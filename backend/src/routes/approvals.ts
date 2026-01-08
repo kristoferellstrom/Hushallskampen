@@ -16,6 +16,7 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
     const approvals = await Approval.find({ status: "pending" })
       .populate({
         path: "calendarEntryId",
+        match: { householdId: user.householdId },
         populate: [
           { path: "choreId", select: "title defaultPoints" },
           { path: "assignedToUserId", select: "name email householdId" },
@@ -23,16 +24,13 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
       })
       .populate({ path: "submittedByUserId", select: "name email householdId" });
 
-    const filtered = approvals.filter((a: any) => {
-      const entry: any = a.calendarEntryId;
-      return (
-        entry &&
-        String(entry.householdId) === String(user.householdId) &&
+    const filtered = approvals.filter(
+      (a: any) =>
+        a.calendarEntryId &&
         String(a.submittedByUserId) !== String(req.userId) &&
-        entry.assignedToUserId &&
-        String(entry.assignedToUserId.householdId || entry.householdId) === String(user.householdId)
-      );
-    });
+        a.calendarEntryId.assignedToUserId &&
+        String(a.calendarEntryId.assignedToUserId.householdId || a.calendarEntryId.householdId) === String(user.householdId),
+    );
 
     res.json({ approvals: filtered });
   } catch (err) {
@@ -91,12 +89,16 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
 
       const upsertStats = async (type: "week" | "month") => {
         const { start, end } = periodKey(approvedAt, type);
-        const record = await StatsRecord.findOneAndUpdate(
-          { householdId: reviewer.householdId, periodType: type, periodStart: start, periodEnd: end },
-          {},
-          { upsert: true, new: true, setDefaultsOnInsert: true },
-        );
-
+        let record = await StatsRecord.findOne({ householdId: reviewer.householdId, periodType: type, periodStart: start, periodEnd: end });
+        if (!record) {
+          record = await StatsRecord.create({
+            householdId: reviewer.householdId,
+            periodType: type,
+            periodStart: start,
+            periodEnd: end,
+            totalsByUser: [],
+          });
+        }
         const existing = record.totalsByUser.find((t: any) => String(t.userId) === String(entry.assignedToUserId));
         if (existing) {
           existing.points += points;
@@ -113,7 +115,7 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
       approval.comment = comment;
       await approval.save();
 
-      entry.status = "rejected";
+      entry.status = "planned";
       await entry.save();
     }
 

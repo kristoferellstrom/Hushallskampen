@@ -155,6 +155,7 @@ router.delete("/:id", authMiddleware, async (req: AuthRequest, res) => {
     if (String(entry.householdId) !== String(user.householdId)) return res.status(403).json({ error: "Not allowed" });
     if (entry.status !== "planned" && entry.status !== "rejected") return res.status(400).json({ error: "Only planned/rejected can be deleted" });
 
+    await Approval.deleteOne({ calendarEntryId: entry._id });
     await entry.deleteOne();
     res.json({ success: true });
   } catch (err) {

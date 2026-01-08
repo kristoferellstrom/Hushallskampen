@@ -13,8 +13,14 @@ const defaultChores = [
   { title: "Laundry", defaultPoints: 2 },
 ];
 
-function genInvite() {
-  return Math.random().toString(36).slice(2, 8).toUpperCase();
+async function genInvite() {
+  let code = "";
+  let exists = true;
+  while (exists) {
+    code = Math.random().toString(36).slice(2, 8).toUpperCase();
+    exists = Boolean(await Household.findOne({ inviteCode: code }));
+  }
+  return code;
 }
 
 router.post("/", authMiddleware, async (req: AuthRequest, res) => {
@@ -23,7 +29,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     if (!name) return res.status(400).json({ error: "Missing name" });
 
-    const inviteCode = genInvite();
+    const inviteCode = await genInvite();
     const household = new Household({ name, inviteCode, mode: mode || "competition" });
     await household.save();
 
