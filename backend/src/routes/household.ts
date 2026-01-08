@@ -29,11 +29,15 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     if (!name) return res.status(400).json({ error: "Missing name" });
 
-    const inviteCode = await genInvite();
-    const household = new Household({ name, inviteCode, mode: mode || "competition" });
-    await household.save();
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    if (user.householdId) return res.status(409).json({ error: "User already belongs to a household" });
 
-    await User.findByIdAndUpdate(req.userId, { householdId: household._id });
+    const inviteCode = await genInvite();
+    const household = await Household.create({ name, inviteCode, mode: mode || "competition" });
+
+    user.householdId = household._id;
+    await user.save();
 
     const chores = defaultChores.map((c) => ({ ...c, householdId: household._id }));
     await Chore.insertMany(chores);
@@ -50,10 +54,15 @@ router.post("/join", authMiddleware, async (req: AuthRequest, res) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     if (!inviteCode) return res.status(400).json({ error: "Missing inviteCode" });
 
-    const household = await Household.findOne({ inviteCode });
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    if (user.householdId) return res.status(409).json({ error: "User already belongs to a household" });
+
+    const household = await Household.findOne({ inviteCode: String(inviteCode).toUpperCase() });
     if (!household) return res.status(404).json({ error: "Household not found" });
 
-    await User.findByIdAndUpdate(req.userId, { householdId: household._id });
+    user.householdId = household._id;
+    await user.save();
     res.json({ household });
   } catch (err) {
     res.status(500).json({ error: "Could not join household" });
