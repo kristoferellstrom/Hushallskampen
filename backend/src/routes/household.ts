@@ -27,10 +27,8 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     const household = new Household({ name, inviteCode, mode: mode || "competition" });
     await household.save();
 
-    // update user
     await User.findByIdAndUpdate(req.userId, { householdId: household._id });
 
-    // seed default chores
     const chores = defaultChores.map((c) => ({ ...c, householdId: household._id }));
     await Chore.insertMany(chores);
 

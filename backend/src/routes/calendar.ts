@@ -7,7 +7,6 @@ import { authMiddleware, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
-// Create a calendar entry (plan a chore)
 router.post("/", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
@@ -17,7 +16,6 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     const chore = await Chore.findById(choreId);
     if (!chore) return res.status(404).json({ error: "Chore not found" });
 
-    // ensure assigned user is in same household
     const assignedUser = await User.findById(assignedToUserId);
     if (!assignedUser || String(assignedUser.householdId) !== String(chore.householdId)) return res.status(400).json({ error: "Invalid assigned user" });
 
@@ -34,7 +32,6 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
-// Submit a calendar entry as done -> creates Approval
 router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
@@ -43,7 +40,6 @@ router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
     if (!entry) return res.status(404).json({ error: "Entry not found" });
     if (String(entry.assignedToUserId) !== String(req.userId)) return res.status(403).json({ error: "Not assigned to you" });
 
-    // check user has no other pending approvals
     const pending = await Approval.findOne({ submittedByUserId: req.userId, status: "pending" });
     if (pending) return res.status(400).json({ error: "You already have a pending approval" });
 
