@@ -15,7 +15,9 @@ dotenv.config();
 const app = express();
 const port = Number(process.env.PORT) || 4000;
 
-connectDB();
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
 
 app.use("/api/auth", authRouter);
 app.use("/api/households", householdRouter);
@@ -23,19 +25,23 @@ app.use("/api/chores", choresRouter);
 app.use("/api/calendar", calendarRouter);
 app.use("/api/approvals", approvalsRouter);
 
+app.get("/health", (_req: Request, res: Response) => {
+  res.json({ status: "ok" });
+});
+
 app.use((err: any, _req: any, res: any, _next: any) => {
   console.error(err);
   res.status(500).json({ error: "Internal server error" });
 });
 
-app.use(cors());
-app.use(express.json());
-app.use(morgan("dev"));
+async function start() {
+  await connectDB();
+  app.listen(port, () => {
+    console.log(`API running on http://localhost:${port}`);
+  });
+}
 
-app.get("/health", (_req: Request, res: Response) => {
-  res.json({ status: "ok" });
-});
-
-app.listen(port, () => {
-  console.log(`API running on http://localhost:${port}`);
+start().catch((err) => {
+  console.error("Failed to start server", err);
+  process.exit(1);
 });

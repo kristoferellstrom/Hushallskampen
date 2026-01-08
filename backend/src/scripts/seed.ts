@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import { connectDB } from "../db";
 import bcrypt from "bcrypt";
 import { User } from "../models/User";
@@ -16,7 +17,7 @@ const run = async () => {
   if (existing) {
     console.log("Test user already exists:", existing.email);
     console.log("Token:", signToken({ id: existing._id }));
-    process.exit(0);
+    return;
   }
 
   const passwordHash = await bcrypt.hash("testpass", 10);
@@ -39,10 +40,12 @@ const run = async () => {
   console.log("Seed complete");
   console.log("Test user:", testEmail, "password: testpass");
   console.log("Token:", signToken({ id: user._id }));
-  process.exit(0);
 };
 
-run().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+run()
+  .then(() => mongoose.connection.close())
+  .catch(async (err) => {
+    console.error(err);
+    await mongoose.connection.close();
+    process.exit(1);
+  });
