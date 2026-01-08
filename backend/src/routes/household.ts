@@ -66,4 +66,39 @@ router.get("/me", authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
+
+    const { mode, weeklyPrizeText, name } = req.body;
+    const updates: any = {};
+    if (mode !== undefined) {
+      if (!["competition", "equality"].includes(mode)) return res.status(400).json({ error: "Invalid mode" });
+      updates.mode = mode;
+    }
+    if (weeklyPrizeText !== undefined) updates.weeklyPrizeText = weeklyPrizeText;
+    if (name !== undefined) updates.name = name;
+
+    const household = await Household.findByIdAndUpdate(user.householdId, updates, { new: true });
+    res.json({ household });
+  } catch (err) {
+    res.status(500).json({ error: "Could not update household" });
+  }
+});
+
+router.get("/members", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.json({ members: [] });
+
+    const members = await User.find({ householdId: user.householdId }).select("name email createdAt");
+    res.json({ members });
+  } catch (err) {
+    res.status(500).json({ error: "Could not list members" });
+  }
+});
+
 export default router;
