@@ -7,6 +7,14 @@ import { LoginPage } from "./pages/LoginPage";
 import { ChoresPage } from "./pages/ChoresPage";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
+
+const HomeRedirect = () => {
+  const { token, user, loading } = useAuth();
+  if (loading) return <p className="status">Laddar...</p>;
+  if (!token) return <Navigate to="/login" replace />;
+  return user?.householdId ? <Navigate to="/dashboard" replace /> : <Navigate to="/household" replace />;
+};
 
 function App() {
   return (
@@ -17,6 +25,7 @@ function App() {
           <Route path="/register" element={<LoginPage mode="register" />} />
 
           <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<HomeRedirect />} />
             <Route path="/household" element={<HouseholdPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/chores" element={<ChoresPage />} />

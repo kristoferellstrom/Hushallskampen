@@ -14,10 +14,10 @@ type AuthContextValue = {
   token: string | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User | null>;
+  register: (name: string, email: string, password: string) => Promise<User | null>;
   logout: () => void;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,17 +40,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [token]);
 
   const refreshUser = async () => {
-    if (!token) return;
+    if (!token) return null;
     try {
       setLoading(true);
       const res = await getMe(token);
       setUser(res.user);
       setError(null);
+      return res.user;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte ladda användare");
       setUser(null);
       setToken(null);
       localStorage.removeItem(STORAGE_KEY);
+      return null;
     } finally {
       setLoading(false);
     }
@@ -63,7 +65,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await login(email, password);
       setToken(res.token);
       localStorage.setItem(STORAGE_KEY, res.token);
-      setUser(res.user);
+      const me = await getMe(res.token);
+      setUser(me.user);
+      return me.user;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Inloggningen misslyckades");
       throw err;
@@ -79,7 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const res = await apiRegister(name, email, password);
       setToken(res.token);
       localStorage.setItem(STORAGE_KEY, res.token);
-      setUser(res.user);
+      const me = await getMe(res.token);
+      setUser(me.user);
+      return me.user;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registreringen misslyckades");
       throw err;

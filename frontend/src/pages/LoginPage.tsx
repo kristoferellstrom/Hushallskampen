@@ -12,21 +12,21 @@ export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
-  const { login, register, loading, user } = useAuth();
+  const { login, register, loading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("");
     setError("");
     try {
-      if (mode === "login") {
-        await login(email, password);
-        setStatus("Inloggad");
-      } else {
-        await register(name, email, password);
-        setStatus("Registrerad och inloggad");
-      }
-      const hasHousehold = user?.householdId;
+      const authed =
+        mode === "login"
+          ? await login(email, password)
+          : await register(name, email, password);
+
+      setStatus(mode === "login" ? "Inloggad" : "Registrerad och inloggad");
+
+      const hasHousehold = authed?.householdId;
       navigate(hasHousehold ? "/dashboard" : "/household", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Något gick fel");
