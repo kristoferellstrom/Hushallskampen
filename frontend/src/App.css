@@ -141,6 +141,11 @@ button:disabled {
   color: #c53030;
 }
 
+.actions {
+  display: inline-flex;
+  gap: 8px;
+}
+
 .list {
   list-style: none;
   padding: 0;

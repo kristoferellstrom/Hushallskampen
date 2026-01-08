@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-type HttpMethod = "GET" | "POST";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
 async function request<T>(path: string, options: { method?: HttpMethod; body?: any; token?: string } = {}): Promise<T> {
   const { method = "GET", body, token } = options;
@@ -44,6 +44,33 @@ export async function getMe(token: string) {
 export async function fetchChores(token: string) {
   return request<{ chores: Array<{ _id: string; title: string; defaultPoints: number }> }>("/chores", {
     method: "GET",
+    token,
+  });
+}
+
+export async function createChore(token: string, data: { title: string; description?: string; defaultPoints?: number }) {
+  return request<{ chore: { _id: string } }>("/chores", {
+    method: "POST",
+    token,
+    body: data,
+  });
+}
+
+export async function updateChore(
+  token: string,
+  id: string,
+  data: { title?: string; description?: string; defaultPoints?: number; isActive?: boolean },
+) {
+  return request<{ chore: { _id: string } }>(`/chores/${id}`, {
+    method: "PUT",
+    token,
+    body: data,
+  });
+}
+
+export async function deleteChore(token: string, id: string) {
+  return request<{ success: boolean }>(`/chores/${id}`, {
+    method: "DELETE",
     token,
   });
 }
