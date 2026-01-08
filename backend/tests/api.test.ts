@@ -159,3 +159,70 @@ describe("Approval rules", () => {
     expect(otherReview.body.entry.status).toBe("approved");
   });
 });
+
+describe("Calendar update/delete and stats", () => {
+  const uniqueEmail = (prefix: string) => `${prefix}-${Date.now()}@example.com`;
+
+  const setupUser = async () => {
+    const email = uniqueEmail("cal");
+    const password = "secret123";
+    const registerRes = await request(app).post("/api/auth/register").send({ name: "Cal", email, password });
+    const token = registerRes.body.token as string;
+    const userId = registerRes.body.user.id as string;
+    await request(app).post("/api/households").set("Authorization", `Bearer ${token}`).send({ name: "HH" });
+    const choresRes = await request(app).get("/api/chores").set("Authorization", `Bearer ${token}`);
+    return { token, userId, choreId: choresRes.body.chores[0]._id as string };
+  };
+
+  it("prevents duplicate planned entry on same day and chore", async () => {
+    if (skipTests) return;
+    const { token, userId, choreId } = await setupUser();
+    const payload = { choreId, date: new Date().toISOString(), assignedToUserId: userId };
+    const first = await request(app).post("/api/calendar").set("Authorization", `Bearer ${token}`).send(payload);
+    expect(first.status).toBe(200);
+    const dup = await request(app).post("/api/calendar").set("Authorization", `Bearer ${token}`).send(payload);
+    expect(dup.status).toBe(409);
+  });
+
+  it("allows updating planned entry date/assignee and deleting planned", async () => {
+    if (skipTests) return;
+    const { token, userId, choreId } = await setupUser();
+    const payload = { choreId, date: new Date().toISOString(), assignedToUserId: userId };
+    const created = await request(app).post("/api/calendar").set("Authorization", `Bearer ${token}`).send(payload);
+    const entryId = created.body.entry._id as string;
+
+    const newDate = new Date(Date.now() + 86400000).toISOString();
+    const updateRes = await request(app).put(`/api/calendar/${entryId}`).set("Authorization", `Bearer ${token}`).send({ date: newDate });
+    expect(updateRes.status).toBe(200);
+    expect(updateRes.body.entry.date).toBe(newDate);
+
+    const delRes = await request(app).delete(`/api/calendar/${entryId}`).set("Authorization", `Bearer ${token}`);
+    expect(delRes.status).toBe(200);
+  });
+
+  it("approving entry updates stats", async () => {
+    if (skipTests) return;
+    const { token, userId, choreId } = await setupUser();
+    const entryRes = await request(app)
+      .post("/api/calendar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ choreId, date: new Date().toISOString(), assignedToUserId: userId });
+    const entryId = entryRes.body.entry._id as string;
+
+    const submitRes = await request(app).post(`/api/calendar/${entryId}/submit`).set("Authorization", `Bearer ${token}`);
+    const approvalId = submitRes.body.approval._id as string;
+    const approveRes = await request(app)
+      .post(`/api/approvals/${approvalId}/review`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ action: "approve" });
+    expect(approveRes.status).toBe(200);
+
+    const leaderboard = await request(app).get("/api/stats/leaderboard").set("Authorization", `Bearer ${token}`);
+    expect(leaderboard.status).toBe(200);
+    expect(leaderboard.body.leaderboard).toBeTruthy();
+
+    const equality = await request(app).get("/api/stats/equality").set("Authorization", `Bearer ${token}`);
+    expect(equality.status).toBe(200);
+    expect(equality.body.equality).toBeTruthy();
+  });
+});

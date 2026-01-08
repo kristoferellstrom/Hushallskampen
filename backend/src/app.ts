@@ -12,7 +12,16 @@ import statsRouter from "./routes/stats";
 export const createApp = () => {
   const app = express();
 
-  app.use(cors());
+  const allowedOrigin = process.env.CORS_ORIGIN;
+  app.use(
+    cors(
+      allowedOrigin
+        ? {
+            origin: allowedOrigin.split(",").map((o) => o.trim()),
+          }
+        : {},
+    ),
+  );
   app.use(express.json());
   if (process.env.NODE_ENV !== "test") {
     app.use(morgan("dev"));

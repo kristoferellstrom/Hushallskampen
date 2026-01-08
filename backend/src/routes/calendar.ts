@@ -66,6 +66,15 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     const assignedUser = await User.findById(assignedToUserId);
     if (!assignedUser || String(assignedUser.householdId) !== String(chore.householdId)) return res.status(400).json({ error: "Invalid assigned user" });
 
+    const existing = await CalendarEntry.findOne({
+      householdId: chore.householdId,
+      choreId: chore._id,
+      assignedToUserId,
+      date: new Date(date),
+      status: "planned",
+    });
+    if (existing) return res.status(409).json({ error: "Duplicate planned entry" });
+
     const entry = await CalendarEntry.create({
       householdId: chore.householdId,
       choreId: chore._id,
@@ -86,6 +95,7 @@ router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
     const entry = await CalendarEntry.findById(id);
     if (!entry) return res.status(404).json({ error: "Entry not found" });
     if (String(entry.assignedToUserId) !== String(req.userId)) return res.status(403).json({ error: "Not assigned to you" });
+    if (entry.status !== "planned") return res.status(400).json({ error: "Entry not in planned state" });
 
     const pending = await Approval.findOne({ submittedByUserId: req.userId, status: "pending" });
     if (pending) return res.status(400).json({ error: "You already have a pending approval" });
@@ -105,7 +115,7 @@ router.put("/:id", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     const { id } = req.params;
-    const { date, assignedToUserId, status } = req.body;
+    const { date, assignedToUserId } = req.body;
 
     const entry = await CalendarEntry.findById(id);
     if (!entry) return res.status(404).json({ error: "Entry not found" });
@@ -126,11 +136,6 @@ router.put("/:id", authMiddleware, async (req: AuthRequest, res) => {
       if (isNaN(newDate.getTime())) return res.status(400).json({ error: "Invalid date" });
       entry.date = newDate;
     }
-    if (status) {
-      if (!["planned", "submitted", "approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
-      entry.status = status;
-    }
-
     await entry.save();
     res.json({ entry });
   } catch (err) {

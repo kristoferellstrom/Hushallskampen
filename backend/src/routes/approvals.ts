@@ -58,6 +58,7 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
     const entry: any = await CalendarEntry.findById(approval.calendarEntryId as any);
     if (!entry) return res.status(404).json({ error: "Calendar entry not found" });
     if (String(entry.householdId) !== String(reviewer.householdId)) return res.status(403).json({ error: "Not in the same household" });
+    if (entry.status !== "submitted") return res.status(400).json({ error: "Entry not submitted" });
 
     if (action === "approve") {
       approval.status = "approved";
