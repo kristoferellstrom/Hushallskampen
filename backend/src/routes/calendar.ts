@@ -7,6 +7,53 @@ import { authMiddleware, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
+function getRange(query: any) {
+  const parse = (val: any) => {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const start = query.startDate ? parse(query.startDate) : null;
+  const end = query.endDate ? parse(query.endDate) : null;
+
+  if (start && end) return { start, end };
+
+  // default: current week (Mon-Sun)
+  const now = new Date();
+  const day = now.getDay(); // 0 Sun - 6 Sat
+  const diffToMonday = (day + 6) % 7; // days since Monday
+  const monday = new Date(now);
+  monday.setHours(0, 0, 0, 0);
+  monday.setDate(now.getDate() - diffToMonday);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 7);
+
+  return { start: start || monday, end: end || sunday };
+}
+
+router.get("/", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.json({ entries: [] });
+
+    const { start, end } = getRange(req.query);
+    if (!start || !end) return res.status(400).json({ error: "Invalid date range" });
+
+    const entries = await CalendarEntry.find({
+      householdId: user.householdId,
+      date: { $gte: start, $lt: end },
+    })
+      .populate({ path: "choreId", select: "title defaultPoints" })
+      .populate({ path: "assignedToUserId", select: "name email" })
+      .sort({ date: 1 });
+
+    res.json({ entries, range: { start, end } });
+  } catch (err) {
+    res.status(500).json({ error: "Could not list calendar entries" });
+  }
+});
+
 router.post("/", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
