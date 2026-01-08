@@ -101,4 +101,60 @@ router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+router.put("/:id", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const { id } = req.params;
+    const { date, assignedToUserId, status } = req.body;
+
+    const entry = await CalendarEntry.findById(id);
+    if (!entry) return res.status(404).json({ error: "Entry not found" });
+
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
+    if (String(entry.householdId) !== String(user.householdId)) return res.status(403).json({ error: "Not allowed" });
+
+    if (entry.status !== "planned") return res.status(400).json({ error: "Only planned entries can be edited" });
+
+    if (assignedToUserId) {
+      const assignedUser = await User.findById(assignedToUserId);
+      if (!assignedUser || String(assignedUser.householdId) !== String(user.householdId)) return res.status(400).json({ error: "Invalid assigned user" });
+      entry.assignedToUserId = assignedToUserId;
+    }
+    if (date) {
+      const newDate = new Date(date);
+      if (isNaN(newDate.getTime())) return res.status(400).json({ error: "Invalid date" });
+      entry.date = newDate;
+    }
+    if (status) {
+      if (!["planned", "submitted", "approved", "rejected"].includes(status)) return res.status(400).json({ error: "Invalid status" });
+      entry.status = status;
+    }
+
+    await entry.save();
+    res.json({ entry });
+  } catch (err) {
+    res.status(500).json({ error: "Could not update entry" });
+  }
+});
+
+router.delete("/:id", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const { id } = req.params;
+    const entry = await CalendarEntry.findById(id);
+    if (!entry) return res.status(404).json({ error: "Entry not found" });
+
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
+    if (String(entry.householdId) !== String(user.householdId)) return res.status(403).json({ error: "Not allowed" });
+    if (entry.status !== "planned" && entry.status !== "rejected") return res.status(400).json({ error: "Only planned/rejected can be deleted" });
+
+    await entry.deleteOne();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Could not delete entry" });
+  }
+});
+
 export default router;
