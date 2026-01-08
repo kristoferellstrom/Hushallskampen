@@ -19,10 +19,10 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
         match: { householdId: user.householdId },
         populate: [
           { path: "choreId", select: "title defaultPoints" },
-          { path: "assignedToUserId", select: "name email householdId" },
+          { path: "assignedToUserId", select: "name email householdId color" },
         ],
       })
-      .populate({ path: "submittedByUserId", select: "name email householdId" });
+      .populate({ path: "submittedByUserId", select: "name email householdId color" });
 
     const filtered = approvals.filter(
       (a: any) =>

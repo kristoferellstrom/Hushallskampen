@@ -45,7 +45,7 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
       date: { $gte: start, $lt: end },
     })
       .populate({ path: "choreId", select: "title defaultPoints" })
-      .populate({ path: "assignedToUserId", select: "name email" })
+      .populate({ path: "assignedToUserId", select: "name email color" })
       .sort({ date: 1 });
 
     res.json({ entries, range: { start, end } });
@@ -96,9 +96,6 @@ router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
     if (!entry) return res.status(404).json({ error: "Entry not found" });
     if (String(entry.assignedToUserId) !== String(req.userId)) return res.status(403).json({ error: "Not assigned to you" });
     if (entry.status !== "planned") return res.status(400).json({ error: "Entry not in planned state" });
-
-    const pending = await Approval.findOne({ submittedByUserId: req.userId, status: "pending" });
-    if (pending) return res.status(400).json({ error: "You already have a pending approval" });
 
     entry.status = "submitted";
     entry.submittedAt = new Date();

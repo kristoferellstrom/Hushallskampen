@@ -10,6 +10,7 @@ import choresRouter from "./routes/chores";
 import calendarRouter from "./routes/calendar";
 import approvalsRouter from "./routes/approvals";
 import statsRouter from "./routes/stats";
+import usersRouter from "./routes/users";
 
 export const createApp = () => {
   const app = express();
@@ -35,6 +36,7 @@ export const createApp = () => {
   app.use("/api/calendar", calendarRouter);
   app.use("/api/approvals", approvalsRouter);
   app.use("/api/stats", statsRouter);
+  app.use("/api/users", usersRouter);
 
   app.get("/health", (_req: Request, res: Response) => {
     res.json({ status: "ok" });

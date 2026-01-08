@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 async function request<T>(path: string, options: { method?: HttpMethod; body?: any; token?: string } = {}): Promise<T> {
   const { method = "GET", body, token } = options;
@@ -99,7 +99,7 @@ export async function getHousehold(token: string) {
 }
 
 export async function listMembers(token: string) {
-  return request<{ members: Array<{ _id: string; name: string; email: string }> }>("/households/members", {
+  return request<{ members: Array<{ _id: string; name: string; email: string; color?: string }> }>("/households/members", {
     method: "GET",
     token,
   });
@@ -115,7 +115,7 @@ export async function listCalendar(token: string, startDate?: string, endDate?: 
       _id: string;
       date: string;
       status: string;
-      assignedToUserId: { _id: string; name: string; email: string };
+      assignedToUserId: { _id: string; name: string; email: string; color?: string };
       choreId: { _id: string; title: string; defaultPoints: number };
     }>;
   }>(`/calendar${qs}`, { method: "GET", token });
@@ -145,16 +145,20 @@ export async function listApprovals(token: string) {
   return request<{
     approvals: Array<{
       _id: string;
-      submittedByUserId: { _id: string; name: string; email: string };
+      submittedByUserId: { _id: string; name: string; email: string; color?: string };
       calendarEntryId: {
         _id: string;
         date: string;
         status: string;
-        assignedToUserId: { _id: string; name: string; email: string };
+        assignedToUserId: { _id: string; name: string; email: string; color?: string };
         choreId: { _id: string; title: string; defaultPoints: number };
       };
     }>;
   }>("/approvals", { method: "GET", token });
+}
+
+export async function updateColor(token: string, color: string) {
+  return request<{ color: string }>("/users/color", { method: "PATCH", token, body: { color } });
 }
 
 export async function reviewApproval(token: string, id: string, action: "approve" | "reject", comment?: string) {

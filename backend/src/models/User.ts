@@ -6,6 +6,7 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   householdId?: string;
+  color?: string;
   createdAt: Date;
   comparePassword(password: string): Promise<boolean>;
 }
@@ -15,6 +16,7 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
   householdId: { type: Schema.Types.ObjectId as any, ref: "Household" },
+  color: { type: String },
   createdAt: { type: Date, default: () => new Date() },
 });
 

@@ -109,7 +109,7 @@ router.get("/members", authMiddleware, async (req: AuthRequest, res) => {
     const user = await User.findById(req.userId).select("householdId");
     if (!user || !user.householdId) return res.json({ members: [] });
 
-    const members = await User.find({ householdId: user.householdId }).select("name email createdAt");
+    const members = await User.find({ householdId: user.householdId }).select("name email createdAt color");
     res.json({ members });
   } catch (err) {
     res.status(500).json({ error: "Could not list members" });

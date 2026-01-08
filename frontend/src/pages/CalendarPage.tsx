@@ -8,12 +8,13 @@ import {
   submitCalendarEntry,
 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { shadeForPoints } from "../utils/palette";
 
 type Entry = {
   _id: string;
   date: string;
   status: string;
-  assignedToUserId: { _id: string; name: string; email: string };
+  assignedToUserId: { _id: string; name: string; email: string; color?: string };
   choreId: { _id: string; title: string; defaultPoints: number };
 };
 
@@ -202,7 +203,11 @@ export const CalendarPage = () => {
               </div>
               <ul className="list">
                 {(entriesByDay[day] || []).map((e) => (
-                  <li key={e._id} className={`status-pill ${e.status}`}>
+                  <li
+                    key={e._id}
+                    className={`status-pill ${e.status}`}
+                    style={{ background: shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints) }}
+                  >
                     <div className="row">
                       <div>
                         <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
