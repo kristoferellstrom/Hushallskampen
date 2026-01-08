@@ -90,3 +90,80 @@ export async function joinHousehold(token: string, inviteCode: string) {
     body: { inviteCode },
   });
 }
+
+export async function listMembers(token: string) {
+  return request<{ members: Array<{ _id: string; name: string; email: string }> }>("/households/members", {
+    method: "GET",
+    token,
+  });
+}
+
+export async function listCalendar(token: string, startDate?: string, endDate?: string) {
+  const params = new URLSearchParams();
+  if (startDate) params.append("startDate", startDate);
+  if (endDate) params.append("endDate", endDate);
+  const qs = params.toString() ? `?${params.toString()}` : "";
+  return request<{
+    entries: Array<{
+      _id: string;
+      date: string;
+      status: string;
+      assignedToUserId: { _id: string; name: string; email: string };
+      choreId: { _id: string; title: string; defaultPoints: number };
+    }>;
+  }>(`/calendar${qs}`, { method: "GET", token });
+}
+
+export async function createCalendarEntry(token: string, data: { choreId: string; date: string; assignedToUserId: string }) {
+  return request<{ entry: { _id: string } }>("/calendar", { method: "POST", token, body: data });
+}
+
+export async function updateCalendarEntry(
+  token: string,
+  id: string,
+  data: { date?: string; assignedToUserId?: string; status?: string },
+) {
+  return request<{ entry: { _id: string } }>(`/calendar/${id}`, { method: "PUT", token, body: data });
+}
+
+export async function deleteCalendarEntry(token: string, id: string) {
+  return request<{ success: boolean }>(`/calendar/${id}`, { method: "DELETE", token });
+}
+
+export async function submitCalendarEntry(token: string, id: string) {
+  return request<{ entry: any; approval: any }>(`/calendar/${id}/submit`, { method: "POST", token });
+}
+
+export async function listApprovals(token: string) {
+  return request<{
+    approvals: Array<{
+      _id: string;
+      submittedByUserId: { _id: string; name: string; email: string };
+      calendarEntryId: {
+        _id: string;
+        date: string;
+        status: string;
+        assignedToUserId: { _id: string; name: string; email: string };
+        choreId: { _id: string; title: string; defaultPoints: number };
+      };
+    }>;
+  }>("/approvals", { method: "GET", token });
+}
+
+export async function reviewApproval(token: string, id: string, action: "approve" | "reject", comment?: string) {
+  return request<{ approval: any; entry: any }>(`/approvals/${id}/review`, { method: "POST", token, body: { action, comment } });
+}
+
+export async function fetchWeeklyStats(token: string) {
+  return request<{ totals: Array<{ periodStart: string; periodEnd: string; totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }> }> }>(
+    "/stats/weekly",
+    { method: "GET", token },
+  );
+}
+
+export async function fetchMonthlyStats(token: string) {
+  return request<{ totals: Array<{ periodStart: string; periodEnd: string; totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }> }> }>(
+    "/stats/monthly",
+    { method: "GET", token },
+  );
+}

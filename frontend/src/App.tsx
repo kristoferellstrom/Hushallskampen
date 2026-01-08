@@ -5,7 +5,9 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { HouseholdPage } from "./pages/HouseholdPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ChoresPage } from "./pages/ChoresPage";
-import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { CalendarPage } from "./pages/CalendarPage";
+import { ApprovalsPage } from "./pages/ApprovalsPage";
+import { StatsPage } from "./pages/StatsPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 
@@ -29,10 +31,10 @@ function App() {
             <Route path="/household" element={<HouseholdPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/chores" element={<ChoresPage />} />
-            <Route path="/calendar" element={<PlaceholderPage title="Kalender" />} />
-            <Route path="/approvals" element={<PlaceholderPage title="Approvals" />} />
-            <Route path="/stats" element={<PlaceholderPage title="Stats" />} />
-            <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/approvals" element={<ApprovalsPage />} />
+            <Route path="/stats" element={<StatsPage />} />
+            <Route path="/settings" element={<DashboardPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
