@@ -25,6 +25,7 @@ export const CalendarPage = () => {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
 
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [choreId, setChoreId] = useState("");
@@ -42,6 +43,7 @@ export const CalendarPage = () => {
       if (!choreId && ch.chores[0]) setChoreId(ch.chores[0]._id);
       if (!assignedToUserId && mem.members[0]) setAssignedToUserId(mem.members[0]._id);
       setStatus(`Hämtade ${cal.entries.length} poster`);
+      setSelected([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte ladda kalender");
     }
@@ -93,6 +95,32 @@ export const CalendarPage = () => {
       await loadAll();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte ta bort");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isEligible = (e: Entry) => e.status === "planned" && e.assignedToUserId._id === user?.id;
+
+  const toggleSelect = (entry: Entry) => {
+    if (!isEligible(entry)) return;
+    setSelected((prev) => (prev.includes(entry._id) ? prev.filter((id) => id !== entry._id) : [...prev, entry._id]));
+  };
+
+  const handleSubmitSelected = async () => {
+    if (!token) return;
+    const ids = entries.filter((e) => selected.includes(e._id) && isEligible(e)).map((e) => e._id);
+    if (ids.length === 0) return;
+    setLoading(true);
+    setError("");
+    try {
+      for (const id of ids) {
+        await submitCalendarEntry(token, id);
+      }
+      setStatus(`Markerade ${ids.length} poster som pending approval`);
+      await loadAll();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunde inte markera valda");
     } finally {
       setLoading(false);
     }
@@ -162,6 +190,9 @@ export const CalendarPage = () => {
           {status && <p className="status ok">{status}</p>}
           {error && <p className="status error">{error}</p>}
           {!status && !error && <p className="hint">Antal: {entries.length}</p>}
+          <button type="button" disabled={loading || selected.length === 0} onClick={handleSubmitSelected}>
+            Markera valda
+          </button>
         </div>
         <div className="calendar-grid">
           {days.map((day) => (
@@ -179,9 +210,16 @@ export const CalendarPage = () => {
                         <p className="hint">Status: {e.status}</p>
                       </div>
                       <div className="actions">
+                        <input
+                          type="checkbox"
+                          aria-label="Välj för massmarkering"
+                          disabled={!isEligible(e)}
+                          checked={selected.includes(e._id)}
+                          onChange={() => toggleSelect(e)}
+                        />
                         <button
                           type="button"
-                          disabled={loading || e.status !== "planned" || e.assignedToUserId._id !== user?.id}
+                          disabled={loading || !isEligible(e)}
                           onClick={() => handleSubmit(e._id)}
                         >
                           Markera klar

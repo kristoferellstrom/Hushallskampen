@@ -24,6 +24,13 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const STORAGE_KEY = "hk_token";
 
+const normalizeUser = (raw: any): User => ({
+  id: raw.id || raw._id,
+  name: raw.name,
+  email: raw.email,
+  householdId: raw.householdId,
+});
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(STORAGE_KEY));
   const [user, setUser] = useState<User | null>(null);
@@ -44,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       const res = await getMe(token);
-      setUser(res.user);
+      setUser(normalizeUser(res.user));
       setError(null);
       return res.user;
     } catch (err) {
@@ -66,8 +73,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(res.token);
       localStorage.setItem(STORAGE_KEY, res.token);
       const me = await getMe(res.token);
-      setUser(me.user);
-      return me.user;
+      const normalized = normalizeUser(me.user);
+      setUser(normalized);
+      return normalized;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Inloggningen misslyckades");
       throw err;
@@ -84,8 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(res.token);
       localStorage.setItem(STORAGE_KEY, res.token);
       const me = await getMe(res.token);
-      setUser(me.user);
-      return me.user;
+      const normalized = normalizeUser(me.user);
+      setUser(normalized);
+      return normalized;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registreringen misslyckades");
       throw err;

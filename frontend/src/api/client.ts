@@ -91,6 +91,13 @@ export async function joinHousehold(token: string, inviteCode: string) {
   });
 }
 
+export async function getHousehold(token: string) {
+  return request<{ household: { _id: string; name: string; inviteCode: string } | null }>("/households/me", {
+    method: "GET",
+    token,
+  });
+}
+
 export async function listMembers(token: string) {
   return request<{ members: Array<{ _id: string; name: string; email: string }> }>("/households/members", {
     method: "GET",
