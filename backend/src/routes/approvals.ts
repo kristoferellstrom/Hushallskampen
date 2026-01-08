@@ -11,10 +11,25 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
     const user = await User.findById(req.userId).select("householdId");
     if (!user || !user.householdId) return res.json({ approvals: [] });
 
-    const approvals = await Approval.find({ status: "pending" }).populate({ path: "calendarEntryId" });
+    const approvals = await Approval.find({ status: "pending" })
+      .populate({
+        path: "calendarEntryId",
+        populate: [
+          { path: "choreId", select: "title defaultPoints" },
+          { path: "assignedToUserId", select: "name email householdId" },
+        ],
+      })
+      .populate({ path: "submittedByUserId", select: "name email householdId" });
+
     const filtered = approvals.filter((a: any) => {
       const entry: any = a.calendarEntryId;
-      return entry && String(entry.householdId) === String(user.householdId) && String(a.submittedByUserId) !== String(req.userId);
+      return (
+        entry &&
+        String(entry.householdId) === String(user.householdId) &&
+        String(a.submittedByUserId) !== String(req.userId) &&
+        entry.assignedToUserId &&
+        String(entry.assignedToUserId.householdId || entry.householdId) === String(user.householdId)
+      );
     });
 
     res.json({ approvals: filtered });
