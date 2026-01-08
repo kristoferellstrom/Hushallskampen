@@ -3,6 +3,8 @@ import { Approval } from "../models/Approval";
 import { CalendarEntry } from "../models/CalendarEntry";
 import { User } from "../models/User";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
+import { Chore } from "../models/Chore";
+import { StatsRecord } from "../models/StatsRecord";
 
 const router = Router();
 router.get("/", authMiddleware, async (req: AuthRequest, res) => {
@@ -66,6 +68,44 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
       entry.status = "approved";
       entry.approvedAt = new Date();
       await entry.save();
+
+      const chore = await Chore.findById(entry.choreId).select("defaultPoints");
+      const points = chore?.defaultPoints ?? 0;
+      const approvedAt = entry.approvedAt || new Date();
+
+      const periodKey = (date: Date, type: "week" | "month") => {
+        const d = new Date(date);
+        if (type === "month") {
+          return { start: new Date(d.getFullYear(), d.getMonth(), 1), end: new Date(d.getFullYear(), d.getMonth() + 1, 1) };
+        }
+        const day = d.getDay();
+        const diffToMonday = (day + 6) % 7;
+        const monday = new Date(d);
+        monday.setHours(0, 0, 0, 0);
+        monday.setDate(d.getDate() - diffToMonday);
+        const nextMonday = new Date(monday);
+        nextMonday.setDate(monday.getDate() + 7);
+        return { start: monday, end: nextMonday };
+      };
+
+      const upsertStats = async (type: "week" | "month") => {
+        const { start, end } = periodKey(approvedAt, type);
+        const record = await StatsRecord.findOneAndUpdate(
+          { householdId: reviewer.householdId, periodType: type, periodStart: start, periodEnd: end },
+          {},
+          { upsert: true, new: true, setDefaultsOnInsert: true },
+        );
+
+        const existing = record.totalsByUser.find((t: any) => String(t.userId) === String(entry.assignedToUserId));
+        if (existing) {
+          existing.points += points;
+        } else {
+          record.totalsByUser.push({ userId: entry.assignedToUserId, points });
+        }
+        await record.save();
+      };
+
+      await Promise.all([upsertStats("week"), upsertStats("month")]);
     } else {
       approval.status = "rejected";
       approval.reviewedByUserId = req.userId;
