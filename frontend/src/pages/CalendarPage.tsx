@@ -33,6 +33,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [filter, setFilter] = useState<string>("all");
 
   const formatDateLocal = (d: Date) => {
     const y = d.getFullYear();
@@ -148,13 +149,18 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   const entriesByDay = useMemo(() => {
     const groups: Record<string, Entry[]> = {};
-    entries.forEach((e) => {
+    const filtered = entries.filter((e) => {
+      if (filter === "all") return true;
+      if (filter === "submitted") return e.status === "submitted";
+      return e.assignedToUserId._id === filter;
+    });
+    filtered.forEach((e) => {
       const key = e.date.slice(0, 10);
       if (!groups[key]) groups[key] = [];
       groups[key].push(e);
     });
     return groups;
-  }, [entries]);
+  }, [entries, filter]);
 
   const myPendingCount = useMemo(
     () => entries.filter((e) => e.status === "submitted" && e.assignedToUserId._id === user?.id).length,
@@ -314,6 +320,20 @@ export const CalendarPage = ({ embedded = false }: Props) => {
             <button type="button" className="chip" onClick={handleCopyLastWeek} disabled={loading} style={{ marginLeft: 8 }}>
               Kopiera förra veckan
             </button>
+          </div>
+          <div className="row" style={{ marginBottom: 8, gap: 8, flexWrap: "wrap" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              Filter
+              <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+                <option value="all">Alla</option>
+                <option value="submitted">Väntar godkännande</option>
+                {members.map((m) => (
+                  <option key={m._id} value={m._id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
           <div className="weekdays">
             {["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"].map((d) => (
