@@ -34,6 +34,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("all");
+  const [showHeatmap, setShowHeatmap] = useState(false);
 
   const formatDateLocal = (d: Date) => {
     const y = d.getFullYear();
@@ -193,6 +194,14 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const todayStr = formatDateLocal(new Date());
   const selectedEntries = entriesByDay[selectedDay] || [];
 
+  const heatmapData = useMemo(() => {
+    return monthGrid.map((day) => {
+      const dayEntries = entriesByDay[day.date] || [];
+      const totalPoints = dayEntries.reduce((sum, e) => sum + (e.choreId.defaultPoints || 0), 0);
+      return { date: day.date, inMonth: day.inMonth, count: dayEntries.length, points: totalPoints };
+    });
+  }, [monthGrid, entriesByDay]);
+
   const handleDropCreate = async (day: string, choreId: string) => {
     if (!token) return;
     const assignee = selectedAssignee || members[0]?._id;
@@ -334,6 +343,9 @@ export const CalendarPage = ({ embedded = false }: Props) => {
                 ))}
               </select>
             </label>
+            <button type="button" className="chip" onClick={() => setShowHeatmap((v) => !v)}>
+              {showHeatmap ? "Dölj heatmap" : "Visa heatmap"}
+            </button>
           </div>
           <div className="weekdays">
             {["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"].map((d) => (
@@ -379,6 +391,19 @@ export const CalendarPage = ({ embedded = false }: Props) => {
               );
             })}
           </div>
+          {showHeatmap && (
+            <div className="heatmap-grid">
+              {heatmapData.map((d) => {
+                const intensity = Math.min(1, d.count / 5 || d.points / 15);
+                const bg = `rgba(15, 23, 42, ${0.08 + intensity * 0.35})`;
+                return (
+                  <div key={d.date} className={`heatmap-cell ${d.inMonth ? "" : "muted"}`} title={`${d.date} • ${d.count} uppgifter • ${d.points}p`} style={{ background: bg }}>
+                    <span>{Number(d.date.slice(-2))}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="card sidebar right">
