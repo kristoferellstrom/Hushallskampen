@@ -230,3 +230,25 @@ button:disabled {
 .back-link:hover {
   text-decoration: underline;
 }
+
+.invite-wrapper {
+  margin-top: 8px;
+}
+
+.invite-pill {
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #f8fafc;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.logo-mark {
+  width: 200px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 12px;
+}
