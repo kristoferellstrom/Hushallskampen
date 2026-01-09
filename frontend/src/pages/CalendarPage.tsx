@@ -208,17 +208,24 @@ export const CalendarPage = () => {
                 <strong>{day}</strong>
               </div>
               <ul className="list">
-                {(entriesByDay[day] || []).map((e) => (
-                  <li
-                    key={e._id}
-                    className={`status-pill ${e.status}`}
-                    style={{ background: shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints) }}
-                  >
-                    <div className="row">
-                      <div>
-                        <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
-                        <p className="hint">{e.assignedToUserId.name}</p>
-                        <p className="hint">Status: {e.status}</p>
+                {(entriesByDay[day] || []).map((e) => {
+                  const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                  const textColor = e.choreId.defaultPoints > 6 ? "#ffffff" : "#0f172a";
+                  return (
+                    <li
+                      key={e._id}
+                      className={`status-pill ${e.status}`}
+                      style={{ background: shade, color: textColor }}
+                    >
+                      <div className="row">
+                        <div>
+                          <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
+                          <p className="hint" style={{ color: textColor, opacity: 0.85 }}>
+                            {e.assignedToUserId.name}
+                          </p>
+                          <p className="hint" style={{ color: textColor, opacity: 0.85 }}>
+                            Status: {e.status}
+                          </p>
                       </div>
                       <div className="actions">
                         <input
@@ -244,8 +251,9 @@ export const CalendarPage = () => {
                         </button>
                       </div>
                     </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

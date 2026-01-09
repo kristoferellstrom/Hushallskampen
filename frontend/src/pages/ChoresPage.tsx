@@ -14,12 +14,12 @@ export const ChoresPage = () => {
   const [loading, setLoading] = useState(false);
 
   const [newTitle, setNewTitle] = useState("");
-  const [newPoints, setNewPoints] = useState(1);
+  const [newPoints, setNewPoints] = useState("1");
   const [newDescription, setNewDescription] = useState("");
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
-  const [editPoints, setEditPoints] = useState(1);
+  const [editPoints, setEditPoints] = useState("1");
   const [editDescription, setEditDescription] = useState("");
 
   const loadChores = async () => {
@@ -38,7 +38,6 @@ export const ChoresPage = () => {
 
   useEffect(() => {
     loadChores();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -47,9 +46,10 @@ export const ChoresPage = () => {
     setLoading(true);
     setError("");
     try {
-      await createChore(token, { title: newTitle, defaultPoints: newPoints, description: newDescription || undefined });
+      const points = Number(newPoints || 0);
+      await createChore(token, { title: newTitle, defaultPoints: points, description: newDescription || undefined });
       setNewTitle("");
-      setNewPoints(1);
+      setNewPoints("1");
       setNewDescription("");
       setStatus("Skapade syssla");
       await loadChores();
@@ -63,7 +63,7 @@ export const ChoresPage = () => {
   const startEdit = (chore: Chore) => {
     setEditingId(chore._id);
     setEditTitle(chore.title);
-    setEditPoints(chore.defaultPoints);
+    setEditPoints(String(chore.defaultPoints));
     setEditDescription(chore.description || "");
   };
 
@@ -73,9 +73,10 @@ export const ChoresPage = () => {
     setLoading(true);
     setError("");
     try {
+      const points = Number(editPoints || 0);
       await updateChore(token, editingId, {
         title: editTitle,
-        defaultPoints: editPoints,
+        defaultPoints: points,
         description: editDescription || undefined,
       });
       setEditingId(null);
@@ -126,7 +127,7 @@ export const ChoresPage = () => {
           </label>
           <label>
             Poäng
-            <input type="number" min={0} value={newPoints} onChange={(e) => setNewPoints(Number(e.target.value) || 0)} required />
+            <input type="number" min={0} value={newPoints} onChange={(e) => setNewPoints(e.target.value)} required />
           </label>
           <label>
             Beskrivning (valfritt)
@@ -146,7 +147,7 @@ export const ChoresPage = () => {
             </label>
             <label>
               Poäng
-              <input type="number" min={0} value={editPoints} onChange={(e) => setEditPoints(Number(e.target.value) || 0)} required />
+              <input type="number" min={0} value={editPoints} onChange={(e) => setEditPoints(e.target.value)} required />
             </label>
             <label>
               Beskrivning
