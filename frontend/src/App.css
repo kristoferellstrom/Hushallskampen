@@ -246,9 +246,9 @@ button:disabled {
 }
 
 .logo-mark {
-  width: 200px;
+  width: 480px;
   max-width: 100%;
   height: auto;
   display: block;
-  margin-bottom: 12px;
+  margin: 0 auto 16px;
 }
