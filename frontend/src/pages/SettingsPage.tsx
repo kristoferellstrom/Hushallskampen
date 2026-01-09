@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getHousehold, listMembers, updateColor } from "../api/client";
+import { getHousehold, listMembers, updateColor, updateHousehold } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
 import { colorPreview } from "../utils/palette";
@@ -13,6 +13,9 @@ export const SettingsPage = () => {
   const [error, setError] = useState("");
   const [colorStatus, setColorStatus] = useState("");
   const [colorError, setColorError] = useState("");
+  const [mode, setMode] = useState<"competition" | "equality">("competition");
+  const [prize, setPrize] = useState("");
+  const [updatingHousehold, setUpdatingHousehold] = useState(false);
   const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
 
   const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
@@ -37,9 +40,13 @@ export const SettingsPage = () => {
         setStatus("Du har inget hushåll");
         setInvite("");
         setName("");
+        setMode("competition");
+        setPrize("");
       } else {
         setInvite(res.household.inviteCode);
         setName(res.household.name);
+        setMode(res.household.mode || "competition");
+        setPrize(res.household.weeklyPrizeText || "");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta hushåll");
@@ -74,6 +81,31 @@ export const SettingsPage = () => {
   const usedColors = members.filter((m) => m.color).map((m) => m.color);
   const userColor = members.find((m) => m._id === user?.id)?.color || user?.color;
 
+  const handleUpdateHousehold = async () => {
+    if (!token) return;
+    setStatus("");
+    setError("");
+    setUpdatingHousehold(true);
+    try {
+      await updateHousehold(token, { name, mode, weeklyPrizeText: prize });
+      setStatus("Hushållet uppdaterat");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
+    } finally {
+      setUpdatingHousehold(false);
+    }
+  };
+
+  const copyInvite = async () => {
+    if (!invite) return;
+    try {
+      await navigator.clipboard.writeText(invite);
+      setStatus("Koden kopierad");
+    } catch {
+      setStatus("Kunde inte kopiera koden");
+    }
+  };
+
   useEffect(() => {
     loadInvite();
     loadMembers();
@@ -101,9 +133,41 @@ export const SettingsPage = () => {
         {invite && (
           <div className="invite-wrapper">
             <span className="invite-pill">{invite}</span>
+            <button type="button" className="chip" onClick={copyInvite}>
+              Kopiera
+            </button>
           </div>
         )}
         {status && !invite && <p className="hint">{status}</p>}
+        {error && (
+          <p className="status error" aria-live="assertive">
+            {error}
+          </p>
+        )}
+      </div>
+
+      <div className="card">
+        <h2>Hushållets läge & pris</h2>
+        <label>
+          Namn
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        </label>
+        <div className="mode-toggle" style={{ marginTop: 8, marginBottom: 8 }}>
+          <button type="button" className={mode === "competition" ? "active" : ""} onClick={() => setMode("competition")}>
+            Tävling
+          </button>
+          <button type="button" className={mode === "equality" ? "active" : ""} onClick={() => setMode("equality")}>
+            Rättvisa
+          </button>
+        </div>
+        <label>
+          Veckans pris
+          <input type="text" value={prize} onChange={(e) => setPrize(e.target.value)} placeholder="Ex: Välj film, middag, etc." />
+        </label>
+        <button type="button" onClick={handleUpdateHousehold} disabled={updatingHousehold}>
+          Spara inställningar
+        </button>
+        {status && invite && <p className="status ok">{status}</p>}
         {error && (
           <p className="status error" aria-live="assertive">
             {error}

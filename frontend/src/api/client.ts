@@ -185,6 +185,10 @@ export async function reviewApproval(token: string, id: string, action: "approve
   return request<{ approval: any; entry: any }>(`/approvals/${id}/review`, { method: "POST", token, body: { action, comment } });
 }
 
+export async function updateHousehold(token: string, data: { name?: string; mode?: "competition" | "equality"; weeklyPrizeText?: string }) {
+  return request<{ household: any }>("/household/me", { method: "PATCH", token, body: data });
+}
+
 export async function fetchWeeklyStats(token: string) {
   return request<{ totals: Array<{ periodStart: string; periodEnd: string; totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }> }> }>(
     "/stats/weekly",
