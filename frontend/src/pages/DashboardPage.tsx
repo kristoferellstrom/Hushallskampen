@@ -12,6 +12,16 @@ export const DashboardPage = () => {
   const [householdName, setHouseholdName] = useState("");
 
   const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
+  const colorLabels: Record<string, string> = {
+    blue: "Blå",
+    green: "Grön",
+    red: "Röd",
+    orange: "Orange",
+    purple: "Lila",
+    pink: "Rosa",
+    yellow: "Gul",
+    teal: "Turkos",
+  };
 
   const loadHousehold = async () => {
     if (!token) return;
@@ -106,14 +116,20 @@ export const DashboardPage = () => {
                   disabled={taken && !isMine}
                   onClick={() => handleColor(c)}
                 >
-                  {c}
+                  {colorLabels[c] || c}
                 </button>
               );
             })}
           </div>
-          {userColor && <p className="hint">Din färg: {userColor}</p>}
+          {userColor && <p className="hint">Din färg: {colorLabels[userColor] || userColor}</p>}
           {usedColors.length > 0 && (
-            <p className="hint">Upptagna: {usedColors.filter(Boolean).join(", ")}</p>
+            <p className="hint">
+              Upptagna:{" "}
+              {usedColors
+                .filter(Boolean)
+                .map((c) => colorLabels[c] || c)
+                .join(", ")}
+            </p>
           )}
           {status && <p className="status ok">{status}</p>}
           {error && (

@@ -12,7 +12,7 @@ const palettes: Record<string, string[]> = {
 export function shadeForPoints(color: string | undefined, points: number) {
   const palette = color ? palettes[color] : null;
   const clamped = Math.min(Math.max(points, 1), 10);
-  const idx = Math.ceil(clamped / 2) - 1; // map 1-10 -> 5 nyanser
+  const idx = Math.ceil(clamped / 2) - 1;
   return palette ? palette[idx] : "#f8fafc";
 }
 

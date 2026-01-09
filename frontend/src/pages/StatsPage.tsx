@@ -45,7 +45,7 @@ export const StatsPage = () => {
 
       <div className="grid">
         <div className="card">
-          <h2>Weekly</h2>
+          <h2>Veckosummeringar</h2>
           {weekly.map((rec) => (
             <div key={rec.periodStart} className="stat-block">
               <p className="hint">
@@ -65,7 +65,7 @@ export const StatsPage = () => {
         </div>
 
         <div className="card">
-          <h2>Monthly</h2>
+          <h2>Månads-summeringar</h2>
           {monthly.map((rec) => (
             <div key={rec.periodStart} className="stat-block">
               <p className="hint">

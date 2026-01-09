@@ -30,9 +30,9 @@ export const ApprovalsPage = () => {
     try {
       const res = await listApprovals(token);
       setApprovals(res.approvals);
-      setStatus(`Pending: ${res.approvals.length}`);
+      setStatus(`Att granska: ${res.approvals.length}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte hämta approvals");
+      setError(err instanceof Error ? err.message : "Kunde inte hämta godkännanden");
     }
   };
 
@@ -96,7 +96,7 @@ export const ApprovalsPage = () => {
               </div>
             </li>
           ))}
-          {approvals.length === 0 && <p className="hint">Inga pending just nu</p>}
+          {approvals.length === 0 && <p className="hint">Inga att granska just nu</p>}
         </ul>
       </div>
     </div>

@@ -50,7 +50,7 @@ export const SettingsPage = () => {
       </header>
 
       <div className="card">
-        <h2>Invite-kod</h2>
+        <h2>Inbjudningskod</h2>
         <p className="hint">Dela koden med de som ska gå med i hushållet</p>
         <button onClick={loadInvite}>Hämta kod</button>
         {invite && (

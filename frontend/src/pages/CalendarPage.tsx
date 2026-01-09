@@ -84,7 +84,7 @@ export const CalendarPage = () => {
     setError("");
     try {
       await submitCalendarEntry(token, id);
-      setStatus("Markerad som klar (pending approval)");
+      setStatus("Markerad som klar (väntar på godkännande)");
       await loadAll();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte markera");
@@ -125,7 +125,7 @@ export const CalendarPage = () => {
       for (const id of ids) {
         await submitCalendarEntry(token, id);
       }
-      setStatus(`Markerade ${ids.length} poster som pending approval`);
+      setStatus(`Markerade ${ids.length} poster som väntar på godkännande`);
       await loadAll();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte markera valda");

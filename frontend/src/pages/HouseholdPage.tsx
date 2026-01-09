@@ -74,7 +74,7 @@ export const HouseholdPage = () => {
           <button type="submit">Skapa</button>
           {inviteCreated && (
             <p className="status ok" aria-live="polite">
-              Invite code: <strong>{inviteCreated}</strong>
+              Inbjudningskod: <strong>{inviteCreated}</strong>
             </p>
           )}
         </form>
@@ -82,7 +82,7 @@ export const HouseholdPage = () => {
         <form className="card" onSubmit={handleJoin}>
           <h2>Gå med i hushåll</h2>
           <label>
-            Invite code
+            Inbjudningskod
             <input value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} required />
           </label>
           <button type="submit">Gå med</button>
