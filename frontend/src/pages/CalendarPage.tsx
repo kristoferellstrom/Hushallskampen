@@ -82,6 +82,10 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   const handleSubmit = async (id: string) => {
     if (!token) return;
+    if (myPendingCount >= 5) {
+      setError("Du har redan 5 sysslor som väntar på godkännande.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -119,6 +123,10 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   const handleSubmitSelected = async () => {
     if (!token) return;
+    if (myPendingCount >= 5) {
+      setError("Du har redan 5 sysslor som väntar på godkännande.");
+      return;
+    }
     const ids = entries.filter((e) => selected.includes(e._id) && isEligible(e)).map((e) => e._id);
     if (ids.length === 0) return;
     setLoading(true);
@@ -145,6 +153,11 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     });
     return groups;
   }, [entries]);
+
+  const myPendingCount = useMemo(
+    () => entries.filter((e) => e.status === "submitted" && e.assignedToUserId._id === user?.id).length,
+    [entries, user],
+  );
 
   const startOfWeek = (d: Date) => {
     const date = new Date(d);
@@ -200,6 +213,11 @@ export const CalendarPage = ({ embedded = false }: Props) => {
       <div className="row status-row">
         {status && <p className="status ok">{status}</p>}
         {error && <p className="status error">{error}</p>}
+        {myPendingCount > 0 && (
+          <div className="banner warning">
+            Du har {myPendingCount} syssla som väntar på godkännande. Max 5 kan ligga och vänta på granskning innan du markerar fler.
+          </div>
+        )}
       </div>
 
       <div className="row calendar-row three-cols">
@@ -322,7 +340,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
                   </div>
                   <div className="actions">
                     {isEligible(e) && (
-                      <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading}>
+                      <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading || myPendingCount >= 5}>
                         Klar
                       </button>
                     )}

@@ -149,6 +149,20 @@ button {
   }
 }
 
+.banner {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid $color-border;
+  background: $color-surface;
+
+  &.warning {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    color: #92400e;
+  }
+}
+
 .actions {
   display: inline-flex;
   gap: 8px;

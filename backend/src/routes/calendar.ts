@@ -88,6 +88,13 @@ router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
     if (String(entry.assignedToUserId) !== String(req.userId)) return res.status(403).json({ error: "Not assigned to you" });
     if (entry.status !== "planned") return res.status(400).json({ error: "Entry not in planned state" });
 
+    const pendingCount = await CalendarEntry.countDocuments({
+      assignedToUserId: req.userId,
+      status: "submitted",
+      _id: { $ne: entry._id },
+    });
+    if (pendingCount >= 5) return res.status(409).json({ error: "You already have 5 tasks pending approval" });
+
     entry.status = "submitted";
     entry.submittedAt = new Date();
     await entry.save();
