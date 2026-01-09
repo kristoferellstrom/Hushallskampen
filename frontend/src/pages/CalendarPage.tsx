@@ -30,24 +30,39 @@ export const CalendarPage = () => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalDate, setModalDate] = useState("");
-  const [currentMonth, setCurrentMonth] = useState(() => new Date());
-  const [selectedDay, setSelectedDay] = useState(() => new Date().toISOString().slice(0, 10));
+  const formatDateLocal = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
 
-  const [choreId, setChoreId] = useState("");
-  const [assignedToUserId, setAssignedToUserId] = useState("");
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [selectedDay, setSelectedDay] = useState(() => formatDateLocal(new Date()));
+  const [dragChoreId, setDragChoreId] = useState<string | null>(null);
+  const [dragOverDay, setDragOverDay] = useState<string | null>(null);
+  const [selectedAssignee, setSelectedAssignee] = useState("");
+  const gridRange = () => {
+    const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+    const gridStart = startOfWeek(monthStart);
+    const gridEnd = new Date(gridStart);
+    gridEnd.setDate(gridEnd.getDate() + 42);
+    return { start: formatDateLocal(gridStart), endExclusive: formatDateLocal(gridEnd) };
+  };
+
   const loadAll = async () => {
     if (!token) return;
     setStatus("Laddar...");
     setError("");
     try {
-      const [cal, ch, mem] = await Promise.all([listCalendar(token), fetchChores(token), listMembers(token)]);
+      const { start, endExclusive } = gridRange();
+      const [cal, ch, mem] = await Promise.all([listCalendar(token, start, endExclusive), fetchChores(token), listMembers(token)]);
       setEntries(cal.entries);
       setChores(ch.chores);
       setMembers(mem.members);
-      if (!choreId && ch.chores[0]) setChoreId(ch.chores[0]._id);
-      if (!assignedToUserId && mem.members[0]) setAssignedToUserId(mem.members[0]._id);
+      if (!dragChoreId && ch.chores[0]) setDragChoreId(ch.chores[0]._id);
+      if (!selectedAssignee && mem.members[0]) setSelectedAssignee(mem.members[0]._id);
       setStatus(`Hämtade ${cal.entries.length} poster`);
       setSelected([]);
     } catch (err) {
@@ -58,7 +73,7 @@ export const CalendarPage = () => {
   useEffect(() => {
     loadAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, currentMonth]);
 
   const handleSubmit = async (id: string) => {
     if (!token) return;
@@ -133,8 +148,6 @@ export const CalendarPage = () => {
     return date;
   };
 
-  const formatDate = (d: Date) => d.toISOString().slice(0, 10);
-
   const monthGrid = useMemo(() => {
     const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
     const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
@@ -143,7 +156,7 @@ export const CalendarPage = () => {
     const cursor = new Date(gridStart);
     while (grid.length < 42) {
       const inMonth = cursor >= monthStart && cursor <= monthEnd;
-      grid.push({ date: formatDate(cursor), inMonth });
+      grid.push({ date: formatDateLocal(cursor), inMonth });
       cursor.setDate(cursor.getDate() + 1);
     }
     return grid;
@@ -151,29 +164,27 @@ export const CalendarPage = () => {
 
   const monthLabel = currentMonth.toLocaleDateString("sv-SE", { month: "long", year: "numeric" });
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = formatDateLocal(new Date());
   const selectedEntries = entriesByDay[selectedDay] || [];
 
-  const openModalForDate = (day: string) => {
-    setSelectedDay(day);
-    setModalDate(day);
-    if (!choreId && chores[0]) setChoreId(chores[0]._id);
-    if (!assignedToUserId && members[0]) setAssignedToUserId(members[0]._id);
-    setModalOpen(true);
-  };
-
-  const handleCreateForModal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token || !modalDate) return;
+  const handleDropCreate = async (day: string, choreId: string) => {
+    if (!token) return;
+    const assignee = selectedAssignee || members[0]?._id;
+    if (!assignee) {
+      setError("Välj en person att tilldela innan du släpper en syssla.");
+      return;
+    }
+    setDragOverDay(null);
+    setDragChoreId(null);
     setLoading(true);
     setError("");
     try {
-      await createCalendarEntry(token, { choreId, date: modalDate, assignedToUserId });
-      setStatus("Skapade kalenderpost");
-      setModalOpen(false);
+      setSelectedDay(day);
+      await createCalendarEntry(token, { choreId, date: day, assignedToUserId: assignee });
+      setStatus("La till syssla i kalendern");
       await loadAll();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte skapa post");
+      setError(err instanceof Error ? err.message : "Kunde inte lägga till syssla");
     } finally {
       setLoading(false);
     }
@@ -193,7 +204,44 @@ export const CalendarPage = () => {
         </div>
       </header>
 
-      <div className="row calendar-row">
+      <div className="row calendar-row three-cols">
+        <div className="card sidebar left">
+          <h3>Sysslor (pusselbitar)</h3>
+          <label>
+            Tilldela till
+            <select value={selectedAssignee} onChange={(e) => setSelectedAssignee(e.target.value)}>
+              {members.map((m) => (
+                <option key={m._id} value={m._id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="puzzle-grid">
+            {chores.map((c) => (
+              <div
+                key={c._id}
+                className="puzzle"
+                draggable
+                onDragStart={(e) => {
+                  setDragChoreId(c._id);
+                  e.dataTransfer.effectAllowed = "copyMove";
+                  e.dataTransfer.setData("text/plain", c._id);
+                }}
+                onDragEnd={() => {
+                  setDragChoreId(null);
+                  setDragOverDay(null);
+                }}
+              >
+                <strong>{c.title}</strong>
+                <p className="hint">{c._id.slice(-4)}</p>
+                <span className="pill">{c.defaultPoints}p</span>
+              </div>
+            ))}
+          </div>
+          <p className="hint">Dra en syssla till en dag i kalendern.</p>
+        </div>
+
         <div className="card calendar-card">
           <div className="month-nav">
             <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}>
@@ -218,8 +266,20 @@ export const CalendarPage = () => {
               return (
                 <div
                   key={day.date}
-                  className={`day-cell ${day.inMonth ? "" : "muted"}`}
-                  onClick={() => openModalForDate(day.date)}
+                  className={`day-cell ${day.inMonth ? "" : "muted"} ${selectedDay === day.date ? "selected" : ""} ${dragOverDay === day.date ? "drag-over" : ""}`}
+                  onClick={() => setSelectedDay(day.date)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "copy";
+                    setDragOverDay(day.date);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragOverDay(null);
+                    const cid = e.dataTransfer.getData("text/plain") || dragChoreId;
+                    if (cid) handleDropCreate(day.date, cid);
+                  }}
+                  onDragLeave={() => setDragOverDay(null)}
                 >
                   <div className="day-number">{dayNumber}</div>
                   <div className="dot-row">
@@ -235,7 +295,7 @@ export const CalendarPage = () => {
           </div>
         </div>
 
-        <div className="card sidebar">
+        <div className="card sidebar right">
           <div className="row">
             {status && <p className="status ok">{status}</p>}
             {error && <p className="status error">{error}</p>}
@@ -294,52 +354,6 @@ export const CalendarPage = () => {
         </div>
       </div>
 
-      {modalOpen && (
-        <div className="modal-backdrop" onClick={() => setModalOpen(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Lägg till syssla</h2>
-            <form onSubmit={handleCreateForModal} className="modal-form">
-              <label>
-                Datum
-                <input
-                  type="date"
-                  value={modalDate || new Date().toISOString().slice(0, 10)}
-                  onChange={(e) => setModalDate(e.target.value)}
-                  required
-                />
-              </label>
-              <label>
-                Syssla
-                <select value={choreId} onChange={(e) => setChoreId(e.target.value)} required>
-                  {chores.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.title} ({c.defaultPoints}p)
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Tilldelad
-                <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} required>
-                  {members.map((m) => (
-                    <option key={m._id} value={m._id}>
-                      {m.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="row">
-                <button type="submit" disabled={loading}>
-                  Lägg till
-                </button>
-                <button type="button" onClick={() => setModalOpen(false)}>
-                  Avbryt
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

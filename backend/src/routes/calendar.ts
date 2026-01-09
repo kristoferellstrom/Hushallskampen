@@ -66,15 +66,6 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     const assignedUser = await User.findById(assignedToUserId);
     if (!assignedUser || String(assignedUser.householdId) !== String(chore.householdId)) return res.status(400).json({ error: "Invalid assigned user" });
 
-    const existing = await CalendarEntry.findOne({
-      householdId: chore.householdId,
-      choreId: chore._id,
-      assignedToUserId,
-      date: new Date(date),
-      status: "planned",
-    });
-    if (existing) return res.status(409).json({ error: "Duplicate planned entry" });
-
     const entry = await CalendarEntry.create({
       householdId: chore.householdId,
       choreId: chore._id,

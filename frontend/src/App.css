@@ -1,5 +1,5 @@
 .shell {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
   display: flex;
@@ -255,14 +255,27 @@ button:disabled {
 
 .calendar-row {
   align-items: stretch;
+  gap: 16px;
 }
 
 .calendar-card {
-  flex: 3;
+  flex: 4;
 }
 
 .sidebar {
-  flex: 1;
+  flex: 1.2;
+}
+
+.calendar-row.three-cols > .sidebar.left {
+  order: 1;
+}
+
+.calendar-row.three-cols > .calendar-card {
+  order: 2;
+}
+
+.calendar-row.three-cols > .sidebar.right {
+  order: 3;
 }
 
 .month-nav {
@@ -314,6 +327,16 @@ button:disabled {
 
 .day-cell.muted {
   opacity: 0.5;
+}
+
+.day-cell.selected {
+  border-color: #0f172a;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+}
+
+.day-cell.drag-over {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
 }
 
 .day-number {
