@@ -7,6 +7,7 @@ import {
   listMembers,
   fetchChores,
   submitCalendarEntry,
+  copyLastWeek,
 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { shadeForPoints, textColorForBackground } from "../utils/palette";
@@ -208,6 +209,21 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     }
   };
 
+  const handleCopyLastWeek = async () => {
+    if (!token) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await copyLastWeek(token);
+      setStatus(`Kopierade ${res.created.length} sysslor från förra veckan`);
+      await loadAll();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunde inte kopiera förra veckan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const content = (
     <>
       <div className="row status-row">
@@ -277,6 +293,9 @@ export const CalendarPage = ({ embedded = false }: Props) => {
             </div>
             <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}>
               →
+            </button>
+            <button type="button" className="chip" onClick={handleCopyLastWeek} disabled={loading} style={{ marginLeft: 8 }}>
+              Kopiera förra veckan
             </button>
           </div>
           <div className="weekdays">

@@ -141,6 +141,10 @@ export async function submitCalendarEntry(token: string, id: string) {
   return request<{ entry: any; approval: any }>(`/calendar/${id}/submit`, { method: "POST", token });
 }
 
+export async function copyLastWeek(token: string) {
+  return request<{ created: any[] }>("/calendar/copy-last-week", { method: "POST", token });
+}
+
 export async function listApprovals(token: string) {
   return request<{
     approvals: Array<{

@@ -79,6 +79,63 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+router.post("/copy-last-week", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
+
+    const now = new Date();
+    const day = now.getDay() || 7; // Mon=1
+    const mondayThisWeek = new Date(now);
+    mondayThisWeek.setHours(0, 0, 0, 0);
+    mondayThisWeek.setDate(now.getDate() - (day - 1));
+    const mondayLastWeek = new Date(mondayThisWeek);
+    mondayLastWeek.setDate(mondayThisWeek.getDate() - 7);
+    const mondayNextWeek = new Date(mondayThisWeek);
+    mondayNextWeek.setDate(mondayThisWeek.getDate() + 7);
+
+    const lastWeekEntries = await CalendarEntry.find({
+      householdId: user.householdId,
+      date: { $gte: mondayLastWeek, $lt: mondayThisWeek },
+    })
+      .populate({ path: "choreId", select: "householdId" })
+      .lean();
+
+    const created: any[] = [];
+    for (const e of lastWeekEntries) {
+      const newDate = new Date(e.date);
+      newDate.setDate(newDate.getDate() + 7);
+
+      const status = e.status === "approved" ? "planned" : "planned";
+
+      const exists = await CalendarEntry.findOne({
+        householdId: user.householdId,
+        assignedToUserId: e.assignedToUserId,
+        choreId: e.choreId as any,
+        date: {
+          $gte: new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()),
+          $lt: new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1),
+        },
+      });
+      if (exists) continue;
+
+      const entry = await CalendarEntry.create({
+        householdId: user.householdId,
+        choreId: e.choreId,
+        assignedToUserId: e.assignedToUserId,
+        date: newDate,
+        status,
+      });
+      created.push(entry);
+    }
+
+    res.json({ created });
+  } catch (err) {
+    res.status(500).json({ error: "Could not copy last week" });
+  }
+});
+
 router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
