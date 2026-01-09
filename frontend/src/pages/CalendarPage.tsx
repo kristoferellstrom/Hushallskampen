@@ -35,6 +35,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const [selected, setSelected] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [showHeatmap, setShowHeatmap] = useState(false);
+  const [view, setView] = useState<"month" | "week">("month");
 
   const formatDateLocal = (d: Date) => {
     const y = d.getFullYear();
@@ -187,6 +188,17 @@ export const CalendarPage = ({ embedded = false }: Props) => {
       cursor.setDate(cursor.getDate() + 1);
     }
     return grid;
+  }, [currentMonth]);
+
+  const weekGrid = useMemo(() => {
+    const start = startOfWeek(currentMonth);
+    const days: Array<{ date: string }> = [];
+    const cursor = new Date(start);
+    for (let i = 0; i < 7; i++) {
+      days.push({ date: formatDateLocal(cursor) });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return days;
   }, [currentMonth]);
 
   const monthLabel = currentMonth.toLocaleDateString("sv-SE", { month: "long", year: "numeric" });
@@ -343,6 +355,14 @@ export const CalendarPage = ({ embedded = false }: Props) => {
                 ))}
               </select>
             </label>
+            <div className="mode-toggle" style={{ marginLeft: "auto" }}>
+              <button type="button" className={view === "month" ? "active" : ""} onClick={() => setView("month")}>
+                Månad
+              </button>
+              <button type="button" className={view === "week" ? "active" : ""} onClick={() => setView("week")}>
+                Vecka
+              </button>
+            </div>
             <button type="button" className="chip" onClick={() => setShowHeatmap((v) => !v)}>
               {showHeatmap ? "Dölj heatmap" : "Visa heatmap"}
             </button>
@@ -352,53 +372,116 @@ export const CalendarPage = ({ embedded = false }: Props) => {
               <span key={d}>{d}</span>
             ))}
           </div>
-          <div className="month-grid">
-            {monthGrid.map((day) => {
-              const dayEntries = entriesByDay[day.date] || [];
-              const dayNumber = Number(day.date.slice(-2));
-              return (
-                <div
-                  key={day.date}
-                  className={`day-cell ${day.inMonth ? "" : "muted"} ${selectedDay === day.date ? "selected" : ""} ${dragOverDay === day.date ? "drag-over" : ""}`}
-                  onClick={() => setSelectedDay(day.date)}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "copy";
-                    setDragOverDay(day.date);
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setDragOverDay(null);
-                    const entryId = e.dataTransfer.getData("entry-id");
-                    if (entryId) {
-                      handleMoveEntry(entryId, day.date);
-                      return;
-                    }
-                    const cid = e.dataTransfer.getData("text/plain") || dragChoreId;
-                    if (cid) handleDropCreate(day.date, cid);
-                  }}
-                  onDragLeave={() => setDragOverDay(null)}
-                >
-                  <div className="day-number">{dayNumber}</div>
-                  <div className="dot-row">
-                    {dayEntries.slice(0, 8).map((e) => {
-                      const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
-                      return <span key={e._id} className="dot" style={{ background: shade }} />;
-                    })}
-                    {dayEntries.length > 8 && <span className="dot more">+{dayEntries.length - 8}</span>}
-                  </div>
+          {view === "month" ? (
+            <>
+              <div className="month-grid">
+                {monthGrid.map((day) => {
+                  const dayEntries = entriesByDay[day.date] || [];
+                  const dayNumber = Number(day.date.slice(-2));
+                  return (
+                    <div
+                      key={day.date}
+                      className={`day-cell ${day.inMonth ? "" : "muted"} ${selectedDay === day.date ? "selected" : ""} ${dragOverDay === day.date ? "drag-over" : ""}`}
+                      onClick={() => setSelectedDay(day.date)}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "copy";
+                        setDragOverDay(day.date);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDragOverDay(null);
+                        const entryId = e.dataTransfer.getData("entry-id");
+                        if (entryId) {
+                          handleMoveEntry(entryId, day.date);
+                          return;
+                        }
+                        const cid = e.dataTransfer.getData("text/plain") || dragChoreId;
+                        if (cid) handleDropCreate(day.date, cid);
+                      }}
+                      onDragLeave={() => setDragOverDay(null)}
+                    >
+                      <div className="day-number">{dayNumber}</div>
+                      <div className="dot-row">
+                        {dayEntries.slice(0, 8).map((e) => {
+                          const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                          return <span key={e._id} className="dot" style={{ background: shade }} />;
+                        })}
+                        {dayEntries.length > 8 && <span className="dot more">+{dayEntries.length - 8}</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {showHeatmap && (
+                <div className="heatmap-grid">
+                  {heatmapData.map((d) => {
+                    const intensity = Math.min(1, d.count / 5 || d.points / 15);
+                    const bg = `rgba(15, 23, 42, ${0.08 + intensity * 0.35})`;
+                    return (
+                      <div
+                        key={d.date}
+                        className={`heatmap-cell ${d.inMonth ? "" : "muted"}`}
+                        title={`${d.date} • ${d.count} uppgifter • ${d.points}p`}
+                        style={{ background: bg }}
+                      >
+                        <span>{Number(d.date.slice(-2))}</span>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-          {showHeatmap && (
-            <div className="heatmap-grid">
-              {heatmapData.map((d) => {
-                const intensity = Math.min(1, d.count / 5 || d.points / 15);
-                const bg = `rgba(15, 23, 42, ${0.08 + intensity * 0.35})`;
+              )}
+            </>
+          ) : (
+            <div className="week-grid">
+              {weekGrid.map((day) => {
+                const dayEntries = entriesByDay[day.date] || [];
+                const dayNumber = Number(day.date.slice(-2));
                 return (
-                  <div key={d.date} className={`heatmap-cell ${d.inMonth ? "" : "muted"}`} title={`${d.date} • ${d.count} uppgifter • ${d.points}p`} style={{ background: bg }}>
-                    <span>{Number(d.date.slice(-2))}</span>
+                  <div
+                    key={day.date}
+                    className={`day-cell ${selectedDay === day.date ? "selected" : ""} ${dragOverDay === day.date ? "drag-over" : ""}`}
+                    onClick={() => setSelectedDay(day.date)}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "copy";
+                      setDragOverDay(day.date);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragOverDay(null);
+                      const entryId = e.dataTransfer.getData("entry-id");
+                      if (entryId) {
+                        handleMoveEntry(entryId, day.date);
+                        return;
+                      }
+                      const cid = e.dataTransfer.getData("text/plain") || dragChoreId;
+                      if (cid) handleDropCreate(day.date, cid);
+                    }}
+                    onDragLeave={() => setDragOverDay(null)}
+                  >
+                    <div className="day-number">{dayNumber}</div>
+                    <div className="dot-row">
+                      {dayEntries.slice(0, 8).map((e) => {
+                        const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                        return <span key={e._id} className="dot" style={{ background: shade }} />;
+                      })}
+                      {dayEntries.length > 8 && <span className="dot more">+{dayEntries.length - 8}</span>}
+                    </div>
+                    <ul className="list compact" style={{ marginTop: 8 }}>
+                      {dayEntries.map((e) => {
+                        const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                        const textColor = textColorForBackground(shade);
+                        return (
+                          <li key={e._id} className="mini-item" style={{ background: shade, color: textColor }}>
+                            <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
+                            <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
+                              {e.assignedToUserId.name} — {e.status}
+                            </p>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
                 );
               })}
