@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -13,6 +13,15 @@ export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const { login, register, loading } = useAuth();
+  const [rememberEmail, setRememberEmail] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("hk_last_email");
+    if (saved) {
+      setEmail(saved);
+      setRememberEmail(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +34,12 @@ export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
           : await register(name, email, password);
 
       setStatus(mode === "login" ? "Inloggad" : "Registrerad och inloggad");
+
+      if (rememberEmail) {
+        localStorage.setItem("hk_last_email", email);
+      } else {
+        localStorage.removeItem("hk_last_email");
+      }
 
       const hasHousehold = authed?.householdId;
       navigate(hasHousehold ? "/dashboard" : "/household", { replace: true });
@@ -65,6 +80,9 @@ export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
         <label>
           Lösenord
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+        </label>
+        <label className="inline">
+          <input type="checkbox" checked={rememberEmail} onChange={(e) => setRememberEmail(e.target.checked)} /> Kom ihåg e-post
         </label>
         <button type="submit" disabled={loading}>
           {mode === "login" ? "Logga in" : "Registrera"}
