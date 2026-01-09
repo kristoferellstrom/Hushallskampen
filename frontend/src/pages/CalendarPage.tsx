@@ -20,7 +20,9 @@ type Entry = {
   choreId: { _id: string; title: string; defaultPoints: number };
 };
 
-export const CalendarPage = () => {
+type Props = { embedded?: boolean };
+
+export const CalendarPage = ({ embedded = false }: Props) => {
   const { token, user } = useAuth();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [chores, setChores] = useState<Array<{ _id: string; title: string }>>([]);
@@ -66,7 +68,7 @@ export const CalendarPage = () => {
         const preferred = mem.members.find((m) => m._id === user?.id) || mem.members[0];
         setSelectedAssignee(preferred._id);
       }
-      setStatus(`Hämtade ${cal.entries.length} poster`);
+      setStatus("");
       setSelected([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte ladda kalender");
@@ -193,20 +195,8 @@ export const CalendarPage = () => {
     }
   };
 
-  return (
-    <div className="shell">
-      <Link className="back-link" to="/dashboard">
-        ← Till dashboard
-      </Link>
-      <Logo />
-      <header>
-        <div>
-          <p className="eyebrow">Kalender</p>
-          <h1>Planera veckan</h1>
-          <p className="hint">Skapa poster och markera som klara</p>
-        </div>
-      </header>
-
+  const content = (
+    <>
       <div className="row status-row">
         {status && <p className="status ok">{status}</p>}
         {error && <p className="status error">{error}</p>}
@@ -354,7 +344,24 @@ export const CalendarPage = () => {
           </ul>
         </div>
       </div>
+    </>
+  );
 
+  if (embedded) {
+    return (
+      <section id="kalender">
+        {content}
+      </section>
+    );
+  }
+
+  return (
+    <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
+      <Logo />
+      {content}
     </div>
   );
 };

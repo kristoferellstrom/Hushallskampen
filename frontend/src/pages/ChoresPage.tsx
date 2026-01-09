@@ -6,7 +6,9 @@ import { Logo } from "../components/Logo";
 
 type Chore = { _id: string; title: string; defaultPoints: number; description?: string };
 
-export const ChoresPage = () => {
+type Props = { embedded?: boolean };
+
+export const ChoresPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
   const [chores, setChores] = useState<Chore[]>([]);
   const [status, setStatus] = useState("");
@@ -29,7 +31,7 @@ export const ChoresPage = () => {
     try {
       const res = await fetchChores(token);
       setChores(res.chores);
-      setStatus(`Hämtade ${res.chores.length} sysslor`);
+      setStatus("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta");
       setStatus("");
@@ -104,20 +106,8 @@ export const ChoresPage = () => {
     }
   };
 
-  return (
-    <div className="shell">
-      <Link className="back-link" to="/dashboard">
-        ← Till dashboard
-      </Link>
-      <Logo />
-      <header>
-        <div>
-          <p className="eyebrow">Sysslor</p>
-          <h1>Sysslebibliotek</h1>
-          <p className="hint">Lägg till, uppdatera eller ta bort sysslor i hushållet</p>
-        </div>
-      </header>
-
+  const body = (
+    <>
       <div className="grid">
         <form className="card" onSubmit={handleCreate}>
           <h2>Ny syssla</h2>
@@ -198,6 +188,38 @@ export const ChoresPage = () => {
           ))}
         </ul>
       </div>
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <section id="sysslor">
+        <header>
+          <div>
+            <p className="eyebrow">Sysslor</p>
+            <h2>Sysslebibliotek</h2>
+            <p className="hint">Lägg till, uppdatera eller ta bort sysslor i hushållet</p>
+          </div>
+        </header>
+        {body}
+      </section>
+    );
+  }
+
+  return (
+    <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
+      <Logo />
+      <header>
+        <div>
+          <p className="eyebrow">Sysslor</p>
+          <h1>Sysslebibliotek</h1>
+          <p className="hint">Lägg till, uppdatera eller ta bort sysslor i hushållet</p>
+        </div>
+      </header>
+      {body}
     </div>
   );
 };

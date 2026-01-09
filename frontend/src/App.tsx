@@ -11,6 +11,7 @@ import { StatsPage } from "./pages/StatsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
+import { HomePage } from "./pages/HomePage";
 
 const HomeRedirect = () => {
   const { token, user, loading } = useAuth();
@@ -30,11 +31,11 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomeRedirect />} />
             <Route path="/household" element={<HouseholdPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/chores" element={<ChoresPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/approvals" element={<ApprovalsPage />} />
-            <Route path="/stats" element={<StatsPage />} />
+            <Route path="/dashboard" element={<HomePage />} />
+            <Route path="/chores" element={<HomePage />} />
+            <Route path="/calendar" element={<HomePage />} />
+            <Route path="/approvals" element={<HomePage />} />
+            <Route path="/stats" element={<HomePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
 

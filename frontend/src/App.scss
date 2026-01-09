@@ -151,6 +151,36 @@ button {
   gap: 8px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.home-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero-logo {
+  display: none;
+}
+
+.header-logo-large {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .logo-mark {
+    width: 440px;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 .icon-btn {
   background: transparent;
   border: none;
@@ -260,9 +290,15 @@ button {
   border-radius: 8px;
   padding: 10px;
   text-transform: capitalize;
+  opacity: 1;
 
   &.selected {
     outline: 2px solid #0f172a;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 }
 

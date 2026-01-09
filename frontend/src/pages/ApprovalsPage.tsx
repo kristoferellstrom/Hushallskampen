@@ -16,7 +16,9 @@ type Approval = {
   };
 };
 
-export const ApprovalsPage = () => {
+type Props = { embedded?: boolean };
+
+export const ApprovalsPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
   const [approvals, setApprovals] = useState<Approval[]>([]);
   const [status, setStatus] = useState("");
@@ -57,48 +59,90 @@ export const ApprovalsPage = () => {
   };
 
   return (
-    <div className="shell">
-      <Link className="back-link" to="/dashboard">
-        ← Till dashboard
-      </Link>
-      <Logo />
-      <header>
-        <div>
-          <p className="eyebrow">Godkännanden</p>
-          <h1>Granska klara sysslor</h1>
-          <p className="hint">Godkänn eller avvisa</p>
+    <>
+      {!embedded ? (
+        <div className="shell">
+          <Link className="back-link" to="/dashboard">
+            ← Till dashboard
+          </Link>
+          <Logo />
+          <header>
+            <div>
+              <p className="eyebrow">Godkännanden</p>
+              <h1>Granska klara sysslor</h1>
+              <p className="hint">Godkänn eller avvisa</p>
+            </div>
+          </header>
+          <div className="card">
+            <div className="row">
+              {status && <p className="status ok">{status}</p>}
+              {error && <p className="status error">{error}</p>}
+            </div>
+            <ul className="list">
+              {approvals.map((a) => (
+                <li key={a._id}>
+                  <div className="row">
+                    <div>
+                      <strong>{a.calendarEntryId.choreId.title}</strong> · {a.calendarEntryId.choreId.defaultPoints}p
+                      <p className="hint">Av: {a.submittedByUserId.name}</p>
+                      <p className="hint">Tilldelad: {a.calendarEntryId.assignedToUserId.name}</p>
+                      <p className="hint">Datum: {a.calendarEntryId.date.slice(0, 10)}</p>
+                    </div>
+                    <div className="actions">
+                      <button type="button" disabled={loading} onClick={() => handle(a._id, "approve")}>
+                        Godkänn
+                      </button>
+                      <button type="button" disabled={loading} onClick={() => handle(a._id, "reject")}>
+                        Avvisa
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+              {approvals.length === 0 && <p className="hint">Inga att granska just nu</p>}
+            </ul>
+          </div>
         </div>
-      </header>
-
-      <div className="card">
-        <div className="row">
-          {status && <p className="status ok">{status}</p>}
-          {error && <p className="status error">{error}</p>}
-        </div>
-        <ul className="list">
-          {approvals.map((a) => (
-            <li key={a._id}>
-              <div className="row">
-                <div>
-                  <strong>{a.calendarEntryId.choreId.title}</strong> · {a.calendarEntryId.choreId.defaultPoints}p
-                  <p className="hint">Av: {a.submittedByUserId.name}</p>
-                  <p className="hint">Tilldelad: {a.calendarEntryId.assignedToUserId.name}</p>
-                  <p className="hint">Datum: {a.calendarEntryId.date.slice(0, 10)}</p>
-                </div>
-                <div className="actions">
-                  <button type="button" disabled={loading} onClick={() => handle(a._id, "approve")}>
-                    Godkänn
-                  </button>
-                  <button type="button" disabled={loading} onClick={() => handle(a._id, "reject")}>
-                    Avvisa
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-          {approvals.length === 0 && <p className="hint">Inga att granska just nu</p>}
-        </ul>
-      </div>
-    </div>
+      ) : (
+        <section id="godkannanden">
+          <header>
+            <div>
+              <p className="eyebrow">Godkännanden</p>
+              <h2>Granska klara sysslor</h2>
+              <p className="hint">Godkänn eller avvisa</p>
+            </div>
+          </header>
+          <div className="card">
+            <div className="row">
+              {status && <p className="status ok">{status}</p>}
+              {error && <p className="status error">{error}</p>}
+            </div>
+            <ul className="list">
+              {approvals.map((a) => (
+                <li key={a._id}>
+                  <div className="row">
+                    <div>
+                      <strong>{a.calendarEntryId.choreId.title}</strong> · {a.calendarEntryId.choreId.defaultPoints}p
+                      <p className="hint">Av: {a.submittedByUserId.name}</p>
+                      <p className="hint">Tilldelad: {a.calendarEntryId.assignedToUserId.name}</p>
+                      <p className="hint">Datum: {a.calendarEntryId.date.slice(0, 10)}</p>
+                    </div>
+                    <div className="actions">
+                      <button type="button" disabled={loading} onClick={() => handle(a._id, "approve")}>
+                        Godkänn
+                      </button>
+                      <button type="button" disabled={loading} onClick={() => handle(a._id, "reject")}>
+                        Avvisa
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+              {approvals.length === 0 && <p className="hint">Inga att granska just nu</p>}
+            </ul>
+          </div>
+        </section>
+      )}
+    </>
   );
 };
