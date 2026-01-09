@@ -57,8 +57,8 @@ function mix(hexA: string, hexB: string, t: number) {
 
 export function textColorForBackground(hex: string) {
   const lum = luminance(hex);
-  if (lum < 0.35) return "#ffffff";
-  const t = clamp((0.55 - lum) / 0.55, 0, 1);
+  if (lum < 0.6) return "#ffffff";
+  const t = clamp((0.75 - lum) / 0.75, 0, 1);
   return mix("#0f172a", "#f8fafc", t);
 }
 
