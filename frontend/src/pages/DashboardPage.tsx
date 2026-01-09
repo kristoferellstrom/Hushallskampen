@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getHousehold, listMembers, updateColor } from "../api/client";
 import { colorPreview } from "../utils/palette";
@@ -10,6 +10,7 @@ export const DashboardPage = () => {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
+  const [householdName, setHouseholdName] = useState("");
 
   const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
 
@@ -22,12 +23,27 @@ export const DashboardPage = () => {
       if (!res.household) {
         setStatus("Du har inget hushåll");
         setCode("");
+        setHouseholdName("");
       } else {
         setCode(res.household.inviteCode);
+        setHouseholdName(res.household.name);
         setStatus("Invite-kod hämtad");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta kod");
+    }
+  };
+
+  const loadHousehold = async () => {
+    if (!token) return;
+    try {
+      const res = await getHousehold(token);
+      if (res.household) {
+        setHouseholdName(res.household.name);
+        setCode(res.household.inviteCode);
+      }
+    } catch (err) {
+      // ignore; shown via loadCode if needed
     }
   };
 
@@ -57,13 +73,18 @@ export const DashboardPage = () => {
   const usedColors = members.filter((m) => m.color).map((m) => m.color);
   const userColor = members.find((m) => m._id === user?.id)?.color || user?.color;
 
+  useEffect(() => {
+    loadHousehold();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
   return (
     <div className="shell">
       <header className="row">
         <div>
           <p className="eyebrow">Dashboard</p>
           <h1>Hej {user?.name || user?.email}</h1>
-          <p className="hint">Hushåll: {user?.householdId ? user.householdId : "Inget ännu"}</p>
+          <p className="hint">Hushåll: {householdName || "Inget ännu"}</p>
         </div>
         <button onClick={logout}>Logga ut</button>
       </header>
