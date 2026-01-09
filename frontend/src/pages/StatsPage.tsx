@@ -33,9 +33,9 @@ export const StatsPage = () => {
       </Link>
       <header>
         <div>
-          <p className="eyebrow">Stats</p>
+          <p className="eyebrow">Statistik</p>
           <h1>Poäng och balans</h1>
-          <p className="hint">Weekly och monthly totals per hushåll</p>
+          <p className="hint">Vecko- och månadssummor per hushåll</p>
         </div>
       </header>
 

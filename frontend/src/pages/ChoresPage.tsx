@@ -109,8 +109,8 @@ export const ChoresPage = () => {
       </Link>
       <header>
         <div>
-          <p className="eyebrow">Chores</p>
-          <h1>Chore library</h1>
+          <p className="eyebrow">Sysslor</p>
+          <h1>Sysslebibliotek</h1>
           <p className="hint">Lägg till, uppdatera eller ta bort sysslor i hushållet</p>
         </div>
       </header>

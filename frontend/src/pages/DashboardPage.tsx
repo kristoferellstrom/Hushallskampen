@@ -91,22 +91,22 @@ export const DashboardPage = () => {
 
       <div className="grid">
         <div className="card">
-          <h2>Navigation</h2>
+          <h2>Navigering</h2>
           <ul className="list">
             <li>
-              <Link to="/chores">Chore library</Link>
+              <Link to="/chores">Sysslor</Link>
             </li>
             <li>
               <Link to="/calendar">Kalender</Link>
             </li>
             <li>
-              <Link to="/approvals">Approvals</Link>
+              <Link to="/approvals">Godkännanden</Link>
             </li>
             <li>
-              <Link to="/stats">Stats</Link>
+              <Link to="/stats">Statistik</Link>
             </li>
             <li>
-              <Link to="/settings">Settings</Link>
+              <Link to="/settings">Inställningar</Link>
             </li>
           </ul>
         </div>

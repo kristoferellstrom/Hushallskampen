@@ -62,7 +62,7 @@ export const ApprovalsPage = () => {
       </Link>
       <header>
         <div>
-          <p className="eyebrow">Approvals</p>
+          <p className="eyebrow">Godkännanden</p>
           <h1>Granska klara sysslor</h1>
           <p className="hint">Godkänn eller avvisa</p>
         </div>
