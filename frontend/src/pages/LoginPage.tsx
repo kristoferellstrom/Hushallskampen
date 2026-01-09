@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Logo } from "../components/Logo";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -50,6 +51,7 @@ export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
 
   return (
     <div className="shell">
+      <Logo />
       <header>
         <div>
           <p className="eyebrow">Hushållskampen</p>

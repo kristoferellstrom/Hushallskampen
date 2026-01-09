@@ -8,6 +8,7 @@ import { ChoresPage } from "./pages/ChoresPage";
 import { CalendarPage } from "./pages/CalendarPage";
 import { ApprovalsPage } from "./pages/ApprovalsPage";
 import { StatsPage } from "./pages/StatsPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 
@@ -34,7 +35,7 @@ function App() {
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/approvals" element={<ApprovalsPage />} />
             <Route path="/stats" element={<StatsPage />} />
-            <Route path="/settings" element={<DashboardPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

@@ -6,7 +6,6 @@ import { colorPreview } from "../utils/palette";
 
 export const DashboardPage = () => {
   const { user, logout, token } = useAuth();
-  const [code, setCode] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
@@ -14,33 +13,12 @@ export const DashboardPage = () => {
 
   const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
 
-  const loadCode = async () => {
-    setStatus("");
-    setError("");
-    try {
-      if (!token) throw new Error("Ingen token");
-      const res = await getHousehold(token);
-      if (!res.household) {
-        setStatus("Du har inget hushåll");
-        setCode("");
-        setHouseholdName("");
-      } else {
-        setCode(res.household.inviteCode);
-        setHouseholdName(res.household.name);
-        setStatus("Invite-kod hämtad");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte hämta kod");
-    }
-  };
-
   const loadHousehold = async () => {
     if (!token) return;
     try {
       const res = await getHousehold(token);
       if (res.household) {
         setHouseholdName(res.household.name);
-        setCode(res.household.inviteCode);
       }
     } catch (err) {
       // ignore; shown via loadCode if needed
@@ -110,22 +88,6 @@ export const DashboardPage = () => {
             </li>
           </ul>
         </div>
-        <div className="card">
-          <h2>Invite-kod</h2>
-          <p className="hint">Dela denna kod med andra i hushållet</p>
-          <button onClick={loadCode}>Hämta kod</button>
-          {code && (
-            <p className="status ok" aria-live="polite">
-              {code}
-            </p>
-          )}
-          {status && !code && <p className="hint">{status}</p>}
-          {error && (
-            <p className="status error" aria-live="assertive">
-              {error}
-            </p>
-          )}
-        </div>
 
         <div className="card">
           <h2>Välj din färg</h2>
@@ -152,6 +114,12 @@ export const DashboardPage = () => {
           {userColor && <p className="hint">Din färg: {userColor}</p>}
           {usedColors.length > 0 && (
             <p className="hint">Upptagna: {usedColors.filter(Boolean).join(", ")}</p>
+          )}
+          {status && <p className="status ok">{status}</p>}
+          {error && (
+            <p className="status error" aria-live="assertive">
+              {error}
+            </p>
           )}
         </div>
       </div>

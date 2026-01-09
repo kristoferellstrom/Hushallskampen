@@ -10,6 +10,7 @@ import {
 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { shadeForPoints } from "../utils/palette";
+import { Logo } from "../components/Logo";
 
 type Entry = {
   _id: string;
@@ -149,6 +150,7 @@ export const CalendarPage = () => {
       <Link className="back-link" to="/dashboard">
         ← Till dashboard
       </Link>
+      <Logo />
       <header>
         <div>
           <p className="eyebrow">Kalender</p>

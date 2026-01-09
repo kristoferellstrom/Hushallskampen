@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listApprovals, reviewApproval } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { Logo } from "../components/Logo";
 
 type Approval = {
   _id: string;
@@ -60,6 +61,7 @@ export const ApprovalsPage = () => {
       <Link className="back-link" to="/dashboard">
         ← Till dashboard
       </Link>
+      <Logo />
       <header>
         <div>
           <p className="eyebrow">Godkännanden</p>

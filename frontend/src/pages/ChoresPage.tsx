@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createChore, deleteChore, fetchChores, updateChore } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { Logo } from "../components/Logo";
 
 type Chore = { _id: string; title: string; defaultPoints: number; description?: string };
 
@@ -107,6 +108,7 @@ export const ChoresPage = () => {
       <Link className="back-link" to="/dashboard">
         ← Till dashboard
       </Link>
+      <Logo />
       <header>
         <div>
           <p className="eyebrow">Sysslor</p>

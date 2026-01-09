@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchMonthlyStats, fetchWeeklyStats } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { Logo } from "../components/Logo";
 
 type StatItem = { periodStart: string; periodEnd: string; totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }> };
 
@@ -31,6 +32,7 @@ export const StatsPage = () => {
       <Link className="back-link" to="/dashboard">
         ← Till dashboard
       </Link>
+      <Logo />
       <header>
         <div>
           <p className="eyebrow">Statistik</p>
