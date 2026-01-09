@@ -27,12 +27,11 @@ type Props = { embedded?: boolean };
 export const CalendarPage = ({ embedded = false }: Props) => {
   const { token, user } = useAuth();
   const [entries, setEntries] = useState<Entry[]>([]);
-  const [chores, setChores] = useState<Array<{ _id: string; title: string }>>([]);
-  const [members, setMembers] = useState<Array<{ _id: string; name: string }>>([]);
+  const [chores, setChores] = useState<Array<{ _id: string; title: string; defaultPoints: number }>>([]);
+  const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState<string[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [view, setView] = useState<"month" | "week">("month");
@@ -51,7 +50,6 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const [selectedAssignee, setSelectedAssignee] = useState("");
   const gridRange = () => {
     const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-    const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
     const gridStart = startOfWeek(monthStart);
     const gridEnd = new Date(gridStart);
     gridEnd.setDate(gridEnd.getDate() + 42);
@@ -74,7 +72,6 @@ export const CalendarPage = ({ embedded = false }: Props) => {
         setSelectedAssignee(preferred._id);
       }
       setStatus("");
-      setSelected([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte ladda kalender");
     }
@@ -120,34 +117,6 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   };
 
   const isEligible = (e: Entry) => (e.status === "planned" || e.status === "rejected") && e.assignedToUserId._id === user?.id;
-
-  const toggleSelect = (entry: Entry) => {
-    if (!isEligible(entry)) return;
-    setSelected((prev) => (prev.includes(entry._id) ? prev.filter((id) => id !== entry._id) : [...prev, entry._id]));
-  };
-
-  const handleSubmitSelected = async () => {
-    if (!token) return;
-    if (myPendingCount >= 5) {
-      setError("Du har redan 5 sysslor som väntar på godkännande.");
-      return;
-    }
-    const ids = entries.filter((e) => selected.includes(e._id) && isEligible(e)).map((e) => e._id);
-    if (ids.length === 0) return;
-    setLoading(true);
-    setError("");
-    try {
-      for (const id of ids) {
-        await submitCalendarEntry(token, id);
-      }
-      setStatus(`Markerade ${ids.length} poster som väntar på godkännande`);
-      await loadAll();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte markera valda");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const entriesByDay = useMemo(() => {
     const groups: Record<string, Entry[]> = {};
@@ -203,7 +172,6 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   const monthLabel = currentMonth.toLocaleDateString("sv-SE", { month: "long", year: "numeric" });
 
-  const todayStr = formatDateLocal(new Date());
   const selectedEntries = entriesByDay[selectedDay] || [];
 
   const heatmapData = useMemo(() => {
