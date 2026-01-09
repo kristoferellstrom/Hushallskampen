@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   createCalendarEntry,
   deleteCalendarEntry,
@@ -145,6 +146,9 @@ export const CalendarPage = () => {
 
   return (
     <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
       <header>
         <div>
           <p className="eyebrow">Kalender</p>

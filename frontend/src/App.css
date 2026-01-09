@@ -216,3 +216,17 @@ button:disabled {
 .color-swatch.selected {
   outline: 2px solid #0f172a;
 }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #0f172a;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchMonthlyStats, fetchWeeklyStats } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
@@ -27,6 +28,9 @@ export const StatsPage = () => {
 
   return (
     <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
       <header>
         <div>
           <p className="eyebrow">Stats</p>

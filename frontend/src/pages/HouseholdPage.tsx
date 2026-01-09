@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createHousehold, joinHousehold } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
@@ -51,6 +51,9 @@ export const HouseholdPage = () => {
 
   return (
     <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
       <header>
         <div>
           <p className="eyebrow">Hushåll</p>

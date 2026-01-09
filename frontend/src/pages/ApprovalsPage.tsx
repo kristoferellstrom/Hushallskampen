@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { listApprovals, reviewApproval } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
@@ -56,6 +57,9 @@ export const ApprovalsPage = () => {
 
   return (
     <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
       <header>
         <div>
           <p className="eyebrow">Approvals</p>

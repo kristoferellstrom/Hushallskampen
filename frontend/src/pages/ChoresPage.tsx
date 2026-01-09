@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { createChore, deleteChore, fetchChores, updateChore } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
@@ -103,6 +104,9 @@ export const ChoresPage = () => {
 
   return (
     <div className="shell">
+      <Link className="back-link" to="/dashboard">
+        ← Till dashboard
+      </Link>
       <header>
         <div>
           <p className="eyebrow">Chores</p>
