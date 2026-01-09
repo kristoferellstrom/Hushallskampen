@@ -8,6 +8,7 @@ import {
   fetchChores,
   submitCalendarEntry,
   copyLastWeek,
+  updateCalendarEntry,
 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { shadeForPoints, textColorForBackground } from "../utils/palette";
@@ -209,6 +210,22 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     }
   };
 
+  const handleMoveEntry = async (entryId: string, day: string) => {
+    if (!token) return;
+    setDragOverDay(null);
+    setLoading(true);
+    setError("");
+    try {
+      await updateCalendarEntry(token, entryId, { date: day });
+      setStatus("Flyttade sysslan");
+      await loadAll();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunde inte flytta syssla");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCopyLastWeek = async () => {
     if (!token) return;
     setLoading(true);
@@ -320,6 +337,11 @@ export const CalendarPage = ({ embedded = false }: Props) => {
                   onDrop={(e) => {
                     e.preventDefault();
                     setDragOverDay(null);
+                    const entryId = e.dataTransfer.getData("entry-id");
+                    if (entryId) {
+                      handleMoveEntry(entryId, day.date);
+                      return;
+                    }
                     const cid = e.dataTransfer.getData("text/plain") || dragChoreId;
                     if (cid) handleDropCreate(day.date, cid);
                   }}
@@ -350,12 +372,22 @@ export const CalendarPage = ({ embedded = false }: Props) => {
               const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
               const textColor = textColorForBackground(shade);
               return (
-                <li key={e._id} className="mini-item" style={{ background: shade, color: textColor }}>
+                <li
+                  key={e._id}
+                  className="mini-item"
+                  style={{ background: shade, color: textColor }}
+                  draggable={isEligible(e)}
+                  onDragStart={(ev) => {
+                    ev.dataTransfer.effectAllowed = "move";
+                    ev.dataTransfer.setData("entry-id", e._id);
+                  }}
+                  onDragEnd={() => setDragOverDay(null)}
+                >
                   <div>
                     <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
-                <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
-                  {e.assignedToUserId.name} — {e.status === "rejected" ? "avvisad, gör om" : e.status}
-                </p>
+                    <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
+                      {e.assignedToUserId.name} — {e.status === "rejected" ? "avvisad, gör om" : e.status}
+                    </p>
               </div>
               <div className="actions">
                 {isEligible(e) && (
