@@ -7,11 +7,14 @@
 .shell {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 16px 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   color: $color-primary;
+  position: relative;
+  overflow: visible;
+  padding-top: 169px;
 
   header {
     display: flex;
@@ -159,26 +162,49 @@ button {
 }
 
 .home-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 24px;
+  flex-wrap: nowrap;
+  min-width: 0;
+  margin-bottom: 0;
+  position: relative;
+  padding: 4px 0 4px;
+
+  .home-left {
+    flex: 0 0 auto;
+    min-width: 280px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-logo-large {
+    position: absolute;
+    left: 50%;
+    top: -180px;
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+
+    .logo-mark {
+      width: 520px;
+      max-width: 80vw;
+      height: auto;
+      margin: 0;
+    }
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    margin-left: auto;
+    position: relative;
+    z-index: 1;
+  }
 }
 
 .hero-logo {
   display: none;
-}
-
-.header-logo-large {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .logo-mark {
-    width: 440px;
-    max-width: 100%;
-    height: auto;
-  }
 }
 
 .icon-btn {
@@ -340,6 +366,8 @@ button {
 
 .calendar-row {
   align-items: stretch;
+  position: relative;
+  z-index: 2;
   gap: 16px;
 
   &.two-cols {
