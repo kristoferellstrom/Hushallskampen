@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import "./App.css";
+import "./App.scss";
 import { AuthProvider } from "./context/AuthContext";
 import { DashboardPage } from "./pages/DashboardPage";
 import { HouseholdPage } from "./pages/HouseholdPage";
