@@ -38,6 +38,41 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
   }
 });
 
+router.get("/history", authMiddleware, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    const user = await User.findById(req.userId).select("householdId");
+    if (!user || !user.householdId) return res.json({ approvals: [] });
+
+    const limit = Math.min(Number(req.query.limit) || 10, 50);
+
+    const approvals = await Approval.find({ status: { $in: ["approved", "rejected"] } })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate({
+        path: "calendarEntryId",
+        match: { householdId: user.householdId },
+        populate: [
+          { path: "choreId", select: "title defaultPoints" },
+          { path: "assignedToUserId", select: "name email householdId color" },
+        ],
+      })
+      .populate({ path: "submittedByUserId", select: "name email householdId color" })
+      .populate({ path: "reviewedByUserId", select: "name email householdId color" });
+
+    const filtered = approvals.filter(
+      (a: any) =>
+        a.calendarEntryId &&
+        a.calendarEntryId.assignedToUserId &&
+        String(a.calendarEntryId.assignedToUserId.householdId || a.calendarEntryId.householdId) === String(user.householdId),
+    );
+
+    res.json({ approvals: filtered });
+  } catch (err) {
+    res.status(500).json({ error: "Could not list approval history" });
+  }
+});
+
 router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
