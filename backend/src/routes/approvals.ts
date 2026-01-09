@@ -150,7 +150,7 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
       approval.comment = comment;
       await approval.save();
 
-      entry.status = "planned";
+      entry.status = "rejected";
       await entry.save();
     }
 

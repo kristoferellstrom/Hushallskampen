@@ -114,7 +114,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     }
   };
 
-  const isEligible = (e: Entry) => e.status === "planned" && e.assignedToUserId._id === user?.id;
+  const isEligible = (e: Entry) => (e.status === "planned" || e.status === "rejected") && e.assignedToUserId._id === user?.id;
 
   const toggleSelect = (entry: Entry) => {
     if (!isEligible(entry)) return;
@@ -334,16 +334,16 @@ export const CalendarPage = ({ embedded = false }: Props) => {
                 <li key={e._id} className="mini-item" style={{ background: shade, color: textColor }}>
                   <div>
                     <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
-                    <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
-                      {e.assignedToUserId.name} — {e.status}
-                    </p>
-                  </div>
-                  <div className="actions">
-                    {isEligible(e) && (
-                      <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading || myPendingCount >= 5}>
-                        Klar
-                      </button>
-                    )}
+                <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
+                  {e.assignedToUserId.name} — {e.status === "rejected" ? "avvisad, gör om" : e.status}
+                </p>
+              </div>
+              <div className="actions">
+                {isEligible(e) && (
+                  <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading || myPendingCount >= 5}>
+                    {e.status === "rejected" ? "Markera igen" : "Klar"}
+                  </button>
+                )}
                     {(e.status === "planned" || e.status === "rejected") && (
                       <button
                         type="button"
