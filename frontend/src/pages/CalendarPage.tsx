@@ -9,7 +9,7 @@ import {
   submitCalendarEntry,
 } from "../api/client";
 import { useAuth } from "../context/AuthContext";
-import { shadeForPoints } from "../utils/palette";
+import { shadeForPoints, textColorForBackground } from "../utils/palette";
 import { Logo } from "../components/Logo";
 
 type Entry = {
@@ -62,7 +62,10 @@ export const CalendarPage = () => {
       setChores(ch.chores);
       setMembers(mem.members);
       if (!dragChoreId && ch.chores[0]) setDragChoreId(ch.chores[0]._id);
-      if (!selectedAssignee && mem.members[0]) setSelectedAssignee(mem.members[0]._id);
+      if (!selectedAssignee && mem.members.length) {
+        const preferred = mem.members.find((m) => m._id === user?.id) || mem.members[0];
+        setSelectedAssignee(preferred._id);
+      }
       setStatus(`Hämtade ${cal.entries.length} poster`);
       setSelected([]);
     } catch (err) {
@@ -204,6 +207,11 @@ export const CalendarPage = () => {
         </div>
       </header>
 
+      <div className="row status-row">
+        {status && <p className="status ok">{status}</p>}
+        {error && <p className="status error">{error}</p>}
+      </div>
+
       <div className="row calendar-row three-cols">
         <div className="card sidebar left">
           <h3>Sysslor (pusselbitar)</h3>
@@ -231,6 +239,15 @@ export const CalendarPage = () => {
                 onDragEnd={() => {
                   setDragChoreId(null);
                   setDragOverDay(null);
+                }}
+                style={{
+                  background: shadeForPoints(
+                    (members.find((m) => m._id === selectedAssignee) || members[0])?.color,
+                    c.defaultPoints,
+                  ),
+                  color: textColorForBackground(
+                    shadeForPoints((members.find((m) => m._id === selectedAssignee) || members[0])?.color, c.defaultPoints),
+                  ),
                 }}
               >
                 <strong>{c.title}</strong>
@@ -297,60 +314,44 @@ export const CalendarPage = () => {
 
         <div className="card sidebar right">
           <div className="row">
-            {status && <p className="status ok">{status}</p>}
-            {error && <p className="status error">{error}</p>}
+            <strong>Vald dag</strong>
+            <span className="pill light">{selectedDay}</span>
           </div>
-          <div className="today-card">
-            <div className="row">
-              <strong>Vald dag</strong>
-              <span className="pill light">{selectedDay}</span>
-            </div>
-            {selectedEntries.length === 0 && <p className="hint">Inga åtaganden denna dag.</p>}
-            <ul className="list compact">
-              {selectedEntries.map((e) => {
-                const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
-                const textColor = e.choreId.defaultPoints > 6 ? "#ffffff" : "#0f172a";
-                return (
-                  <li key={e._id} className="mini-item" style={{ background: shade, color: textColor }}>
-                    <div>
-                      <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
-                      <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
-                        {e.assignedToUserId.name} — {e.status}
-                      </p>
-                    </div>
-                    <div className="actions">
-                      {isEligible(e) && (
-                        <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading}>
-                          Klar
-                        </button>
-                      )}
-                      {(e.status === "planned" || e.status === "rejected") && (
-                        <button type="button" onClick={() => handleDelete(e._id)} disabled={loading}>
-                          Ta bort
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <div className="row">
-            <button type="button" disabled={loading || selected.length === 0} onClick={handleSubmitSelected}>
-              Markera valda
-            </button>
-          </div>
-          <h3>Sysslor (pusselbitar)</h3>
-          <div className="puzzle-grid">
-            {chores.map((c) => (
-              <div key={c._id} className="puzzle">
-                <strong>{c.title}</strong>
-                <p className="hint">{c._id.slice(-4)}</p>
-                <span className="pill">{c.defaultPoints}p</span>
-              </div>
-            ))}
-          </div>
-          <p className="hint">Klicka på en dag i kalendern för att lägga till syssla.</p>
+          {selectedEntries.length === 0 && <p className="hint">Inga åtaganden denna dag.</p>}
+          <ul className="list compact">
+            {selectedEntries.map((e) => {
+              const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+              const textColor = textColorForBackground(shade);
+              return (
+                <li key={e._id} className="mini-item" style={{ background: shade, color: textColor }}>
+                  <div>
+                    <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
+                    <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
+                      {e.assignedToUserId.name} — {e.status}
+                    </p>
+                  </div>
+                  <div className="actions">
+                    {isEligible(e) && (
+                      <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading}>
+                        Klar
+                      </button>
+                    )}
+                    {(e.status === "planned" || e.status === "rejected") && (
+                      <button
+                        type="button"
+                        className="icon-btn corner-btn"
+                        aria-label="Ta bort"
+                        onClick={() => handleDelete(e._id)}
+                        disabled={loading}
+                      >
+                        🗑
+                      </button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
 

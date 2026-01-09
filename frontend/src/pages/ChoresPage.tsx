@@ -183,8 +183,14 @@ export const ChoresPage = () => {
                   <button type="button" onClick={() => startEdit(c)} disabled={loading}>
                     Redigera
                   </button>
-                  <button type="button" onClick={() => handleDelete(c._id)} disabled={loading}>
-                    Ta bort
+                  <button
+                    type="button"
+                    className="icon-btn corner-btn"
+                    aria-label="Ta bort"
+                    onClick={() => handleDelete(c._id)}
+                    disabled={loading}
+                  >
+                    🗑
                   </button>
                 </div>
               </div>
