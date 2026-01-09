@@ -30,10 +30,13 @@ export const CalendarPage = () => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
 
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalDate, setModalDate] = useState("");
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [selectedDay, setSelectedDay] = useState(() => new Date().toISOString().slice(0, 10));
+
   const [choreId, setChoreId] = useState("");
   const [assignedToUserId, setAssignedToUserId] = useState("");
-
   const loadAll = async () => {
     if (!token) return;
     setStatus("Laddar...");
@@ -56,22 +59,6 @@ export const CalendarPage = () => {
     loadAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token) return;
-    setLoading(true);
-    setError("");
-    try {
-      await createCalendarEntry(token, { choreId, date, assignedToUserId });
-      setStatus("Skapade kalenderpost");
-      await loadAll();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte skapa post");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (id: string) => {
     if (!token) return;
@@ -139,11 +126,58 @@ export const CalendarPage = () => {
     return groups;
   }, [entries]);
 
-  const days = useMemo(() => {
-    const keys = Object.keys(entriesByDay).sort();
-    if (keys.length === 0) return [new Date().toISOString().slice(0, 10)];
-    return keys;
-  }, [entriesByDay]);
+  const startOfWeek = (d: Date) => {
+    const date = new Date(d);
+    const day = date.getDay() || 7; // Monday = 1
+    if (day !== 1) date.setDate(date.getDate() - (day - 1));
+    return date;
+  };
+
+  const formatDate = (d: Date) => d.toISOString().slice(0, 10);
+
+  const monthGrid = useMemo(() => {
+    const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+    const gridStart = startOfWeek(monthStart);
+    const grid: Array<{ date: string; inMonth: boolean }> = [];
+    const cursor = new Date(gridStart);
+    while (grid.length < 42) {
+      const inMonth = cursor >= monthStart && cursor <= monthEnd;
+      grid.push({ date: formatDate(cursor), inMonth });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return grid;
+  }, [currentMonth]);
+
+  const monthLabel = currentMonth.toLocaleDateString("sv-SE", { month: "long", year: "numeric" });
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const selectedEntries = entriesByDay[selectedDay] || [];
+
+  const openModalForDate = (day: string) => {
+    setSelectedDay(day);
+    setModalDate(day);
+    if (!choreId && chores[0]) setChoreId(chores[0]._id);
+    if (!assignedToUserId && members[0]) setAssignedToUserId(members[0]._id);
+    setModalOpen(true);
+  };
+
+  const handleCreateForModal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || !modalDate) return;
+    setLoading(true);
+    setError("");
+    try {
+      await createCalendarEntry(token, { choreId, date: modalDate, assignedToUserId });
+      setStatus("Skapade kalenderpost");
+      setModalOpen(false);
+      await loadAll();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kunde inte skapa post");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="shell">
@@ -159,106 +193,153 @@ export const CalendarPage = () => {
         </div>
       </header>
 
-      <div className="grid">
-        <form className="card" onSubmit={handleCreate}>
-          <h2>Ny post</h2>
-          <label>
-            Datum
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-          </label>
-          <label>
-            Syssla
-            <select value={choreId} onChange={(e) => setChoreId(e.target.value)} required>
-              {chores.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.title}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Tilldelad
-            <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} required>
-              {members.map((m) => (
-                <option key={m._id} value={m._id}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button type="submit" disabled={loading}>
-            Lägg till
-          </button>
-        </form>
-      </div>
-
-      <div className="card">
-        <div className="row">
-          {status && <p className="status ok">{status}</p>}
-          {error && <p className="status error">{error}</p>}
-          {!status && !error && <p className="hint">Antal: {entries.length}</p>}
-          <button type="button" disabled={loading || selected.length === 0} onClick={handleSubmitSelected}>
-            Markera valda
-          </button>
+      <div className="row calendar-row">
+        <div className="card calendar-card">
+          <div className="month-nav">
+            <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}>
+              ←
+            </button>
+            <div>
+              <strong>{monthLabel}</strong>
+            </div>
+            <button type="button" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}>
+              →
+            </button>
+          </div>
+          <div className="weekdays">
+            {["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"].map((d) => (
+              <span key={d}>{d}</span>
+            ))}
+          </div>
+          <div className="month-grid">
+            {monthGrid.map((day) => {
+              const dayEntries = entriesByDay[day.date] || [];
+              const dayNumber = Number(day.date.slice(-2));
+              return (
+                <div
+                  key={day.date}
+                  className={`day-cell ${day.inMonth ? "" : "muted"}`}
+                  onClick={() => openModalForDate(day.date)}
+                >
+                  <div className="day-number">{dayNumber}</div>
+                  <div className="dot-row">
+                    {dayEntries.slice(0, 8).map((e) => {
+                      const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                      return <span key={e._id} className="dot" style={{ background: shade }} />;
+                    })}
+                    {dayEntries.length > 8 && <span className="dot more">+{dayEntries.length - 8}</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <div className="calendar-grid">
-          {days.map((day) => (
-            <div key={day} className="calendar-day">
-              <div className="day-header">
-                <strong>{day}</strong>
-              </div>
-              <ul className="list">
-                {(entriesByDay[day] || []).map((e) => {
-                  const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
-                  const textColor = e.choreId.defaultPoints > 6 ? "#ffffff" : "#0f172a";
-                  return (
-                    <li
-                      key={e._id}
-                      className={`status-pill ${e.status}`}
-                      style={{ background: shade, color: textColor }}
-                    >
-                      <div className="row">
-                        <div>
-                          <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
-                          <p className="hint" style={{ color: textColor, opacity: 0.85 }}>
-                            {e.assignedToUserId.name}
-                          </p>
-                          <p className="hint" style={{ color: textColor, opacity: 0.85 }}>
-                            Status: {e.status}
-                          </p>
-                      </div>
-                      <div className="actions">
-                        <input
-                          type="checkbox"
-                          aria-label="Välj för massmarkering"
-                          disabled={!isEligible(e)}
-                          checked={selected.includes(e._id)}
-                          onChange={() => toggleSelect(e)}
-                        />
-                        <button
-                          type="button"
-                          disabled={loading || !isEligible(e)}
-                          onClick={() => handleSubmit(e._id)}
-                        >
-                          Markera klar
+
+        <div className="card sidebar">
+          <div className="row">
+            {status && <p className="status ok">{status}</p>}
+            {error && <p className="status error">{error}</p>}
+          </div>
+          <div className="today-card">
+            <div className="row">
+              <strong>Vald dag</strong>
+              <span className="pill light">{selectedDay}</span>
+            </div>
+            {selectedEntries.length === 0 && <p className="hint">Inga åtaganden denna dag.</p>}
+            <ul className="list compact">
+              {selectedEntries.map((e) => {
+                const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                const textColor = e.choreId.defaultPoints > 6 ? "#ffffff" : "#0f172a";
+                return (
+                  <li key={e._id} className="mini-item" style={{ background: shade, color: textColor }}>
+                    <div>
+                      <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
+                      <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
+                        {e.assignedToUserId.name} — {e.status}
+                      </p>
+                    </div>
+                    <div className="actions">
+                      {isEligible(e) && (
+                        <button type="button" onClick={() => handleSubmit(e._id)} disabled={loading}>
+                          Klar
                         </button>
-                        <button
-                          type="button"
-                          disabled={loading || (e.status !== "planned" && e.status !== "rejected")}
-                          onClick={() => handleDelete(e._id)}
-                        >
+                      )}
+                      {(e.status === "planned" || e.status === "rejected") && (
+                        <button type="button" onClick={() => handleDelete(e._id)} disabled={loading}>
                           Ta bort
                         </button>
-                      </div>
+                      )}
                     </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="row">
+            <button type="button" disabled={loading || selected.length === 0} onClick={handleSubmitSelected}>
+              Markera valda
+            </button>
+          </div>
+          <h3>Sysslor (pusselbitar)</h3>
+          <div className="puzzle-grid">
+            {chores.map((c) => (
+              <div key={c._id} className="puzzle">
+                <strong>{c.title}</strong>
+                <p className="hint">{c._id.slice(-4)}</p>
+                <span className="pill">{c.defaultPoints}p</span>
+              </div>
+            ))}
+          </div>
+          <p className="hint">Klicka på en dag i kalendern för att lägga till syssla.</p>
         </div>
       </div>
+
+      {modalOpen && (
+        <div className="modal-backdrop" onClick={() => setModalOpen(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Lägg till syssla</h2>
+            <form onSubmit={handleCreateForModal} className="modal-form">
+              <label>
+                Datum
+                <input
+                  type="date"
+                  value={modalDate || new Date().toISOString().slice(0, 10)}
+                  onChange={(e) => setModalDate(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Syssla
+                <select value={choreId} onChange={(e) => setChoreId(e.target.value)} required>
+                  {chores.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.title} ({c.defaultPoints}p)
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Tilldelad
+                <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} required>
+                  {members.map((m) => (
+                    <option key={m._id} value={m._id}>
+                      {m.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="row">
+                <button type="submit" disabled={loading}>
+                  Lägg till
+                </button>
+                <button type="button" onClick={() => setModalOpen(false)}>
+                  Avbryt
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

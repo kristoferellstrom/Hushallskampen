@@ -1,5 +1,5 @@
 .shell {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
   display: flex;
@@ -251,4 +251,175 @@ button:disabled {
   height: auto;
   display: block;
   margin: 0 auto 16px;
+}
+
+.calendar-row {
+  align-items: stretch;
+}
+
+.calendar-card {
+  flex: 3;
+}
+
+.sidebar {
+  flex: 1;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.month-nav button {
+  padding: 6px 10px;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.weekdays span {
+  text-align: center;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day-cell {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  min-height: 110px;
+  padding: 8px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.day-cell:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+}
+
+.day-cell.muted {
+  opacity: 0.5;
+}
+
+.day-number {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.day-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 20px;
+  align-items: center;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.dot.more {
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-size: 11px;
+  border: none;
+}
+
+.puzzle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.puzzle {
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+.pill {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  padding: 16px;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: min(480px, 100%);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+}
+
+.modal-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.today-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+  background: #f8fafc;
+  margin: 12px 0;
+}
+
+.list.compact {
+  gap: 6px;
+}
+
+.mini-item {
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.pill.light {
+  background: #e2e8f0;
+  color: #0f172a;
 }
