@@ -1,13 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.scss";
 import { AuthProvider } from "./context/AuthContext";
-import { DashboardPage } from "./pages/DashboardPage";
+
 import { HouseholdPage } from "./pages/HouseholdPage";
 import { LoginPage } from "./pages/LoginPage";
-import { ChoresPage } from "./pages/ChoresPage";
-import { CalendarPage } from "./pages/CalendarPage";
-import { ApprovalsPage } from "./pages/ApprovalsPage";
-import { StatsPage } from "./pages/StatsPage";
+
 import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
