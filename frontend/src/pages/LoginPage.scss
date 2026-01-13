@@ -5,7 +5,7 @@ $hk-green: #9fc63f;
   align-items: center;
 
   padding-top: 6px;
-  gap: 0px;
+  gap: 10px;
 
   &.login {
     --accent: #{$hk-green};
@@ -100,7 +100,7 @@ $hk-green: #9fc63f;
 .remember {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.9rem;
 
   input.remember-checkbox {
     -webkit-appearance: none;
