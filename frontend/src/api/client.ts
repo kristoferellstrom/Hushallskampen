@@ -92,7 +92,7 @@ export async function joinHousehold(token: string, inviteCode: string) {
 }
 
 export async function getHousehold(token: string) {
-  return request<{ household: { _id: string; name: string; inviteCode: string } | null }>("/households/me", {
+  return request<{ household: { _id: string; name: string; inviteCode: string; mode?: string; weeklyPrizeText?: string; rulesText?: string; approvalTimeoutHours?: number; targetShares?: Array<{ userId: string; targetPct: number }> } | null }>("/households/me", {
     method: "GET",
     token,
   });

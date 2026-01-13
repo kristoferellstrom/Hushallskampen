@@ -19,6 +19,7 @@ export const SettingsPage = () => {
   const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
   const [rulesText, setRulesText] = useState("");
   const [approvalTimeout, setApprovalTimeout] = useState<number | undefined>(undefined);
+  const [targetShares, setTargetShares] = useState<Record<string, number>>({});
 
   const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
   const colorLabels: Record<string, string> = {
@@ -53,6 +54,15 @@ export const SettingsPage = () => {
         setPrize(res.household.weeklyPrizeText || "");
         setRulesText(res.household.rulesText || "");
         setApprovalTimeout(res.household.approvalTimeoutHours);
+        if (res.household.targetShares) {
+          const map: Record<string, number> = {};
+          res.household.targetShares.forEach((t: any) => {
+            map[t.userId] = t.targetPct;
+          });
+          setTargetShares(map);
+        } else {
+          setTargetShares({});
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta hushåll");
@@ -93,7 +103,11 @@ export const SettingsPage = () => {
     setError("");
     setUpdatingHousehold(true);
     try {
-      await updateHousehold(token, { name, mode, weeklyPrizeText: prize, rulesText, approvalTimeoutHours: approvalTimeout });
+      const targetList = members.map((m) => ({
+        userId: m._id,
+        targetPct: targetShares[m._id] !== undefined ? targetShares[m._id] : Math.round(100 / (members.length || 1)),
+      }));
+      await updateHousehold(token, { name, mode, weeklyPrizeText: prize, rulesText, approvalTimeoutHours: approvalTimeout, targetShares: targetList });
       setStatus("Hushållet uppdaterat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
@@ -186,6 +200,28 @@ export const SettingsPage = () => {
           />
           <p className="hint">Sparas som hushållsinställning (kan användas för auto-approve/påminnelser i nästa steg).</p>
         </label>
+        <div>
+          <h3>Målfördelning (%) per vecka</h3>
+          {members.map((m) => (
+            <label key={m._id}>
+              {m.name}
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={targetShares[m._id] ?? ""}
+                onChange={(e) =>
+                  setTargetShares((prev) => ({
+                    ...prev,
+                    [m._id]: e.target.value === "" ? undefined : Number(e.target.value),
+                  }))
+                }
+                placeholder={`${Math.round(100 / (members.length || 1))}%`}
+              />
+            </label>
+          ))}
+          <p className="hint">Låt summan bli runt 100%. Lämna tomt för att auto-fördela lika.</p>
+        </div>
         <button type="button" onClick={handleUpdateHousehold} disabled={updatingHousehold}>
           Spara inställningar
         </button>
