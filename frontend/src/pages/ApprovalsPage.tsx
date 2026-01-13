@@ -1,78 +1,11 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { listApprovalHistory, listApprovals, reviewApproval } from "../api/client";
-import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
-
-type Approval = {
-  _id: string;
-  submittedByUserId: { _id: string; name: string; email: string };
-  reviewedByUserId?: { _id: string; name: string; email: string };
-  status?: string;
-  comment?: string;
-  createdAt?: string;
-  calendarEntryId: {
-    _id: string;
-    date: string;
-    status: string;
-    assignedToUserId: { _id: string; name: string; email: string };
-    choreId: { _id: string; title: string; defaultPoints: number };
-  };
-};
+import { useApprovalsPage } from "../hooks/useApprovalsPage";
 
 type Props = { embedded?: boolean };
 
 export const ApprovalsPage = ({ embedded = false }: Props) => {
-  const { token } = useAuth();
-  const [approvals, setApprovals] = useState<Approval[]>([]);
-  const [history, setHistory] = useState<Approval[]>([]);
-  const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [comments, setComments] = useState<Record<string, string>>({});
-
-  const quickComments = ["Bra jobbat 💪", "Behöver göras om", "Ok men slarvigt"];
-
-  const load = async () => {
-    if (!token) return;
-    setStatus("Laddar...");
-    setError("");
-    try {
-      const res = await listApprovals(token);
-      setApprovals(res.approvals);
-      setStatus(`Att granska: ${res.approvals.length}`);
-      const hist = await listApprovalHistory(token, 10);
-      setHistory(hist.approvals);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte hämta godkännanden");
-    }
-  };
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
-
-  const handle = async (id: string, action: "approve" | "reject") => {
-    if (!token) return;
-    const comment = comments[id];
-    setLoading(true);
-    setError("");
-    try {
-      await reviewApproval(token, id, action, comment);
-      setStatus(action === "approve" ? "Godkände" : "Avslog");
-      setComments((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      });
-      await load();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte uppdatera");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { approvals, history, status, error, loading, comments, quickComments, setQuickComment, setComment, handleReview } = useApprovalsPage(10);
 
   const renderList = () => (
     <div className="card">
@@ -91,13 +24,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                 <p className="hint">Datum: {a.calendarEntryId.date.slice(0, 10)}</p>
                 <div className="chips">
                   {quickComments.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      className="chip"
-                      onClick={() => setComments((prev) => ({ ...prev, [a._id]: c }))}
-                      disabled={loading}
-                    >
+                    <button key={c} type="button" className="chip" onClick={() => setQuickComment(a._id, c)} disabled={loading}>
                       {c}
                     </button>
                   ))}
@@ -106,15 +33,15 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                   type="text"
                   placeholder="Lägg till kommentar (valfritt)"
                   value={comments[a._id] || ""}
-                  onChange={(e) => setComments((prev) => ({ ...prev, [a._id]: e.target.value }))}
+                  onChange={(e) => setComment(a._id, e.target.value)}
                   disabled={loading}
                 />
               </div>
               <div className="actions">
-                <button type="button" disabled={loading} onClick={() => handle(a._id, "approve")}>
+                <button type="button" disabled={loading} onClick={() => handleReview(a._id, "approve")}>
                   Godkänn
                 </button>
-                <button type="button" disabled={loading} onClick={() => handle(a._id, "reject")}>
+                <button type="button" disabled={loading} onClick={() => handleReview(a._id, "reject")}>
                   Avvisa
                 </button>
               </div>

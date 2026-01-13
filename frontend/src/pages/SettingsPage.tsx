@@ -1,133 +1,41 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getHousehold, listMembers, updateColor, updateHousehold } from "../api/client";
-import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
 import { colorPreview } from "../utils/palette";
+import { useSettingsPage } from "../hooks/useSettingsPage";
 
 export const SettingsPage = () => {
-  const { token, user } = useAuth();
-  const [invite, setInvite] = useState("");
-  const [name, setName] = useState("");
-  const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
-  const [colorStatus, setColorStatus] = useState("");
-  const [colorError, setColorError] = useState("");
-  const [mode, setMode] = useState<"competition" | "equality">("competition");
-  const [prize, setPrize] = useState("");
-  const [updatingHousehold, setUpdatingHousehold] = useState(false);
-  const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
-  const [rulesText, setRulesText] = useState("");
-  const [approvalTimeout, setApprovalTimeout] = useState<number | undefined>(undefined);
-  const [targetShares, setTargetShares] = useState<Record<string, number>>({});
+  const {
+    invite,
+    name,
+    status,
+    error,
+    colorStatus,
+    colorError,
+    mode,
+    prize,
+    updatingHousehold,
+    members,
+    rulesText,
+    approvalTimeout,
+    targetShares,
 
-  const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
-  const colorLabels: Record<string, string> = {
-    blue: "Blå",
-    green: "Grön",
-    red: "Röd",
-    orange: "Orange",
-    purple: "Lila",
-    pink: "Rosa",
-    yellow: "Gul",
-    teal: "Turkos",
-  };
+    availableColors,
+    colorLabels,
+    usedColors,
+    userColor,
 
-  const loadInvite = async () => {
-    setStatus("");
-    setError("");
-    try {
-      if (!token) throw new Error("Ingen token");
-      const res = await getHousehold(token);
-      if (!res.household) {
-        setStatus("Du har inget hushåll");
-        setInvite("");
-        setName("");
-        setMode("competition");
-        setPrize("");
-        setRulesText("");
-        setApprovalTimeout(undefined);
-      } else {
-        setInvite(res.household.inviteCode);
-        setName(res.household.name);
-        setMode(res.household.mode === "equality" ? "equality" : "competition");
-        setPrize(res.household.weeklyPrizeText || "");
-        setRulesText(res.household.rulesText || "");
-        setApprovalTimeout(res.household.approvalTimeoutHours);
-        if (res.household.targetShares) {
-          const map: Record<string, number> = {};
-          res.household.targetShares.forEach((t: any) => {
-            map[t.userId] = t.targetPct;
-          });
-          setTargetShares(map);
-        } else {
-          setTargetShares({});
-        }
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte hämta hushåll");
-    }
-  };
+    setName,
+    setMode,
+    setPrize,
+    setRulesText,
+    setApprovalTimeout,
 
-  const loadMembers = async () => {
-    if (!token) return;
-    setColorStatus("");
-    setColorError("");
-    try {
-      const res = await listMembers(token);
-      setMembers(res.members);
-    } catch (err) {
-      setColorError(err instanceof Error ? err.message : "Kunde inte hämta medlemmar");
-    }
-  };
-
-  const handleColor = async (color: string) => {
-    if (!token) return;
-    setColorStatus("");
-    setColorError("");
-    try {
-      await updateColor(token, color);
-      setColorStatus("Färg uppdaterad");
-      await loadMembers();
-    } catch (err) {
-      setColorError(err instanceof Error ? err.message : "Kunde inte uppdatera färg");
-    }
-  };
-
-  const usedColors = members.filter((m) => m.color).map((m) => m.color);
-  const userColor = members.find((m) => m._id === user?.id)?.color || user?.color;
-
-const handleUpdateHousehold = async () => {
-  if (!token) return;
-  setStatus("");
-  setError("");
-  setUpdatingHousehold(true);
-  try {
-    await updateHousehold(token, { name, mode, weeklyPrizeText: prize });
-    setStatus("Hushållet uppdaterat");
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
-  } finally {
-    setUpdatingHousehold(false);
-  }
-};
-
-
-  const copyInvite = async () => {
-    if (!invite) return;
-    try {
-      await navigator.clipboard.writeText(invite);
-      setStatus("Koden kopierad");
-    } catch {
-      setStatus("Kunde inte kopiera koden");
-    }
-  };
-
-  useEffect(() => {
-    loadInvite();
-    loadMembers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+    loadInvite,
+    handleUpdateHousehold,
+    copyInvite,
+    handleColor,
+    setTargetShareForMember,
+  } = useSettingsPage();
 
   return (
     <div className="shell">
@@ -207,17 +115,7 @@ const handleUpdateHousehold = async () => {
                 min={0}
                 max={100}
                 value={targetShares[m._id] ?? ""}
-                onChange={(e) =>
-                  setTargetShares((prev) => {
-                    const next = { ...prev };
-                    if (e.target.value === "") {
-                      delete next[m._id];
-                      return next;
-                    }
-                    next[m._id] = Number(e.target.value);
-                    return next;
-                  })
-                }
+                onChange={(e) => setTargetShareForMember(m._id, e.target.value)}
                 placeholder={`${Math.round(100 / (members.length || 1))}%`}
               />
             </label>

@@ -79,7 +79,6 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   useEffect(() => {
     loadAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, currentMonth]);
 
   const handleSubmit = async (id: string) => {
