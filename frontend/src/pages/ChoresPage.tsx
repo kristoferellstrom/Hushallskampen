@@ -1,193 +1,88 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { createChore, deleteChore, fetchChores, updateChore } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
 
-type Chore = { _id: string; title: string; defaultPoints: number; description?: string };
+import { useChores } from "../hooks/useChores";
+import { useChoreForms } from "../hooks/useChoreForms";
+
+import { ChoreCreateForm } from "../components/chores/ChoreCreateForm";
+import { ChoreEditForm } from "../components/chores/ChoreEditForm";
+import { ChoreList } from "../components/chores/ChoreList";
 
 type Props = { embedded?: boolean };
 
 export const ChoresPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
-  const [chores, setChores] = useState<Chore[]>([]);
-  const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const [newTitle, setNewTitle] = useState("");
-  const [newPoints, setNewPoints] = useState("1");
-  const [newDescription, setNewDescription] = useState("");
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editPoints, setEditPoints] = useState("1");
-  const [editDescription, setEditDescription] = useState("");
-
-  const loadChores = async () => {
-    if (!token) return;
-    setStatus("Hämtar sysslor...");
-    setError("");
-    try {
-      const res = await fetchChores(token);
-      setChores(res.chores);
-      setStatus("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte hämta");
-      setStatus("");
-    }
-  };
-
-  useEffect(() => {
-    loadChores();
-  }, [token]);
+  const choresApi = useChores(token);
+  const forms = useChoreForms();
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token) return;
-    setLoading(true);
-    setError("");
-    try {
-      const points = Number(newPoints || 0);
-      await createChore(token, { title: newTitle, defaultPoints: points, description: newDescription || undefined });
-      setNewTitle("");
-      setNewPoints("1");
-      setNewDescription("");
-      setStatus("Skapade syssla");
-      await loadChores();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte skapa syssla");
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const startEdit = (chore: Chore) => {
-    setEditingId(chore._id);
-    setEditTitle(chore.title);
-    setEditPoints(String(chore.defaultPoints));
-    setEditDescription(chore.description || "");
+    const points = Number(forms.newPoints || 0);
+
+    await choresApi.create({
+      title: forms.newTitle,
+      defaultPoints: points,
+      description: forms.newDescription || undefined,
+    });
+
+    if (!choresApi.error) forms.resetNew();
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token || !editingId) return;
-    setLoading(true);
-    setError("");
-    try {
-      const points = Number(editPoints || 0);
-      await updateChore(token, editingId, {
-        title: editTitle,
-        defaultPoints: points,
-        description: editDescription || undefined,
-      });
-      setEditingId(null);
-      setStatus("Uppdaterade syssla");
-      await loadChores();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte uppdatera");
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!forms.editingId) return;
 
-  const handleDelete = async (id: string) => {
-    if (!token) return;
-    setLoading(true);
-    setError("");
-    try {
-      await deleteChore(token, id);
-      setStatus("Tog bort syssla");
-      await loadChores();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte ta bort");
-    } finally {
-      setLoading(false);
-    }
+    const points = Number(forms.editPoints || 0);
+
+    await choresApi.update(forms.editingId, {
+      title: forms.editTitle,
+      defaultPoints: points,
+      description: forms.editDescription || undefined,
+    });
+
+    if (!choresApi.error) forms.cancelEdit();
   };
 
   const body = (
     <>
       <div className="grid">
-        <form className="card" onSubmit={handleCreate}>
-          <h2>Ny syssla</h2>
-          <label>
-            Titel
-            <input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} required />
-          </label>
-          <label>
-            Poäng
-            <input type="number" min={0} value={newPoints} onChange={(e) => setNewPoints(e.target.value)} required />
-          </label>
-          <label>
-            Beskrivning (valfritt)
-            <input value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
-          </label>
-          <button type="submit" disabled={loading}>
-            Skapa syssla
-          </button>
-        </form>
+        <ChoreCreateForm
+          loading={choresApi.loading}
+          newTitle={forms.newTitle}
+          newPoints={forms.newPoints}
+          newDescription={forms.newDescription}
+          onChangeTitle={forms.setNewTitle}
+          onChangePoints={forms.setNewPoints}
+          onChangeDescription={forms.setNewDescription}
+          onSubmit={handleCreate}
+        />
 
-        {editingId && (
-          <form className="card" onSubmit={handleUpdate}>
-            <h2>Redigera syssla</h2>
-            <label>
-              Titel
-              <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} required />
-            </label>
-            <label>
-              Poäng
-              <input type="number" min={0} value={editPoints} onChange={(e) => setEditPoints(e.target.value)} required />
-            </label>
-            <label>
-              Beskrivning
-              <input value={editDescription} onChange={(e) => setEditDescription(e.target.value)} />
-            </label>
-            <div className="row">
-              <button type="submit" disabled={loading}>
-                Spara ändring
-              </button>
-              <button type="button" onClick={() => setEditingId(null)}>
-                Avbryt
-              </button>
-            </div>
-          </form>
+        {forms.editingId && (
+          <ChoreEditForm
+            loading={choresApi.loading}
+            editTitle={forms.editTitle}
+            editPoints={forms.editPoints}
+            editDescription={forms.editDescription}
+            onChangeTitle={forms.setEditTitle}
+            onChangePoints={forms.setEditPoints}
+            onChangeDescription={forms.setEditDescription}
+            onSubmit={handleUpdate}
+            onCancel={forms.cancelEdit}
+          />
         )}
       </div>
 
-      <div className="card">
-        <div className="row">
-          {status && <p className="status ok">{status}</p>}
-          {error && <p className="status error">{error}</p>}
-          {!status && !error && <p className="hint">Totalt: {chores.length} sysslor</p>}
-        </div>
-        <ul className="list">
-          {chores.map((c) => (
-            <li key={c._id}>
-              <div className="row">
-                <div>
-                  <strong>{c.title}</strong> — {c.defaultPoints}p
-                  {c.description && <p className="hint">{c.description}</p>}
-                </div>
-                <div className="actions">
-                  <button type="button" onClick={() => startEdit(c)} disabled={loading}>
-                    Redigera
-                  </button>
-                  <button
-                    type="button"
-                    className="icon-btn corner-btn"
-                    aria-label="Ta bort"
-                    onClick={() => handleDelete(c._id)}
-                    disabled={loading}
-                  >
-                    🗑
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ChoreList
+        chores={choresApi.chores}
+        loading={choresApi.loading}
+        status={choresApi.status}
+        error={choresApi.error}
+        onEdit={forms.startEdit}
+        onDelete={choresApi.remove}
+      />
     </>
   );
 

@@ -14,16 +14,12 @@ export const DashboardPage = () => {
       if (res.household) {
         setHouseholdName(res.household.name);
       }
-    } catch (err) {
-      // ignore; shown via loadCode if needed
-    }
-  };
+    } catch (err) {}};
 
   useEffect(() => {
     loadHousehold();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
-
+  
   return (
     <div className="shell">
       <header className="row">
