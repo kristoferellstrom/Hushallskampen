@@ -5,7 +5,7 @@ export async function fetchWeeklyStats(token: string) {
     totals: Array<{
       periodStart: string;
       periodEnd: string;
-      totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }>;
+      totalsByUser: Array<{ userId: { _id: string; name: string; color?: string | null }; points: number }>;
     }>;
   }>("/stats/weekly", { method: "GET", token });
 }
@@ -15,7 +15,7 @@ export async function fetchMonthlyStats(token: string) {
     totals: Array<{
       periodStart: string;
       periodEnd: string;
-      totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }>;
+      totalsByUser: Array<{ userId: { _id: string; name: string; color?: string | null }; points: number }>;
     }>;
   }>("/stats/monthly", { method: "GET", token });
 }

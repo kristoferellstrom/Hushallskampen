@@ -9,15 +9,15 @@ type Props = { embedded?: boolean };
 
 export const StatsPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
-  const { weekly, monthly, error, balanceInfo } = useStats(token);
+  const { weekly, monthly, error, balanceInfo, memberColors } = useStats(token);
 
   const content = (
     <>
       {error && <p className="status error">{error}</p>}
 
       <div className="grid">
-        <StatsCard title="Veckosummeringar" items={weekly} balanceInfo={balanceInfo} />
-        <StatsCard title="Månads-summeringar" items={monthly} balanceInfo={balanceInfo} />
+        <StatsCard title="Veckosummeringar" items={weekly} balanceInfo={balanceInfo} colorMap={memberColors} />
+        <StatsCard title="Månads-summeringar" items={monthly} balanceInfo={balanceInfo} colorMap={memberColors} />
       </div>
     </>
   );

@@ -22,6 +22,17 @@ export function colorPreview(color: string) {
   return palette[Math.floor(palette.length / 2)];
 }
 
+export function fallbackColorForUser(userId: string) {
+  if (!colorKeys.length) return "#e2e8f0";
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = (hash << 5) - hash + userId.charCodeAt(i);
+    hash |= 0;
+  }
+  const key = colorKeys[Math.abs(hash) % colorKeys.length];
+  return colorPreview(key);
+}
+
 function hexToRgb(hex: string) {
   const stripped = hex.replace("#", "");
   const bigint = parseInt(stripped, 16);

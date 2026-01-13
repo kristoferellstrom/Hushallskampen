@@ -1,15 +1,17 @@
 import type { StatItem } from "../../hooks/useStats";
 import type { BalanceInfo } from "../../hooks/useStats";
 import { BalanceRow } from "./BalanceRow";
+import { colorPreview, textColorForBackground, fallbackColorForUser } from "../../utils/palette";
 
 type Props = {
   title: string;
   items: StatItem[];
   balanceInfo: (rec: StatItem) => BalanceInfo;
   emptyText?: string;
+  colorMap?: Record<string, string>;
 };
 
-export const StatsCard = ({ title, items, balanceInfo, emptyText = "Inga data ännu" }: Props) => {
+export const StatsCard = ({ title, items, balanceInfo, colorMap = {}, emptyText = "Inga data ännu" }: Props) => {
   return (
     <div className="card">
       <h2>{title}</h2>
@@ -23,12 +25,24 @@ export const StatsCard = ({ title, items, balanceInfo, emptyText = "Inga data ä
           <BalanceRow rec={rec} balanceInfo={balanceInfo} />
 
           <ul className="list">
-            {rec.totalsByUser.map((t) => (
-              <li key={t.userId._id} className="row">
-                <span>{t.userId.name}</span>
-                <strong>{t.points}p</strong>
-              </li>
-            ))}
+            {rec.totalsByUser.map((t) => {
+              const bg = (() => {
+                const explicit = t.userId.color || colorMap[t.userId._id];
+                if (!explicit) return fallbackColorForUser(t.userId._id);
+                const col = explicit.toLowerCase();
+                if (col.startsWith("#")) return col;
+                const preview = colorPreview(col);
+                return preview || fallbackColorForUser(t.userId._id);
+              })();
+              const fg = textColorForBackground(bg);
+
+              return (
+                <li key={t.userId._id} className="row" style={{ background: bg, color: fg }}>
+                  <span>{t.userId.name}</span>
+                  <strong>{t.points}p</strong>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ))}

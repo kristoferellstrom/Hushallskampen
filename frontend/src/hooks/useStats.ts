@@ -1,14 +1,14 @@
-import { useCallback, useEffect,  useState } from "react";
-import { fetchMonthlyStats, fetchWeeklyStats, getHousehold } from "../api/index.ts";
+import { useCallback, useEffect, useState } from "react";
+import { fetchMonthlyStats, fetchWeeklyStats, getHousehold, listMembers } from "../api/index.ts";
 
 export type StatItem = {
   periodStart: string;
   periodEnd: string;
-  totalsByUser: Array<{ userId: { _id: string; name: string }; points: number }>;
+  totalsByUser: Array<{ userId: { _id: string; name: string; color?: string | null }; points: number }>;
 };
 
 type BalanceDelta = {
-  userId: { _id: string; name: string };
+  userId: { _id: string; name: string; color?: string | null };
   points: number;
   pct: number;
   target: number;
@@ -27,12 +27,18 @@ export const useStats = (token: string | null | undefined) => {
   const [monthly, setMonthly] = useState<StatItem[]>([]);
   const [error, setError] = useState("");
   const [targets, setTargets] = useState<Record<string, number>>({});
+  const [memberColors, setMemberColors] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     if (!token) return;
     setError("");
     try {
-      const [w, m, h] = await Promise.all([fetchWeeklyStats(token), fetchMonthlyStats(token), getHousehold(token)]);
+      const [w, m, h, members] = await Promise.all([
+        fetchWeeklyStats(token),
+        fetchMonthlyStats(token),
+        getHousehold(token),
+        listMembers(token),
+      ]);
 
       if (h.household?.targetShares) {
         const map: Record<string, number> = {};
@@ -40,6 +46,16 @@ export const useStats = (token: string | null | undefined) => {
         setTargets(map);
       } else {
         setTargets({});
+      }
+
+      if (members.members) {
+        const cm: Record<string, string> = {};
+        members.members.forEach((m: { _id: string; color?: string }) => {
+          if (m.color) cm[m._id] = m.color;
+        });
+        setMemberColors(cm);
+      } else {
+        setMemberColors({});
       }
 
       setWeekly(w.totals);
@@ -77,5 +93,5 @@ export const useStats = (token: string | null | undefined) => {
     [targets]
   );
 
-  return { weekly, monthly, error, targets, load, balanceInfo, setError };
+  return { weekly, monthly, error, targets, memberColors, load, balanceInfo, setError };
 };
