@@ -50,7 +50,7 @@ export const SettingsPage = () => {
       } else {
         setInvite(res.household.inviteCode);
         setName(res.household.name);
-        setMode(res.household.mode || "competition");
+        setMode(res.household.mode === "equality" ? "equality" : "competition");
         setPrize(res.household.weeklyPrizeText || "");
         setRulesText(res.household.rulesText || "");
         setApprovalTimeout(res.household.approvalTimeoutHours);
@@ -97,24 +97,21 @@ export const SettingsPage = () => {
   const usedColors = members.filter((m) => m.color).map((m) => m.color);
   const userColor = members.find((m) => m._id === user?.id)?.color || user?.color;
 
-  const handleUpdateHousehold = async () => {
-    if (!token) return;
-    setStatus("");
-    setError("");
-    setUpdatingHousehold(true);
-    try {
-      const targetList = members.map((m) => ({
-        userId: m._id,
-        targetPct: targetShares[m._id] !== undefined ? targetShares[m._id] : Math.round(100 / (members.length || 1)),
-      }));
-      await updateHousehold(token, { name, mode, weeklyPrizeText: prize, rulesText, approvalTimeoutHours: approvalTimeout, targetShares: targetList });
-      setStatus("Hushållet uppdaterat");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
-    } finally {
-      setUpdatingHousehold(false);
-    }
-  };
+const handleUpdateHousehold = async () => {
+  if (!token) return;
+  setStatus("");
+  setError("");
+  setUpdatingHousehold(true);
+  try {
+    await updateHousehold(token, { name, mode, weeklyPrizeText: prize });
+    setStatus("Hushållet uppdaterat");
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
+  } finally {
+    setUpdatingHousehold(false);
+  }
+};
+
 
   const copyInvite = async () => {
     if (!invite) return;
@@ -211,10 +208,15 @@ export const SettingsPage = () => {
                 max={100}
                 value={targetShares[m._id] ?? ""}
                 onChange={(e) =>
-                  setTargetShares((prev) => ({
-                    ...prev,
-                    [m._id]: e.target.value === "" ? undefined : Number(e.target.value),
-                  }))
+                  setTargetShares((prev) => {
+                    const next = { ...prev };
+                    if (e.target.value === "") {
+                      delete next[m._id];
+                      return next;
+                    }
+                    next[m._id] = Number(e.target.value);
+                    return next;
+                  })
                 }
                 placeholder={`${Math.round(100 / (members.length || 1))}%`}
               />
