@@ -1,6 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import "./App.scss";
+import "./styles/app.scss";
+
+
 import { AuthProvider } from "./context/AuthContext";
+
 
 import { HouseholdPage } from "./pages/HouseholdPage";
 import { LoginPage } from "./pages/LoginPage";
