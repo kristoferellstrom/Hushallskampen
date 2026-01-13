@@ -87,7 +87,7 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
     const user = await User.findById(req.userId).select("householdId");
     if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
 
-    const { mode, weeklyPrizeText, name } = req.body;
+    const { mode, weeklyPrizeText, name, rulesText, approvalTimeoutHours } = req.body;
     const updates: any = {};
     if (mode !== undefined) {
       if (!["competition", "equality"].includes(mode)) return res.status(400).json({ error: "Invalid mode" });
@@ -95,6 +95,12 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
     }
     if (weeklyPrizeText !== undefined) updates.weeklyPrizeText = weeklyPrizeText;
     if (name !== undefined) updates.name = name;
+    if (rulesText !== undefined) updates.rulesText = rulesText;
+    if (approvalTimeoutHours !== undefined) {
+      const num = Number(approvalTimeoutHours);
+      if (isNaN(num) || num < 0 || num > 168) return res.status(400).json({ error: "Invalid approval timeout" });
+      updates.approvalTimeoutHours = num;
+    }
 
     const household = await Household.findByIdAndUpdate(user.householdId, updates, { new: true });
     res.json({ household });

@@ -17,6 +17,8 @@ export const SettingsPage = () => {
   const [prize, setPrize] = useState("");
   const [updatingHousehold, setUpdatingHousehold] = useState(false);
   const [members, setMembers] = useState<Array<{ _id: string; name: string; color?: string }>>([]);
+  const [rulesText, setRulesText] = useState("");
+  const [approvalTimeout, setApprovalTimeout] = useState<number | undefined>(undefined);
 
   const availableColors = ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"];
   const colorLabels: Record<string, string> = {
@@ -42,11 +44,15 @@ export const SettingsPage = () => {
         setName("");
         setMode("competition");
         setPrize("");
+        setRulesText("");
+        setApprovalTimeout(undefined);
       } else {
         setInvite(res.household.inviteCode);
         setName(res.household.name);
         setMode(res.household.mode || "competition");
         setPrize(res.household.weeklyPrizeText || "");
+        setRulesText(res.household.rulesText || "");
+        setApprovalTimeout(res.household.approvalTimeoutHours);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta hushåll");
@@ -87,7 +93,7 @@ export const SettingsPage = () => {
     setError("");
     setUpdatingHousehold(true);
     try {
-      await updateHousehold(token, { name, mode, weeklyPrizeText: prize });
+      await updateHousehold(token, { name, mode, weeklyPrizeText: prize, rulesText, approvalTimeoutHours: approvalTimeout });
       setStatus("Hushållet uppdaterat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
@@ -163,6 +169,22 @@ export const SettingsPage = () => {
         <label>
           Veckans pris
           <input type="text" value={prize} onChange={(e) => setPrize(e.target.value)} placeholder="Ex: Välj film, middag, etc." />
+        </label>
+        <label>
+          Hushållsregler
+          <textarea value={rulesText} onChange={(e) => setRulesText(e.target.value)} rows={3} placeholder="Vad räknas som godkänt? Hur snabbt ska man granska? Vad händer vid avslag?" />
+        </label>
+        <label>
+          Auto-approve/påminnelse (timmar)
+          <input
+            type="number"
+            min={0}
+            max={168}
+            value={approvalTimeout ?? ""}
+            onChange={(e) => setApprovalTimeout(e.target.value === "" ? undefined : Number(e.target.value))}
+            placeholder="0 = av, 24 = en dag"
+          />
+          <p className="hint">Sparas som hushållsinställning (kan användas för auto-approve/påminnelser i nästa steg).</p>
         </label>
         <button type="button" onClick={handleUpdateHousehold} disabled={updatingHousehold}>
           Spara inställningar
