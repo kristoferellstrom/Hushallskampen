@@ -5,9 +5,12 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 dotenv.config();
 
 let memoryServer: MongoMemoryServer | null = null;
+const MONGO_MEM_VERSION = process.env.MONGO_MEMORY_VERSION || "7.0.9";
 
 async function startMemoryServer() {
-  memoryServer = await MongoMemoryServer.create();
+  memoryServer = await MongoMemoryServer.create({
+    binary: { version: MONGO_MEM_VERSION },
+  });
   const uri = memoryServer.getUri();
   await mongoose.connect(uri);
   console.log("MongoDB (memory) connected");

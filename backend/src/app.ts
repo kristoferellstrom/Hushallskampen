@@ -15,7 +15,7 @@ import usersRouter from "./routes/users";
 export const createApp = () => {
   const app = express();
 
-  const allowedOrigin = process.env.CORS_ORIGIN;
+  const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173,http://localhost:5174";
   app.use(
     cors(
       allowedOrigin
