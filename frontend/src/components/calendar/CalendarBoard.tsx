@@ -1,18 +1,7 @@
-import { shadeForPoints } from "../../utils/palette";
-
-type Entry = {
-  _id: string;
-  status: string;
-  date: string;
-  assignedToUserId: { _id: string; name: string; color?: string };
-  choreId: { _id: string; title: string; defaultPoints: number };
-};
-
-type Member = { _id: string; name: string; color?: string };
-
-type MonthDay = { date: string; inMonth: boolean };
-type WeekDay = { date: string };
-type HeatDay = { date: string; inMonth: boolean; count: number; points: number };
+import type { Entry, HeatDay, Member, MonthDay, WeekDay } from "../../types/calendar";
+import { CalendarWeekdays } from "./CalendarWeekdays";
+import { CalendarMonthView } from "./CalendarMonthView";
+import { CalendarWeekView } from "./CalendarWeekView";
 
 type Props = {
   monthLabel: string;
@@ -73,21 +62,6 @@ export const CalendarBoard = ({
   onDragLeaveDay,
   onDropDay,
 }: Props) => {
-  const weekdays = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, day: string) => {
-    e.preventDefault();
-    const entryId = e.dataTransfer.getData("entry-id") || undefined;
-    const choreId = e.dataTransfer.getData("text/plain") || undefined;
-    onDropDay(day, { entryId, choreId });
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, day: string) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
-    onDragOverDay(day);
-  };
-
   return (
     <div className="card calendar-card">
       <div className="month-nav">
@@ -136,101 +110,32 @@ export const CalendarBoard = ({
         </button>
       </div>
 
-      <div className="weekdays">
-        {weekdays.map((d) => (
-          <span key={d}>{d}</span>
-        ))}
-      </div>
+      <CalendarWeekdays />
 
       {view === "month" ? (
-        <>
-          <div className="month-grid">
-            {monthGrid.map((day) => {
-              const dayEntries = entriesByDay[day.date] || [];
-              const dayNumber = Number(day.date.slice(-2));
-
-              return (
-                <div
-                  key={day.date}
-                  className={`day-cell ${day.inMonth ? "" : "muted"} ${selectedDay === day.date ? "selected" : ""} ${
-                    dragOverDay === day.date ? "drag-over" : ""
-                  }`}
-                  onClick={() => onSelectDay(day.date)}
-                  onDragOver={(e) => handleDragOver(e, day.date)}
-                  onDragLeave={onDragLeaveDay}
-                  onDrop={(e) => handleDrop(e, day.date)}
-                >
-                  <div className="day-number">{dayNumber}</div>
-                  <div className="dot-row">
-                    {dayEntries.slice(0, 8).map((en) => {
-                      const shade = shadeForPoints(en.assignedToUserId.color, en.choreId.defaultPoints);
-                      return <span key={en._id} className="dot" style={{ background: shade }} />;
-                    })}
-                    {dayEntries.length > 8 && <span className="dot more">+{dayEntries.length - 8}</span>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {showHeatmap && (
-            <div className="heatmap-grid">
-              {heatmapData.map((d) => {
-                const intensity = Math.min(1, d.count / 5 || d.points / 15);
-                const bg = `rgba(15, 23, 42, ${0.08 + intensity * 0.35})`;
-
-                return (
-                  <div
-                    key={d.date}
-                    className={`heatmap-cell ${d.inMonth ? "" : "muted"}`}
-                    title={`${d.date} • ${d.count} uppgifter • ${d.points}p`}
-                    style={{ background: bg }}
-                  >
-                    <span>{Number(d.date.slice(-2))}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </>
+        <CalendarMonthView
+          monthGrid={monthGrid}
+          entriesByDay={entriesByDay}
+          selectedDay={selectedDay}
+          onSelectDay={onSelectDay}
+          dragOverDay={dragOverDay}
+          onDragOverDay={onDragOverDay}
+          onDragLeaveDay={onDragLeaveDay}
+          onDropDay={onDropDay}
+          showHeatmap={showHeatmap}
+          heatmapData={heatmapData}
+        />
       ) : (
-        <div className="week-grid">
-          {weekGrid.map((day) => {
-            const dayEntries = entriesByDay[day.date] || [];
-            const dayNumber = Number(day.date.slice(-2));
-
-            return (
-              <div
-                key={day.date}
-                className={`day-cell ${selectedDay === day.date ? "selected" : ""} ${dragOverDay === day.date ? "drag-over" : ""}`}
-                onClick={() => onSelectDay(day.date)}
-                onDragOver={(e) => handleDragOver(e, day.date)}
-                onDragLeave={onDragLeaveDay}
-                onDrop={(e) => handleDrop(e, day.date)}
-              >
-                <div className="day-number">{dayNumber}</div>
-                <div className="dot-row">
-                  {dayEntries.slice(0, 8).map((en) => {
-                    const shade = shadeForPoints(en.assignedToUserId.color, en.choreId.defaultPoints);
-                    return <span key={en._id} className="dot" style={{ background: shade }} />;
-                  })}
-                  {dayEntries.length > 8 && <span className="dot more">+{dayEntries.length - 8}</span>}
-                </div>
-
-                <ul className="list compact" style={{ marginTop: 8 }}>
-                  {dayEntries.map((en) => (
-                    <li key={en._id} className="mini-item">
-                      <strong>{en.choreId.title}</strong> · {en.choreId.defaultPoints}p
-                      <p className="hint" style={{ opacity: 0.9 }}>
-                        {en.assignedToUserId.name} — {en.status}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
-        </div>
+        <CalendarWeekView
+          weekGrid={weekGrid}
+          entriesByDay={entriesByDay}
+          selectedDay={selectedDay}
+          onSelectDay={onSelectDay}
+          dragOverDay={dragOverDay}
+          onDragOverDay={onDragOverDay}
+          onDragLeaveDay={onDragLeaveDay}
+          onDropDay={onDropDay}
+        />
       )}
     </div>
   );
