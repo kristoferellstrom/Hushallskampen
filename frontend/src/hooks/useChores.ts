@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { createChore, deleteChore, fetchChores, updateChore } from "../api/client";
+import { createChore, deleteChore, fetchChores, updateChore } from "../api";
 
 export type Chore = {
   _id: string;

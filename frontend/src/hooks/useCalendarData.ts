@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { fetchChores, listCalendar, listMembers } from "../api/client";
+import { fetchChores, listCalendar, listMembers } from "../api";
 import { buildMonthGrid, buildWeekGrid, formatDateLocal, getGridRange } from "../utils/calendarDates";
 import type { CalendarEntry, CalendarChore, CalendarMember } from "../types/calendar";
 

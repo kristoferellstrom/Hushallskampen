@@ -1,5 +1,5 @@
 import { useCallback, useEffect,  useState } from "react";
-import { fetchMonthlyStats, fetchWeeklyStats, getHousehold } from "../api/client";
+import { fetchMonthlyStats, fetchWeeklyStats, getHousehold } from "../api/index.ts";
 
 export type StatItem = {
   periodStart: string;

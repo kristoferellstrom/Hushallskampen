@@ -1,11 +1,5 @@
 import { useCallback } from "react";
-import {
-  createCalendarEntry,
-  deleteCalendarEntry,
-  submitCalendarEntry,
-  copyLastWeek,
-  updateCalendarEntry,
-} from "../api/client";
+import { createCalendarEntry, deleteCalendarEntry, submitCalendarEntry, copyLastWeek, updateCalendarEntry } from "../api";
 import type { CalendarEntry, CalendarMember } from "../types/calendar";
 
 type Params = {

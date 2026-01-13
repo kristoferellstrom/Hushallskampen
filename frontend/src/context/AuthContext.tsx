@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { getMe, login, register as apiRegister } from "../api/client";
+import { getMe, login, register as apiRegister } from "../api";
 
 export type User = {
   id: string;

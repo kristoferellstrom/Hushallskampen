@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { getHousehold, listMembers, updateColor, updateHousehold } from "../api/client";
+import { getHousehold, listMembers, updateHousehold, updateColor } from "../api";
 import { useAuth } from "../context/AuthContext";
+
 
 type Member = { _id: string; name: string; color?: string };
 type Mode = "competition" | "equality";

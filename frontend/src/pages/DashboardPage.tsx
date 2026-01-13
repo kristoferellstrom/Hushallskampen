@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getHousehold } from "../api/client";
+import { getHousehold } from "../api";
 
 export const DashboardPage = () => {
   const { user, logout, token } = useAuth();

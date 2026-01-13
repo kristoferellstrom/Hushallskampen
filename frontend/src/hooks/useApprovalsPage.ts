@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { listApprovalHistory, listApprovals, reviewApproval } from "../api/client";
+import { listApprovalHistory, listApprovals, reviewApproval } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 export type Approval = {
@@ -46,7 +46,6 @@ export const useApprovalsPage = (historyLimit = 10) => {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const setQuickComment = (approvalId: string, value: string) => {
