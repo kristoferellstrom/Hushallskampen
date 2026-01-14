@@ -40,6 +40,24 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const handleNextMonth = () =>
     cal.setCurrentMonth(new Date(cal.currentMonth.getFullYear(), cal.currentMonth.getMonth() + 1, 1));
 
+  const handleManualAdd = () => {
+    if (!cal.chores.length) {
+      cal.setError("Inga sysslor att lägga till ännu.");
+      return;
+    }
+    const date = window.prompt("Ange datum (YYYY-MM-DD):", cal.selectedDay || cal.monthGrid[0]?.date.slice(0, 10));
+    if (!date) return;
+    const list = cal.chores.map((c) => `${c.title} (${c.defaultPoints}p)`).join("\n");
+    const title = window.prompt(`Välj syssla (skriv exakt titel):\n${list}`);
+    if (!title) return;
+    const chore = cal.chores.find((c) => c.title.toLowerCase() === title.toLowerCase());
+    if (!chore) {
+      cal.setError("Hittade ingen syssla med det namnet.");
+      return;
+    }
+    actions.handleDropCreate(date, chore._id);
+  };
+
   const handleDropDay = (day: string, payload: { entryId?: string; choreId?: string }) => {
     drag.setDragOverDay(null);
 
@@ -88,6 +106,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
           onCopyLastWeek={actions.handleCopyLastWeek}
+          onManualAdd={handleManualAdd}
           members={cal.members}
           filter={cal.filter}
           onChangeFilter={cal.setFilter}

@@ -3,6 +3,7 @@ import { textColorForBackground } from "../../utils/palette";
 import { CalendarWeekdays } from "./CalendarWeekdays";
 import { CalendarMonthView } from "./CalendarMonthView";
 import { CalendarWeekView } from "./CalendarWeekView";
+import { CalendarHeatmap } from "./CalendarHeatmap";
 
 type Props = {
   monthLabel: string;
@@ -24,6 +25,7 @@ type Props = {
   onToggleHeatmap: () => void;
 
   onCopyLastWeek: () => void;
+  onManualAdd: () => void;
 
   selectedDay: string;
   onSelectDay: (day: string) => void;
@@ -54,6 +56,7 @@ export const CalendarBoard = ({
   showHeatmap,
   onToggleHeatmap,
   onCopyLastWeek,
+  onManualAdd,
   selectedDay,
   onSelectDay,
   monthGrid,
@@ -99,9 +102,6 @@ export const CalendarBoard = ({
           →
         </button>
 
-        <button type="button" className="chip" onClick={onCopyLastWeek} disabled={loading} style={{ marginLeft: 8 }}>
-          Kopiera förra veckan
-        </button>
       </div>
 
       <div className="row" style={{ marginBottom: 8, gap: 8, flexWrap: "wrap" }}>
@@ -137,9 +137,6 @@ export const CalendarBoard = ({
           </button>
         </div>
 
-        <button type="button" className="chip" onClick={onToggleHeatmap}>
-          {showHeatmap ? "Dölj heatmap" : "Visa heatmap"}
-        </button>
       </div>
 
       <CalendarWeekdays />
@@ -155,8 +152,6 @@ export const CalendarBoard = ({
           onDragOverDay={onDragOverDay}
           onDragLeaveDay={onDragLeaveDay}
           onDropDay={onDropDay}
-          showHeatmap={showHeatmap}
-          heatmapData={heatmapData}
         />
       ) : (
         <CalendarWeekView
@@ -171,6 +166,57 @@ export const CalendarBoard = ({
           onDropDay={onDropDay}
         />
       )}
+
+      <div
+        className="month-footer row"
+        style={{ justifyContent: "flex-end", gap: 6, flexWrap: "wrap", marginTop: 0, marginBottom: 0, paddingRight: 0 }}
+      >
+        <button
+          type="button"
+          className="chip"
+          onClick={onManualAdd}
+          style={{
+            flex: "0 0 auto",
+            minWidth: 120,
+            background: userColor,
+            color: textColorForBackground(userColor),
+            border: "none",
+          }}
+        >
+          Lägg till manuellt
+        </button>
+        <button
+          type="button"
+          className="chip"
+          onClick={onCopyLastWeek}
+          disabled={loading}
+          style={{
+            flex: "0 0 auto",
+            minWidth: 120,
+            background: userColor,
+            color: textColorForBackground(userColor),
+            border: "none",
+          }}
+        >
+          Kopiera förra veckan
+        </button>
+        <button
+          type="button"
+          className="chip"
+          onClick={onToggleHeatmap}
+          style={{
+            flex: "0 0 auto",
+            minWidth: 120,
+            background: userColor,
+            color: textColorForBackground(userColor),
+            border: "none",
+          }}
+        >
+          {showHeatmap ? "Dölj heatmap" : "Visa heatmap"}
+        </button>
+      </div>
+
+      {showHeatmap && view === "month" && <CalendarHeatmap data={heatmapData} />}
     </div>
   );
 };

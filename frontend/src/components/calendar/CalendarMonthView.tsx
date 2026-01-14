@@ -1,7 +1,6 @@
-import type { Entry, HeatDay, MonthDay } from "../../types/calendar";
+import type { Entry, MonthDay } from "../../types/calendar";
 import { CalendarDayCell } from "./CalendarDayCell";
 import { CalendarDots } from "./CalendarDots";
-import { CalendarHeatmap } from "./CalendarHeatmap";
 
 type Props = {
   monthGrid: MonthDay[];
@@ -14,9 +13,6 @@ type Props = {
   onDragOverDay: (day: string) => void;
   onDragLeaveDay: () => void;
   onDropDay: (day: string, payload: { entryId?: string; choreId?: string }) => void;
-
-  showHeatmap: boolean;
-  heatmapData: HeatDay[];
 };
 
 export const CalendarMonthView = ({
@@ -29,41 +25,35 @@ export const CalendarMonthView = ({
   onDragOverDay,
   onDragLeaveDay,
   onDropDay,
-  showHeatmap,
-  heatmapData,
 }: Props) => {
   return (
-    <>
-      <div className="month-grid">
-        {monthGrid.map((day) => {
-          if (!day.inMonth) {
-            return <div key={day.date} className="day-cell placeholder" aria-hidden="true" />;
-          }
+    <div className="month-grid">
+      {monthGrid.map((day) => {
+        if (!day.inMonth) {
+          return <div key={day.date} className="day-cell placeholder" aria-hidden="true" />;
+        }
 
-          const dayEntries = entriesByDay[day.date] || [];
-          const dayNumber = Number(day.date.slice(-2));
+        const dayEntries = entriesByDay[day.date] || [];
+        const dayNumber = Number(day.date.slice(-2));
 
-          return (
-            <CalendarDayCell
-              key={day.date}
-              day={day.date}
-              dayNumber={dayNumber}
-              muted={false}
-              selected={selectedDay === day.date}
-              dragOver={dragOverDay === day.date}
-              userColor={userColor}
-              onSelectDay={onSelectDay}
-              onDragOverDay={onDragOverDay}
-              onDragLeaveDay={onDragLeaveDay}
-              onDropDay={onDropDay}
-            >
-              <CalendarDots entries={dayEntries} />
-            </CalendarDayCell>
-          );
-        })}
-      </div>
-
-      {showHeatmap && <CalendarHeatmap data={heatmapData} />}
-    </>
+        return (
+          <CalendarDayCell
+            key={day.date}
+            day={day.date}
+            dayNumber={dayNumber}
+            muted={false}
+            selected={selectedDay === day.date}
+            dragOver={dragOverDay === day.date}
+            userColor={userColor}
+            onSelectDay={onSelectDay}
+            onDragOverDay={onDragOverDay}
+            onDragLeaveDay={onDragLeaveDay}
+            onDropDay={onDropDay}
+          >
+            <CalendarDots entries={dayEntries} />
+          </CalendarDayCell>
+        );
+      })}
+    </div>
   );
 };
