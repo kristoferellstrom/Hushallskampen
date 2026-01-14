@@ -1,4 +1,5 @@
 import type { Entry, HeatDay, Member, MonthDay, WeekDay } from "../../types/calendar";
+import { textColorForBackground } from "../../utils/palette";
 import { CalendarWeekdays } from "./CalendarWeekdays";
 import { CalendarMonthView } from "./CalendarMonthView";
 import { CalendarWeekView } from "./CalendarWeekView";
@@ -64,10 +65,16 @@ export const CalendarBoard = ({
   onDragLeaveDay,
   onDropDay,
 }: Props) => {
+  const arrowStyle = {
+    background: userColor,
+    color: textColorForBackground(userColor),
+    border: "none",
+  };
+
   return (
     <div className="card calendar-card">
       <div className="month-nav">
-        <button type="button" onClick={onPrevMonth}>
+        <button type="button" onClick={onPrevMonth} style={arrowStyle}>
           ←
         </button>
 
@@ -75,7 +82,7 @@ export const CalendarBoard = ({
           <strong>{monthLabel}</strong>
         </div>
 
-        <button type="button" onClick={onNextMonth}>
+        <button type="button" onClick={onNextMonth} style={arrowStyle}>
           →
         </button>
 
