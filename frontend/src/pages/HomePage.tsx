@@ -84,40 +84,37 @@ export const HomePage = () => {
           <nav className="nav-links">
             <a
               href="#kalender"
-              className={`nav-link ${selected === "kalender" ? "active" : ""}`}
+              className={`nav-link subtle ${selected === "kalender" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("kalender");
               }}
             >
               Kalender
-            </a>{" "}
-            ·{" "}
+            </a>
             <a
               href="#sysslor"
-              className={`nav-link ${selected === "sysslor" ? "active" : ""}`}
+              className={`nav-link subtle ${selected === "sysslor" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("sysslor");
               }}
             >
               Sysslor
-            </a>{" "}
-            ·{" "}
+            </a>
             <a
               href="#godkannanden"
-              className={`nav-link ${selected === "godkannanden" ? "active" : ""}`}
+              className={`nav-link subtle ${selected === "godkannanden" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("godkannanden");
               }}
             >
               Godkännanden
-            </a>{" "}
-            ·{" "}
+            </a>
             <a
               href="#statistik"
-              className={`nav-link ${selected === "statistik" ? "active" : ""}`}
+              className={`nav-link subtle ${selected === "statistik" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("statistik");

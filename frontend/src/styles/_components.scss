@@ -142,9 +142,16 @@ button {
     color: #0f172a;
     transition: background 0.15s ease, color 0.15s ease;
 
+    &.subtle {
+      font-weight: 500;
+      background: transparent;
+      color: #0f172a;
+    }
+
     &.active {
       background: var(--user-color, #e2e8f0);
       color: var(--user-color-fg, #0f172a);
+      font-weight: 700;
     }
   }
 }
