@@ -36,6 +36,10 @@ export const CalendarMonthView = ({
     <>
       <div className="month-grid">
         {monthGrid.map((day) => {
+          if (!day.inMonth) {
+            return <div key={day.date} className="day-cell placeholder" aria-hidden="true" />;
+          }
+
           const dayEntries = entriesByDay[day.date] || [];
           const dayNumber = Number(day.date.slice(-2));
 
@@ -44,7 +48,7 @@ export const CalendarMonthView = ({
               key={day.date}
               day={day.date}
               dayNumber={dayNumber}
-              muted={!day.inMonth}
+              muted={false}
               selected={selectedDay === day.date}
               dragOver={dragOverDay === day.date}
               userColor={userColor}
