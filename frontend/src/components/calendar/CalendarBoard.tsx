@@ -219,7 +219,7 @@ export const CalendarBoard = ({
       {showHeatmap && view === "month" && (
         <div className="heatmap-row">
           <CalendarHeatmap data={heatmapData} userColor={userColor} />
-          <p className="heatmap-note">Heatmap visar hur mycket som gjorts per dag (mörkare = mer poäng).</p>
+          <p className="heatmap-note">Heatmapen visar aktivitetsnivån per dag. Mörkare färg = fler utförda sysslor.</p>
         </div>
       )}
     </div>
