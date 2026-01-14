@@ -6,6 +6,7 @@ type Props = {
   entries: CalendarEntry[];
   loading: boolean;
   myPendingCount: number;
+  userColor: string;
 
   isEligible: (e: CalendarEntry) => boolean;
 
@@ -21,17 +22,27 @@ export const SelectedDaySidebar = ({
   entries,
   loading,
   myPendingCount,
+  userColor,
   isEligible,
   onSubmit,
   onDelete,
   onDragStartEntry,
   onDragEndEntry,
 }: Props) => {
+  const dateBadgeBg = userColor;
   return (
     <div className="card sidebar right">
-      <div className="row">
-        <strong>Vald dag</strong>
-        <span className="pill light">{selectedDay}</span>
+      <div className="row" style={{ justifyContent: "flex-end" }}>
+        <span
+          className="pill light"
+          style={{
+            background: dateBadgeBg,
+            color: textColorForBackground(dateBadgeBg),
+            border: "none",
+          }}
+        >
+          {selectedDay}
+        </span>
       </div>
 
       {entries.length === 0 && <p className="hint">Inga åtaganden denna dag.</p>}
