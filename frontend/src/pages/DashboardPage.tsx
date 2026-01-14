@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { colorPreview, textColorForBackground, fallbackColorForUser } from "../utils/palette";
 import { getHousehold } from "../api";
 
 export const DashboardPage = () => {
@@ -20,6 +21,15 @@ export const DashboardPage = () => {
     loadHousehold();
   }, [token]);
   
+  const navColor = (() => {
+    const c = user?.color;
+    if (!c) return "#e2e8f0";
+    if (c.startsWith("#")) return c;
+    const preview = colorPreview(c);
+    return preview || fallbackColorForUser(user?.id || "");
+  })();
+  const navText = textColorForBackground(navColor);
+
   return (
     <div className="shell">
       <header className="row">
@@ -32,9 +42,9 @@ export const DashboardPage = () => {
       </header>
 
       <div className="grid">
-        <div className="card">
+        <div className="card" style={{ background: navColor, color: navText }}>
           <h2>Navigering</h2>
-          <ul className="list">
+          <ul className="list nav-links">
             <li>
               <Link to="/chores">Sysslor</Link>
             </li>

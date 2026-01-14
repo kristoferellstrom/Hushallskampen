@@ -140,6 +140,20 @@ button {
   }
 }
 
+.nav-links {
+  li {
+    border: none;
+    background: transparent;
+    padding: 4px 0;
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: 700;
+    color: inherit;
+  }
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;
