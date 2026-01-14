@@ -11,6 +11,7 @@ import { CalendarStatusRow } from "../components/calendar/CalendarStatusRow";
 import { ChoreSidebar } from "../components/calendar/ChoreSidebar";
 import { CalendarBoard } from "../components/calendar/CalendarBoard";
 import { SelectedDaySidebar } from "../components/calendar/SelectedDaySidebar";
+import { colorPreview, fallbackColorForUser } from "../utils/palette";
 
 type Props = { embedded?: boolean };
 
@@ -51,11 +52,20 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     if (cid) actions.handleDropCreate(day, cid);
   };
 
+  const userColor = (() => {
+    const me = cal.members.find((m) => m._id === user?.id);
+    const base = user?.color || me?.color;
+    if (!base) return fallbackColorForUser(user?.id || "");
+    if (base.startsWith("#")) return base;
+    const preview = colorPreview(base);
+    return preview || fallbackColorForUser(user?.id || "");
+  })();
+
   const content = (
     <>
       <CalendarStatusRow status={cal.status} error={cal.error} myPendingCount={cal.myPendingCount} />
 
-      <div className="row calendar-row three-cols">
+      <div className="row calendar-row three-cols" style={{ ["--user-color" as any]: userColor }}>
         <ChoreSidebar
           chores={cal.chores}
           members={cal.members}
@@ -73,6 +83,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
           monthLabel={cal.monthLabel}
           loading={cal.loading}
           currentMonth={cal.currentMonth}
+          userColor={userColor}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
           onCopyLastWeek={actions.handleCopyLastWeek}
@@ -113,10 +124,15 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     </>
   );
 
-  if (embedded) return <section id="kalender">{content}</section>;
+  if (embedded)
+    return (
+      <section id="kalender" style={{ ["--user-color" as any]: userColor }}>
+        {content}
+      </section>
+    );
 
   return (
-    <div className="shell">
+    <div className="shell" style={{ ["--user-color" as any]: userColor }}>
       <Link className="back-link" to="/dashboard">
         ← Till dashboard
       </Link>

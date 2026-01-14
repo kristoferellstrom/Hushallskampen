@@ -6,6 +6,7 @@ type Props = {
   weekGrid: WeekDay[];
   entriesByDay: Record<string, Entry[]>;
   selectedDay: string;
+  userColor: string;
   onSelectDay: (day: string) => void;
 
   dragOverDay: string | null;
@@ -18,6 +19,7 @@ export const CalendarWeekView = ({
   weekGrid,
   entriesByDay,
   selectedDay,
+  userColor,
   onSelectDay,
   dragOverDay,
   onDragOverDay,
@@ -37,6 +39,7 @@ export const CalendarWeekView = ({
             dayNumber={dayNumber}
             selected={selectedDay === day.date}
             dragOver={dragOverDay === day.date}
+            userColor={userColor}
             onSelectDay={onSelectDay}
             onDragOverDay={onDragOverDay}
             onDragLeaveDay={onDragLeaveDay}

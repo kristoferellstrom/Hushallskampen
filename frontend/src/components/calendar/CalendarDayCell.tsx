@@ -7,6 +7,7 @@ type Props = {
   muted?: boolean;
   selected: boolean;
   dragOver: boolean;
+  userColor: string;
 
   onSelectDay: (day: string) => void;
   onDragOverDay: (day: string) => void;
@@ -22,6 +23,7 @@ export const CalendarDayCell = ({
   muted,
   selected,
   dragOver,
+  userColor,
   onSelectDay,
   onDragOverDay,
   onDragLeaveDay,
@@ -44,6 +46,14 @@ export const CalendarDayCell = ({
   return (
     <div
       className={`day-cell ${muted ? "muted" : ""} ${selected ? "selected" : ""} ${dragOver ? "drag-over" : ""}`}
+      style={
+        selected
+          ? {
+              borderColor: userColor,
+              boxShadow: `0 0 0 2px ${userColor}`,
+            }
+          : undefined
+      }
       onClick={() => onSelectDay(day)}
       onDragOver={handleDragOver}
       onDragLeave={onDragLeaveDay}

@@ -127,8 +127,8 @@
   }
 
   &.selected {
-    border-color: $color-primary;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    border-color: var(--user-color, $color-primary);
+    box-shadow: 0 0 0 2px var(--user-color, $color-primary);
   }
 
   &.drag-over {

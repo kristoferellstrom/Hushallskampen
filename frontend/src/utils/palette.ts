@@ -9,15 +9,51 @@ const palettes: Record<string, string[]> = {
   teal: ["#e4f7f7", "#c6ecec", "#8fd8d8", "#59c2c2", "#2a9b9b"],
 };
 
+const aliases: Record<string, string> = {
+  blå: "blue",
+  bla: "blue",
+  grön: "green",
+  groen: "green",
+  röd: "red",
+  rod: "red",
+  orange: "orange",
+  lila: "purple",
+  purple: "purple",
+  rosa: "pink",
+  gul: "yellow",
+  turkos: "teal",
+  turquoise: "teal",
+  aqua: "teal",
+  cyan: "teal",
+  mint: "teal",
+  teal: "teal",
+  blue: "blue",
+  green: "green",
+  red: "red",
+  pink: "pink",
+  yellow: "yellow",
+};
+
+function normalizeColorKey(input: string) {
+  const key = input.toLowerCase();
+  if (key.startsWith("#")) return key;
+  if (aliases[key]) return aliases[key];
+  return key;
+}
+
 export function shadeForPoints(color: string | undefined, points: number) {
-  const palette = color ? palettes[color] : null;
+  if (color && color.startsWith("#")) return color;
+  const key = color ? normalizeColorKey(color) : undefined;
+  const palette = key ? palettes[key] : null;
   const clamped = Math.min(Math.max(points, 1), 10);
   const idx = Math.ceil(clamped / 2) - 1;
   return palette ? palette[idx] : "#f8fafc";
 }
 
 export function colorPreview(color: string) {
-  const palette = palettes[color];
+  const key = normalizeColorKey(color);
+  if (key.startsWith("#")) return key;
+  const palette = palettes[key];
   if (!palette || palette.length === 0) return "#e2e8f0";
   return palette[Math.floor(palette.length / 2)];
 }

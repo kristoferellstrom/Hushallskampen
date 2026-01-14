@@ -10,6 +10,7 @@ type Props = {
   currentMonth: Date;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  userColor: string;
 
   members: Member[];
   filter: string;
@@ -43,6 +44,7 @@ export const CalendarBoard = ({
   loading,
   onPrevMonth,
   onNextMonth,
+  userColor,
   members,
   filter,
   onChangeFilter,
@@ -117,6 +119,7 @@ export const CalendarBoard = ({
           monthGrid={monthGrid}
           entriesByDay={entriesByDay}
           selectedDay={selectedDay}
+          userColor={userColor}
           onSelectDay={onSelectDay}
           dragOverDay={dragOverDay}
           onDragOverDay={onDragOverDay}
@@ -130,6 +133,7 @@ export const CalendarBoard = ({
           weekGrid={weekGrid}
           entriesByDay={entriesByDay}
           selectedDay={selectedDay}
+          userColor={userColor}
           onSelectDay={onSelectDay}
           dragOverDay={dragOverDay}
           onDragOverDay={onDragOverDay}
