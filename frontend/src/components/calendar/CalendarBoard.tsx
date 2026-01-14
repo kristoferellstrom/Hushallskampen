@@ -216,7 +216,12 @@ export const CalendarBoard = ({
         </button>
       </div>
 
-      {showHeatmap && view === "month" && <CalendarHeatmap data={heatmapData} />}
+      {showHeatmap && view === "month" && (
+        <div className="heatmap-row">
+          <CalendarHeatmap data={heatmapData} userColor={userColor} />
+          <p className="heatmap-note">Heatmap visar hur mycket som gjorts per dag (mörkare = mer poäng).</p>
+        </div>
+      )}
     </div>
   );
 };
