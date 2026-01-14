@@ -66,14 +66,14 @@ export const HomePage = () => {
   }, [selected, sectionIds]);
 
   return (
-    <div className="shell">
+    <div className="shell" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: activeFg }}>
       <header
         className="home-header"
         style={{
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "#f1f5f9",
+          background: "rgba(241, 245, 249, 0.92)",
           paddingBottom: "10px",
           marginBottom: "12px",
           boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
@@ -81,20 +81,13 @@ export const HomePage = () => {
       >
         <div className="home-left">
           <h1>Hej {user?.name || user?.email}</h1>
-          <nav style={{ background: "transparent", color: "#0f172a", padding: "0", borderRadius: "10px" }}>
+          <nav className="nav-links">
             <a
               href="#kalender"
+              className={`nav-link ${selected === "kalender" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("kalender");
-              }}
-              style={{
-                textDecoration: "none",
-                fontWeight: 700,
-                padding: "6px 10px",
-                borderRadius: "10px",
-                background: selected === "kalender" ? userColor : "transparent",
-                color: selected === "kalender" ? activeFg : "#0f172a",
               }}
             >
               Kalender
@@ -102,17 +95,10 @@ export const HomePage = () => {
             ·{" "}
             <a
               href="#sysslor"
+              className={`nav-link ${selected === "sysslor" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("sysslor");
-              }}
-              style={{
-                textDecoration: "none",
-                fontWeight: 700,
-                padding: "6px 10px",
-                borderRadius: "10px",
-                background: selected === "sysslor" ? userColor : "transparent",
-                color: selected === "sysslor" ? activeFg : "#0f172a",
               }}
             >
               Sysslor
@@ -120,17 +106,10 @@ export const HomePage = () => {
             ·{" "}
             <a
               href="#godkannanden"
+              className={`nav-link ${selected === "godkannanden" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("godkannanden");
-              }}
-              style={{
-                textDecoration: "none",
-                fontWeight: 700,
-                padding: "6px 10px",
-                borderRadius: "10px",
-                background: selected === "godkannanden" ? userColor : "transparent",
-                color: selected === "godkannanden" ? activeFg : "#0f172a",
               }}
             >
               Godkännanden
@@ -138,41 +117,23 @@ export const HomePage = () => {
             ·{" "}
             <a
               href="#statistik"
+              className={`nav-link ${selected === "statistik" ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToId("statistik");
               }}
-              style={{
-                textDecoration: "none",
-                fontWeight: 700,
-                padding: "6px 10px",
-                borderRadius: "10px",
-                background: selected === "statistik" ? userColor : "transparent",
-                color: selected === "statistik" ? activeFg : "#0f172a",
-              }}
             >
               Statistik
-            </a>{" "}
-            ·{" "}
-            <Link
-              to="/settings"
-              style={{
-                textDecoration: "none",
-                fontWeight: 700,
-                padding: "6px 10px",
-                borderRadius: "10px",
-                background: "transparent",
-                color: "#0f172a",
-              }}
-            >
-              Inställningar
-            </Link>
+            </a>
           </nav>
         </div>
         <div className="header-logo-large">
           <Logo />
         </div>
         <div className="header-actions">
+          <Link to="/settings" className="nav-link" style={{ marginRight: 8 }}>
+            Inställningar
+          </Link>
           <button className="logout-btn" onClick={logout}>
             Logga ut
           </button>

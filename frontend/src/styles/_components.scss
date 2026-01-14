@@ -120,6 +120,35 @@ button {
   right: 6px;
 }
 
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  .nav-links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 10px;
+    color: #0f172a;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &.active {
+      background: var(--user-color, #e2e8f0);
+      color: var(--user-color-fg, #0f172a);
+    }
+  }
+}
+
 .list {
   list-style: none;
   padding: 0;
