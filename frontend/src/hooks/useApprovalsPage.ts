@@ -19,7 +19,7 @@ export type Approval = {
 };
 
 export const useApprovalsPage = (historyLimit = 10) => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [approvals, setApprovals] = useState<Approval[]>([]);
   const [history, setHistory] = useState<Approval[]>([]);
   const [status, setStatus] = useState("");
@@ -35,8 +35,9 @@ export const useApprovalsPage = (historyLimit = 10) => {
     setError("");
     try {
       const res = await listApprovals(token);
-      setApprovals(res.approvals);
-      setStatus(`Att granska: ${res.approvals.length}`);
+      const filtered = res.approvals.filter((a: any) => a.submittedByUserId?._id !== user?.id);
+      setApprovals(filtered);
+      setStatus(`Att granska: ${filtered.length}`);
       const hist = await listApprovalHistory(token, historyLimit);
       setHistory(hist.approvals);
     } catch (err) {

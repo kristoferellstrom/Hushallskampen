@@ -7,12 +7,13 @@ import { StatsPage } from "./StatsPage";
 import { Logo } from "../components/Logo";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { useEffect, useState } from "react";
-import { listMembers } from "../api";
+import { listMembers, listApprovals } from "../api";
 
 export const HomePage = () => {
   const { user, token, logout } = useAuth();
   const [selected, setSelected] = useState<string>("kalender");
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+  const [approvalCount, setApprovalCount] = useState<number>(0);
   const sectionIds = ["kalender", "sysslor", "godkannanden", "statistik"];
 
   useEffect(() => {
@@ -28,6 +29,21 @@ export const HomePage = () => {
     };
     loadColor();
   }, [token, user?.id, user?.color]);
+
+  useEffect(() => {
+    const loadApprovals = async () => {
+      try {
+        if (!token) return;
+        const res = await listApprovals(token);
+        const mine = user?.id;
+        const pendingForMe = res.approvals.filter((a: any) => a.submittedByUserId?._id !== mine);
+        setApprovalCount(pendingForMe.length || 0);
+      } catch {
+        setApprovalCount(0);
+      }
+    };
+    loadApprovals();
+  }, [token, user?.id]);
 
   const userColor = (() => {
     const c = memberColor || user?.color;
@@ -111,6 +127,7 @@ export const HomePage = () => {
               }}
             >
               Godkännanden
+              {approvalCount > 0 && <span className="nav-badge">{approvalCount}</span>}
             </a>
             <a
               href="#statistik"

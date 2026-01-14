@@ -63,12 +63,13 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   const content = (
     <>
-      <CalendarStatusRow status={cal.status} error={cal.error} myPendingCount={cal.myPendingCount} />
+      <CalendarStatusRow status={cal.status} error={cal.error} />
 
       <div className="row calendar-row three-cols" style={{ ["--user-color" as any]: userColor }}>
         <ChoreSidebar
           chores={cal.chores}
           members={cal.members}
+          myPendingCount={cal.myPendingCount}
           selectedAssignee={cal.selectedAssignee}
           onChangeAssignee={cal.setSelectedAssignee}
           onDragStartChore={(choreId, e) => {

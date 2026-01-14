@@ -6,6 +6,7 @@ type Chore = { _id: string; title: string; defaultPoints: number };
 type Props = {
   chores: Chore[];
   members: Member[];
+  myPendingCount: number;
   selectedAssignee: string;
   onChangeAssignee: (id: string) => void;
 
@@ -16,6 +17,7 @@ type Props = {
 export const ChoreSidebar = ({
   chores,
   members,
+  myPendingCount,
   selectedAssignee,
   onChangeAssignee,
   onDragStartChore,
@@ -59,6 +61,12 @@ export const ChoreSidebar = ({
           );
         })}
       </div>
+
+      {myPendingCount > 0 && (
+        <div className="banner warning">
+          Du har {myPendingCount} syssla som väntar på godkännande. Max 5 kan ligga och vänta på granskning innan du markerar fler.
+        </div>
+      )}
 
       <p className="hint">Dra en syssla till en dag i kalendern.</p>
     </div>
