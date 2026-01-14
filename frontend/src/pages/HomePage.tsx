@@ -7,14 +7,30 @@ import { StatsPage } from "./StatsPage";
 import { Logo } from "../components/Logo";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { useEffect, useState } from "react";
+import { listMembers } from "../api";
 
 export const HomePage = () => {
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const [selected, setSelected] = useState<string>("kalender");
+  const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
   const sectionIds = ["kalender", "sysslor", "godkannanden", "statistik"];
 
+  useEffect(() => {
+    const loadColor = async () => {
+      try {
+        if (!token) return;
+        const res = await listMembers(token);
+        const me = res.members.find((m: any) => m._id === user.id);
+        if (me?.color) setMemberColor(me.color);
+      } catch {
+        /* ignore */
+      }
+    };
+    loadColor();
+  }, [token, user?.id, user?.color]);
+
   const userColor = (() => {
-    const c = user?.color;
+    const c = memberColor || user?.color;
     if (!c) return fallbackColorForUser(user?.id || "");
     if (c.startsWith("#")) return c;
     const preview = colorPreview(c.toLowerCase());
