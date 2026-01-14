@@ -70,6 +70,19 @@ export const CalendarBoard = ({
     color: textColorForBackground(userColor),
     border: "none",
   };
+  const toggleStyle = (isActive: boolean) =>
+    isActive
+      ? {
+          background: userColor,
+          color: textColorForBackground(userColor),
+          border: "none",
+        }
+      : {
+          background: "transparent",
+          color: userColor,
+          border: "none",
+          boxShadow: "none",
+        };
 
   return (
     <div className="card calendar-card">
@@ -106,10 +119,20 @@ export const CalendarBoard = ({
         </label>
 
         <div className="mode-toggle" style={{ marginLeft: "auto" }}>
-          <button type="button" className={view === "month" ? "active" : ""} onClick={() => onChangeView("month")}>
+          <button
+            type="button"
+            className={view === "month" ? "active" : ""}
+            style={toggleStyle(view === "month")}
+            onClick={() => onChangeView("month")}
+          >
             Månad
           </button>
-          <button type="button" className={view === "week" ? "active" : ""} onClick={() => onChangeView("week")}>
+          <button
+            type="button"
+            className={view === "week" ? "active" : ""}
+            style={toggleStyle(view === "week")}
+            onClick={() => onChangeView("week")}
+          >
             Vecka
           </button>
         </div>

@@ -134,7 +134,11 @@ export const HomePage = () => {
           <Link to="/settings" className="nav-link" style={{ marginRight: 8 }}>
             Inställningar
           </Link>
-          <button className="logout-btn" onClick={logout}>
+          <button
+            className="logout-btn"
+            onClick={logout}
+            style={{ background: userColor, color: activeFg, border: "none" }}
+          >
             Logga ut
           </button>
         </div>
