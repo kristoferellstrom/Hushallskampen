@@ -88,37 +88,37 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
     if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
 
     const { mode, weeklyPrizeText, name, rulesText, approvalTimeoutHours, targetShares } = req.body;
-    const updates: any = {};
+
+    const household = await Household.findById(user.householdId);
+    if (!household) return res.status(404).json({ error: "Household not found" });
+
     if (mode !== undefined) {
       if (!["competition", "equality"].includes(mode)) return res.status(400).json({ error: "Invalid mode" });
-      updates.mode = mode;
+      household.mode = mode;
     }
-    if (weeklyPrizeText !== undefined) updates.weeklyPrizeText = weeklyPrizeText;
-    if (name !== undefined) updates.name = name;
-    if (rulesText !== undefined) updates.rulesText = rulesText;
+    if (weeklyPrizeText !== undefined) household.weeklyPrizeText = weeklyPrizeText;
+    if (name !== undefined) household.name = name;
+    if (rulesText !== undefined) household.rulesText = rulesText;
     if (approvalTimeoutHours !== undefined) {
       const num = Number(approvalTimeoutHours);
       if (isNaN(num) || num < 0 || num > 168) return res.status(400).json({ error: "Invalid approval timeout" });
-      updates.approvalTimeoutHours = num;
+      household.approvalTimeoutHours = num;
     }
     if (Array.isArray(targetShares)) {
       const members = await User.find({ householdId: user.householdId }).select("_id");
       const memberIds = new Set(members.map((m) => String(m._id)));
       const cleaned: Array<{ userId: string; targetPct: number }> = [];
-      let sum = 0;
       for (const entry of targetShares) {
         const userId = String(entry.userId);
         const pct = Number(entry.targetPct);
         if (!memberIds.has(userId)) return res.status(400).json({ error: "Invalid member in targetShares" });
         if (isNaN(pct) || pct < 0 || pct > 100) return res.status(400).json({ error: "Invalid targetPct" });
         cleaned.push({ userId, targetPct: pct });
-        sum += pct;
       }
-      if (sum > 101 || sum < 99) return res.status(400).json({ error: "targetShares must sum to ~100" });
-      updates.targetShares = cleaned;
+      household.targetShares = cleaned;
     }
 
-    const household = await Household.findByIdAndUpdate(user.householdId, updates, { new: true });
+    await household.save();
     res.json({ household });
   } catch (err) {
     res.status(500).json({ error: "Could not update household" });

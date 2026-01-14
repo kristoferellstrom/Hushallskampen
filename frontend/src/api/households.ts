@@ -54,5 +54,5 @@ export async function updateHousehold(
     targetShares?: Array<{ userId: string; targetPct: number }>;
   },
 ) {
-  return request<{ household: any }>("/household/me", { method: "PATCH", token, body: data });
+  return request<{ household: any }>("/households/me", { method: "PATCH", token, body: data });
 }

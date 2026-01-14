@@ -42,7 +42,7 @@ export const useStats = (token: string | null | undefined) => {
 
       if (h.household?.targetShares) {
         const map: Record<string, number> = {};
-        h.household.targetShares.forEach((t: { userId: string; targetPct: number }) => (map[t.userId] = t.targetPct));
+        h.household.targetShares.forEach((t: { userId: any; targetPct: number }) => (map[String(t.userId)] = t.targetPct));
         setTargets(map);
       } else {
         setTargets({});

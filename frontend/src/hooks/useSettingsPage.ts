@@ -64,14 +64,15 @@ export const useSettingsPage = () => {
       setRulesText(res.household.rulesText || "");
       setApprovalTimeout(res.household.approvalTimeoutHours);
 
-      if (res.household.targetShares) {
+      if (res.household.targetShares && res.household.targetShares.length > 0) {
         const map: Record<string, number> = {};
         res.household.targetShares.forEach((t: any) => {
-          map[t.userId] = t.targetPct;
+          map[String(t.userId)] = t.targetPct;
         });
         setTargetShares(map);
       } else {
-        setTargetShares({});
+        // behåll tidigare om inget skickas tillbaka
+        setTargetShares((prev) => ({ ...prev }));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta hushåll");
@@ -112,7 +113,21 @@ export const useSettingsPage = () => {
     setError("");
     setUpdatingHousehold(true);
     try {
-      await updateHousehold(token, { name, mode, weeklyPrizeText: prize });
+      // Säkerställ att alla medlemmar skickas med, även om något fält är tomt
+      const targetShareArray = Object.entries(targetShares).map(([userId, targetPct]) => ({
+        userId,
+        targetPct: Number(targetPct),
+      }));
+
+      await updateHousehold(token, {
+        name,
+        mode,
+        weeklyPrizeText: prize,
+        rulesText,
+        approvalTimeoutHours: approvalTimeout,
+        targetShares: targetShareArray.length ? targetShareArray : undefined,
+      });
+      await loadInvite(); // hämta om hushållet så fälten speglar sparade värden
       setStatus("Hushållet uppdaterat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");
