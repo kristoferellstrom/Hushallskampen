@@ -24,10 +24,17 @@ export const ChoreSidebar = ({
   onDragEndChore,
 }: Props) => {
   const selectedMember = members.find((m) => m._id === selectedAssignee) || members[0];
+  const titleMap: Record<string, string> = {
+    dishes: "Disk",
+    vacuum: "Dammsugning",
+    "clean toilet": "Rengöra toalett",
+    "clean toilet ": "Rengöra toalett",
+    laundry: "Tvätt",
+  };
 
   return (
     <div className="card sidebar left">
-      <h3>Sysslor (pusselbitar)</h3>
+      <h3>Sysslor</h3>
 
       <label>
         Tilldela till
@@ -44,6 +51,11 @@ export const ChoreSidebar = ({
         {chores.map((c) => {
           const bg = shadeForPoints(selectedMember?.color, c.defaultPoints);
           const fg = textColorForBackground(bg);
+          const label = titleMap[c.title.toLowerCase()] || c.title;
+          const score = Math.min(Math.max(c.defaultPoints, 1), 10);
+          const invertedScore = 11 - score; // högre poäng -> ljusare, lägre poäng -> mörkare
+          const pillBg = shadeForPoints(selectedMember?.color, invertedScore);
+          const pillFg = textColorForBackground(pillBg);
 
           return (
             <div
@@ -54,9 +66,10 @@ export const ChoreSidebar = ({
               onDragEnd={onDragEndChore}
               style={{ background: bg, color: fg }}
             >
-              <strong>{c.title}</strong>
-              <p className="hint">{c._id.slice(-4)}</p>
-              <span className="pill">{c.defaultPoints}p</span>
+              <strong className="puzzle-title">{label}</strong>
+              <span className="pill puzzle-pill" style={{ background: pillBg, color: pillFg }}>
+                {c.defaultPoints}p
+              </span>
             </div>
           );
         })}
