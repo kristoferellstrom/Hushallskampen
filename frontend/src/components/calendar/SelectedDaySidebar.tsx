@@ -70,15 +70,16 @@ export const SelectedDaySidebar = ({
               onDragStart={(ev) => onDragStartEntry(e._id, ev)}
               onDragEnd={onDragEndEntry}
             >
-              <div>
-                <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
-                <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
-                  {e.assignedToUserId.name}
-                  {statusLabel ? ` — ${statusLabel}` : ""}
-                </p>
-              </div>
+              <div className="row" style={{ alignItems: "center", gap: 8 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <strong style={{ fontSize: "13px" }}>{e.choreId.title}</strong> ·{" "}
+                  <span style={{ fontSize: "12px", fontWeight: 700 }}>{e.choreId.defaultPoints}p</span>
+                  <p className="hint" style={{ color: textColor, opacity: 0.9, fontSize: "11px" }}>
+                    {e.assignedToUserId.name}
+                    {statusLabel ? ` — ${statusLabel}` : ""}
+                  </p>
+                </div>
 
-              <div className="actions">
                 {isEligible(e) && (
                   <button
                     type="button"
