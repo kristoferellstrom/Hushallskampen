@@ -70,42 +70,48 @@ export const SelectedDaySidebar = ({
               onDragStart={(ev) => onDragStartEntry(e._id, ev)}
               onDragEnd={onDragEndEntry}
             >
-              <div className="row" style={{ alignItems: "center", gap: 8 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <strong style={{ fontSize: "13px" }}>{e.choreId.title}</strong> ·{" "}
-                  <span style={{ fontSize: "12px", fontWeight: 700 }}>{e.choreId.defaultPoints}p</span>
-                  <p className="hint" style={{ color: textColor, opacity: 0.9, fontSize: "11px" }}>
+              <div className="mini-content">
+                <div className="mini-text">
+                  <div className="mini-title">
+                    <span className="mini-name" style={{ color: textColor }}>
+                      {e.choreId.title}
+                    </span>
+                    <span className="mini-points">{e.choreId.defaultPoints}p</span>
+                  </div>
+                  <p className="hint mini-assignee" style={{ color: textColor }}>
                     {e.assignedToUserId.name}
                     {statusLabel ? ` — ${statusLabel}` : ""}
                   </p>
                 </div>
 
                 {isEligible(e) && (
-                  <button
-                    type="button"
-                    className="tiny-btn"
-                    style={{
-                      background: userColor,
-                      color: textColorForBackground(userColor),
-                    }}
-                    onClick={() => onSubmit(e._id)}
-                    disabled={loading || myPendingCount >= 5}
-                  >
-                    {e.status === "rejected" ? "Markera igen" : "Klar"}
-                  </button>
+                  <div className="mini-actions">
+                    <button
+                      type="button"
+                      className="tiny-btn"
+                      style={{
+                        background: userColor,
+                        color: textColorForBackground(userColor),
+                      }}
+                      onClick={() => onSubmit(e._id)}
+                      disabled={loading || myPendingCount >= 5}
+                    >
+                      {e.status === "rejected" ? "Markera igen" : "Klar"}
+                    </button>
+                    {(e.status === "planned" || e.status === "rejected") && (
+                      <button
+                        type="button"
+                        className="tiny-btn ghost"
+                        onClick={() => onDelete(e._id)}
+                        disabled={loading}
+                        aria-label="Ta bort"
+                      >
+                        Ta bort
+                      </button>
+                    )}
+                  </div>
                 )}
 
-                {(e.status === "planned" || e.status === "rejected") && (
-                  <button
-                    type="button"
-                    className="icon-btn corner-btn"
-                    aria-label="Ta bort"
-                    onClick={() => onDelete(e._id)}
-                    disabled={loading}
-                  >
-                    🗑
-                  </button>
-                )}
               </div>
             </li>
           );

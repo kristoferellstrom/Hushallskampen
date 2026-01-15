@@ -196,6 +196,53 @@
   position: relative;
   overflow: hidden;
 
+  .mini-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .mini-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mini-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+  }
+
+  .mini-name {
+    font-size: 13px;
+    line-height: 1.2;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mini-points {
+    font-size: 12px;
+    font-weight: 800;
+    background: rgba(15, 23, 42, 0.05);
+    border-radius: 8px;
+    padding: 2px 8px;
+  }
+
+  .mini-assignee {
+    font-size: 11px;
+    margin: 2px 0 0;
+    line-height: 1.3;
+  }
+
+  .mini-actions {
+    display: inline-flex;
+    gap: 6px;
+    align-self: center;
+  }
+
   &.status-approved {
     border-color: rgba(15, 23, 42, 0.12);
 

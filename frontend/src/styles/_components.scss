@@ -34,6 +34,19 @@ button {
     box-shadow: none;
     opacity: 0.6;
   }
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.06);
+    color: $color-primary;
+    box-shadow: none;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+
+    &:hover:not(:disabled) {
+      box-shadow: none;
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+  }
 }
 
 .card {
