@@ -142,6 +142,7 @@
   flex-direction: column;
   gap: 6px;
   cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
 
   &.placeholder {
     background: transparent;
@@ -153,7 +154,8 @@
 
   &:hover {
     border-color: $color-border;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
   }
 
   &.muted {

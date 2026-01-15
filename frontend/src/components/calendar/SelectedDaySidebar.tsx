@@ -80,7 +80,16 @@ export const SelectedDaySidebar = ({
 
               <div className="actions">
                 {isEligible(e) && (
-                  <button type="button" onClick={() => onSubmit(e._id)} disabled={loading || myPendingCount >= 5}>
+                  <button
+                    type="button"
+                    className="tiny-btn"
+                    style={{
+                      background: userColor,
+                      color: textColorForBackground(userColor),
+                    }}
+                    onClick={() => onSubmit(e._id)}
+                    disabled={loading || myPendingCount >= 5}
+                  >
                     {e.status === "rejected" ? "Markera igen" : "Klar"}
                   </button>
                 )}
