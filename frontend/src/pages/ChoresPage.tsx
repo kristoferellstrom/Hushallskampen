@@ -9,7 +9,7 @@ import { useChoreForms } from "../hooks/useChoreForms";
 import { ChoreCreateForm } from "../components/chores/ChoreCreateForm";
 import { ChoreEditForm } from "../components/chores/ChoreEditForm";
 import { ChoreList } from "../components/chores/ChoreList";
-import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { colorPreview, fallbackColorForUser, textColorForBackground, shadeForPoints } from "../utils/palette";
 import { listMembers } from "../api";
 
 type Props = { embedded?: boolean };
@@ -121,6 +121,12 @@ export const ChoresPage = ({ embedded = false }: Props) => {
           onDelete={choresApi.remove}
           buttonColor={userColor}
           buttonTextColor={textColorForBackground(userColor)}
+          shadeFor={(points: number) => {
+            const base = memberColor || user?.color || userColor;
+            const bg = shadeForPoints(base, points);
+            const finalBg = bg || userColor;
+            return { bg: finalBg, fg: textColorForBackground(finalBg) };
+          }}
         />
       </div>
     </div>

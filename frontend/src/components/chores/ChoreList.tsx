@@ -9,9 +9,20 @@ type Props = {
   onDelete: (id: string) => void;
   buttonColor?: string;
   buttonTextColor?: string;
+  shadeFor: (points: number) => { bg: string; fg: string };
 };
 
-export const ChoreList = ({ chores, loading, status, error, onEdit, onDelete, buttonColor, buttonTextColor }: Props) => {
+export const ChoreList = ({
+  chores,
+  loading,
+  status,
+  error,
+  onEdit,
+  onDelete,
+  buttonColor,
+  buttonTextColor,
+  shadeFor,
+}: Props) => {
   return (
     <div className="card">
       <div className="row">
@@ -20,14 +31,15 @@ export const ChoreList = ({ chores, loading, status, error, onEdit, onDelete, bu
         {!status && !error && <p className="hint">Totalt: {chores.length} sysslor</p>}
       </div>
 
-      <ul className="list">
-        {chores.map((c) => (
-          <li key={c._id}>
-            <div className="row">
-              <div>
-                <strong>{c.title}</strong> — {c.defaultPoints}p
-                {c.description && <p className="hint">{c.description}</p>}
+      <div className="chores-badges">
+        {chores.map((c) => {
+          const { bg, fg } = shadeFor(c.defaultPoints);
+          return (
+            <div key={c._id} className="chore-badge" title={c.description || ""}>
+              <div className="chore-dot" style={{ background: bg, color: fg }}>
+                <span className="chore-points">{c.defaultPoints}p</span>
               </div>
+              <div className="chore-name">{c.title}</div>
 
               <div className="actions">
                 <button
@@ -68,9 +80,9 @@ export const ChoreList = ({ chores, loading, status, error, onEdit, onDelete, bu
                 </button>
               </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          );
+        })}
+      </div>
     </div>
   );
 };
