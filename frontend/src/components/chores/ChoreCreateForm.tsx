@@ -26,16 +26,22 @@ export const ChoreCreateForm = ({
   buttonTextColor,
 }: Props) => {
   return (
-    <form className="card" onSubmit={onSubmit}>
-      <h2>Ny syssla</h2>
+    <form className="card create-card" onSubmit={onSubmit}>
+      <div className="form-head">
+        <h2>Ny syssla</h2>
+        <p className="hint">Skapa uppgifter för hushållet</p>
+      </div>
 
-      <label>
-        Titel
+      <div className="field">
+        <label>Titel</label>
         <input value={newTitle} onChange={(e) => onChangeTitle(e.target.value)} required />
-      </label>
+      </div>
 
-      <label>
-        Poäng
+      <div className="field">
+        <div className="label-row">
+          <span>Poäng</span>
+          <span className="micro-hint">(1–10)</span>
+        </div>
         <input
           type="number"
           min={1}
@@ -44,12 +50,13 @@ export const ChoreCreateForm = ({
           onChange={(e) => onChangePoints(e.target.value)}
           required
         />
-      </label>
+      </div>
 
-      <label>
-        Beskrivning (valfritt)
-        <input value={newDescription} onChange={(e) => onChangeDescription(e.target.value)} />
-      </label>
+      <div className="field">
+        <label>Beskrivning (valfritt)</label>
+        <textarea rows={3} value={newDescription} onChange={(e) => onChangeDescription(e.target.value)} />
+        <span className="micro-hint">Kort text om vad som ska göras</span>
+      </div>
 
       <button
         type="submit"
