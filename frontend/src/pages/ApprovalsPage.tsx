@@ -1,14 +1,50 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Logo } from "../components/Logo";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
+import { useAuth } from "../context/AuthContext";
+import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { listMembers } from "../api";
 
 type Props = { embedded?: boolean };
 
 export const ApprovalsPage = ({ embedded = false }: Props) => {
   const { approvals, history, status, error, loading, comments, quickComments, setQuickComment, setComment, handleReview } = useApprovalsPage(10);
+  const { user, token } = useAuth();
+  const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const loadColor = async () => {
+      try {
+        if (!token || !user?.id) return;
+        const res = await listMembers(token);
+        const me = res.members.find((m: any) => m._id === user.id);
+        if (me?.color) setMemberColor(me.color);
+      } catch {
+        /* ignore */
+      }
+    };
+    loadColor();
+  }, [token, user?.id]);
+
+  const userColor = (() => {
+    const base = memberColor || user?.color;
+    if (!base) return fallbackColorForUser(user?.id || "");
+    if (base.startsWith("#")) return base;
+    return colorPreview(base) || fallbackColorForUser(user?.id || "");
+  })();
+  const userColorFg = textColorForBackground(userColor);
 
   const renderList = () => (
-    <div className="card">
+    <div
+      className="card hoverable approvals-card"
+      style={
+        {
+          ["--user-color" as any]: userColor,
+          ["--user-color-fg" as any]: userColorFg,
+        } as React.CSSProperties
+      }
+    >
       <div className="row">
         {status && <p className="status ok">{status}</p>}
         {error && <p className="status error">{error}</p>}
@@ -18,10 +54,12 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
           <li key={a._id}>
             <div className="row" style={{ alignItems: "flex-start" }}>
               <div>
-                <strong>{a.calendarEntryId.choreId?.title || "Syssla"}</strong> · {a.calendarEntryId.choreId?.defaultPoints ?? 0}p
+                <div className="item-head">
+                  <strong>{a.calendarEntryId.choreId?.title || "Syssla"}</strong>
+                  <span className="pill light">{a.calendarEntryId.choreId?.defaultPoints ?? 0}p</span>
+                  <span className="muted-date">{a.calendarEntryId.date.slice(0, 10)}</span>
+                </div>
                 <p className="hint">Av: {a.submittedByUserId.name}</p>
-                <p className="hint">Tilldelad: {a.calendarEntryId.assignedToUserId.name}</p>
-                <p className="hint">Datum: {a.calendarEntryId.date.slice(0, 10)}</p>
                 <div className="chips">
                   {quickComments.map((c) => (
                     <button key={c} type="button" className="chip" onClick={() => setQuickComment(a._id, c)} disabled={loading}>
@@ -38,10 +76,16 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                 />
               </div>
               <div className="actions">
-                <button type="button" disabled={loading} onClick={() => handleReview(a._id, "approve")}>
+                <button
+                  type="button"
+                  className="user-btn"
+                  style={{ background: userColor, color: userColorFg }}
+                  disabled={loading}
+                  onClick={() => handleReview(a._id, "approve")}
+                >
                   Godkänn
                 </button>
-                <button type="button" disabled={loading} onClick={() => handleReview(a._id, "reject")}>
+                <button type="button" className="danger-btn" disabled={loading} onClick={() => handleReview(a._id, "reject")}>
                   Avvisa
                 </button>
               </div>
@@ -54,7 +98,15 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   );
 
   const renderHistory = () => (
-    <div className="card">
+    <div
+      className="card hoverable approvals-card"
+      style={
+        {
+          ["--user-color" as any]: userColor,
+          ["--user-color-fg" as any]: userColorFg,
+        } as React.CSSProperties
+      }
+    >
       <div className="row">
         <div>
           <p className="eyebrow">Historik</p>
@@ -85,7 +137,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
 
   if (!embedded) {
     return (
-      <div className="shell">
+      <div className="shell" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}>
         <Link className="back-link" to="/dashboard">
           ← Till dashboard
         </Link>
@@ -98,13 +150,19 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
           </div>
         </header>
         {renderList()}
-        {renderHistory()}
+        <div className="approvals-stack">
+          {renderList()}
+          {renderHistory()}
+        </div>
       </div>
     );
   }
 
   return (
-    <section id="godkannanden">
+    <section
+      id="godkannanden"
+      style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}
+    >
       <header>
         <div>
           <p className="eyebrow">Godkännanden</p>
@@ -112,8 +170,10 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
           <p className="hint">Godkänn eller avvisa med kommentar</p>
         </div>
       </header>
-      {renderList()}
-      {renderHistory()}
+      <div className="approvals-stack">
+        {renderList()}
+        {renderHistory()}
+      </div>
     </section>
   );
 };

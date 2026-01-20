@@ -28,6 +28,91 @@
   margin-top: 8px;
 }
 
+.approvals-card ul.list li {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  padding: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  margin-bottom: 10px;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08), inset 4px 0 var(--user-color, $color-primary);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 22px rgba(15, 23, 42, 0.08);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -30% -10% 60% -30%;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4), transparent 55%),
+      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.25), transparent 60%),
+      radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.08), transparent 70%),
+      radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.18), transparent 55%),
+      radial-gradient(circle at 100% 0, rgba(255, 255, 255, 0.16), transparent 55%),
+      radial-gradient(circle at 0 100%, rgba(255, 255, 255, 0.1), transparent 55%),
+      radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.08), transparent 55%),
+      radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.12), transparent 65%),
+      radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.12), transparent 65%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.12), transparent 65%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent 70%),
+      radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.14), transparent 70%),
+      radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.14), transparent 70%),
+      radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.06), transparent 75%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06), transparent 75%);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .item-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+
+    .pill.light {
+      background: var(--user-color, $color-primary);
+      color: var(--user-color-fg, $color-surface);
+    }
+
+    .muted-date {
+      font-size: 12px;
+      color: rgba(15, 23, 42, 0.55);
+    }
+  }
+}
+
+.approvals-card {
+  border-color: rgba(15, 23, 42, 0.08);
+
+  button.user-btn {
+    background: var(--user-color, $color-primary);
+    color: var(--user-color-fg, $color-surface);
+  }
+
+  .chip {
+    border-color: var(--user-color, $color-primary);
+    color: var(--user-color, $color-primary);
+  }
+}
+
+.approvals-stack {
+  display: grid;
+  gap: 14px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
 .chores-layout {
   display: grid;
   grid-template-columns: minmax(220px, 0.6fr) 1.4fr;
