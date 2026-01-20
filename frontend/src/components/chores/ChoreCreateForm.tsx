@@ -9,6 +9,8 @@ type Props = {
   onChangePoints: (v: string) => void;
   onChangeDescription: (v: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  buttonColor?: string;
+  buttonTextColor?: string;
 };
 
 export const ChoreCreateForm = ({
@@ -20,6 +22,8 @@ export const ChoreCreateForm = ({
   onChangePoints,
   onChangeDescription,
   onSubmit,
+  buttonColor,
+  buttonTextColor,
 }: Props) => {
   return (
     <form className="card" onSubmit={onSubmit}>
@@ -46,7 +50,20 @@ export const ChoreCreateForm = ({
         <input value={newDescription} onChange={(e) => onChangeDescription(e.target.value)} />
       </label>
 
-      <button type="submit" disabled={loading}>
+      <button
+        type="submit"
+        className="user-btn"
+        style={
+          buttonColor
+            ? {
+                background: buttonColor,
+                color: buttonTextColor,
+                border: "none",
+              }
+            : undefined
+        }
+        disabled={loading}
+      >
         Skapa syssla
       </button>
     </form>

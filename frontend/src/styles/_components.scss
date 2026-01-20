@@ -13,6 +13,25 @@ button {
     background: $color-border;
     cursor: not-allowed;
   }
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.08);
+    color: $color-primary;
+    box-shadow: none;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+  }
+}
+
+.user-btn {
+  background: var(--user-color, $color-primary);
+  color: var(--user-color-fg, $color-surface);
+  border: none;
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--user-color, $color-primary);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+  }
 }
 
 .tiny-btn {

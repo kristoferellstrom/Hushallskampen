@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
@@ -9,13 +9,30 @@ import { useChoreForms } from "../hooks/useChoreForms";
 import { ChoreCreateForm } from "../components/chores/ChoreCreateForm";
 import { ChoreEditForm } from "../components/chores/ChoreEditForm";
 import { ChoreList } from "../components/chores/ChoreList";
+import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { listMembers } from "../api";
 
 type Props = { embedded?: boolean };
 
 export const ChoresPage = ({ embedded = false }: Props) => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const choresApi = useChores(token);
   const forms = useChoreForms();
+  const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const loadColor = async () => {
+      try {
+        if (!token || !user?.id) return;
+        const res = await listMembers(token);
+        const me = res.members.find((m: any) => m._id === user.id);
+        if (me?.color) setMemberColor(me.color);
+      } catch {
+        /* ignore */
+      }
+    };
+    loadColor();
+  }, [token, user?.id]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,9 +63,24 @@ export const ChoresPage = ({ embedded = false }: Props) => {
     if (!choresApi.error) forms.cancelEdit();
   };
 
+  const userColor = (() => {
+    const base = memberColor || user?.color;
+    if (!base) return fallbackColorForUser(user?.id || "");
+    if (base.startsWith("#")) return base;
+    return colorPreview(base) || fallbackColorForUser(user?.id || "");
+  })();
+
   const body = (
-    <>
-      <div className="grid">
+    <div
+      className="chores-layout"
+      style={
+        {
+          ["--user-color" as any]: userColor,
+          ["--user-color-fg" as any]: textColorForBackground(userColor),
+        } as React.CSSProperties
+      }
+    >
+      <div className="chores-left">
         <ChoreCreateForm
           loading={choresApi.loading}
           newTitle={forms.newTitle}
@@ -58,6 +90,8 @@ export const ChoresPage = ({ embedded = false }: Props) => {
           onChangePoints={forms.setNewPoints}
           onChangeDescription={forms.setNewDescription}
           onSubmit={handleCreate}
+          buttonColor={userColor}
+          buttonTextColor={textColorForBackground(userColor)}
         />
 
         {forms.editingId && (
@@ -67,53 +101,61 @@ export const ChoresPage = ({ embedded = false }: Props) => {
             editPoints={forms.editPoints}
             editDescription={forms.editDescription}
             onChangeTitle={forms.setEditTitle}
-            onChangePoints={forms.setEditPoints}
-            onChangeDescription={forms.setEditDescription}
-            onSubmit={handleUpdate}
-            onCancel={forms.cancelEdit}
-          />
-        )}
+          onChangePoints={forms.setEditPoints}
+          onChangeDescription={forms.setEditDescription}
+          onSubmit={handleUpdate}
+          onCancel={forms.cancelEdit}
+          buttonColor={userColor}
+          buttonTextColor={textColorForBackground(userColor)}
+        />
+      )}
       </div>
 
-      <ChoreList
-        chores={choresApi.chores}
-        loading={choresApi.loading}
-        status={choresApi.status}
-        error={choresApi.error}
-        onEdit={forms.startEdit}
-        onDelete={choresApi.remove}
-      />
-    </>
+      <div className="chores-right">
+        <ChoreList
+          chores={choresApi.chores}
+          loading={choresApi.loading}
+          status={choresApi.status}
+          error={choresApi.error}
+          onEdit={forms.startEdit}
+          onDelete={choresApi.remove}
+          buttonColor={userColor}
+          buttonTextColor={textColorForBackground(userColor)}
+        />
+      </div>
+    </div>
   );
 
   if (embedded) {
     return (
-      <section id="sysslor">
-        <header>
-          <div>
-            <p className="eyebrow">Sysslor</p>
-            <h2>Sysslebibliotek</h2>
-            <p className="hint">Lägg till, uppdatera eller ta bort sysslor i hushållet</p>
-          </div>
-        </header>
+      <section
+        id="sysslor"
+        style={
+          {
+            ["--user-color" as any]: userColor,
+            ["--user-color-fg" as any]: textColorForBackground(userColor),
+          } as React.CSSProperties
+        }
+      >
         {body}
       </section>
     );
   }
 
   return (
-    <div className="shell">
+    <div
+      className="shell"
+      style={
+        {
+          ["--user-color" as any]: userColor,
+          ["--user-color-fg" as any]: textColorForBackground(userColor),
+        } as React.CSSProperties
+      }
+    >
       <Link className="back-link" to="/dashboard">
         ← Till dashboard
       </Link>
       <Logo />
-      <header>
-        <div>
-          <p className="eyebrow">Sysslor</p>
-          <h1>Sysslebibliotek</h1>
-          <p className="hint">Lägg till, uppdatera eller ta bort sysslor i hushållet</p>
-        </div>
-      </header>
       {body}
     </div>
   );

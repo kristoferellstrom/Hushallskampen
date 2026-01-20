@@ -28,6 +28,50 @@
   margin-top: 8px;
 }
 
+.chores-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 1.4fr;
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chores-left {
+  display: grid;
+  gap: 12px;
+}
+
+.chores-right {
+  display: grid;
+}
+
+.chores-layout button {
+  background: var(--user-color, $color-primary);
+  color: var(--user-color-fg, $color-surface);
+  border: none;
+}
+
+.chores-layout button.ghost {
+  background: rgba(15, 23, 42, 0.08);
+  color: var(--user-color, $color-primary);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.user-btn {
+  background: var(--user-color, $color-primary) !important;
+  color: var(--user-color-fg, $color-surface) !important;
+  border: none;
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.08) !important;
+    color: var(--user-color, $color-primary) !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  }
+}
+
 .invite-pill {
   display: inline-block;
   padding: 6px 10px;

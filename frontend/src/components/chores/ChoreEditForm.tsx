@@ -10,6 +10,8 @@ type Props = {
   onChangeDescription: (v: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
+  buttonColor?: string;
+  buttonTextColor?: string;
 };
 
 export const ChoreEditForm = ({
@@ -22,6 +24,8 @@ export const ChoreEditForm = ({
   onChangeDescription,
   onSubmit,
   onCancel,
+  buttonColor,
+  buttonTextColor,
 }: Props) => {
   return (
     <form className="card" onSubmit={onSubmit}>
@@ -49,10 +53,36 @@ export const ChoreEditForm = ({
       </label>
 
       <div className="row">
-        <button type="submit" disabled={loading}>
+        <button
+          type="submit"
+          className="user-btn"
+          style={
+            buttonColor
+              ? {
+                  background: buttonColor,
+                  color: buttonTextColor,
+                  border: "none",
+                }
+              : undefined
+          }
+          disabled={loading}
+        >
           Spara ändring
         </button>
-        <button type="button" onClick={onCancel}>
+        <button
+          type="button"
+          className="user-btn ghost"
+          style={
+            buttonColor
+              ? {
+                  background: "rgba(15, 23, 42, 0.08)",
+                  color: buttonColor,
+                  border: "1px solid rgba(15, 23, 42, 0.12)",
+                }
+              : undefined
+          }
+          onClick={onCancel}
+        >
           Avbryt
         </button>
       </div>
