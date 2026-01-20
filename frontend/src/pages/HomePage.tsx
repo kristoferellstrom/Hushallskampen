@@ -107,16 +107,6 @@ export const HomePage = () => {
               Kalender
             </a>
             <a
-              href="#sysslor"
-              className={`nav-link subtle ${selected === "sysslor" ? "active" : ""}`}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToId("sysslor");
-              }}
-            >
-              Sysslor
-            </a>
-            <a
               href="#godkannanden"
               className={`nav-link subtle ${selected === "godkannanden" ? "active" : ""}`}
               onClick={(e) => {
@@ -126,6 +116,16 @@ export const HomePage = () => {
             >
               Godkännanden
               {approvalCount > 0 && <span className="nav-badge">{approvalCount}</span>}
+            </a>
+            <a
+              href="#sysslor"
+              className={`nav-link subtle ${selected === "sysslor" ? "active" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToId("sysslor");
+              }}
+            >
+              Sysslor
             </a>
             <a
               href="#statistik"
@@ -154,8 +154,8 @@ export const HomePage = () => {
       </header>
 
       <CalendarPage embedded />
-      <ChoresPage embedded />
       <ApprovalsPage embedded />
+      <ChoresPage embedded />
       <StatsPage embedded />
     </div>
   );
