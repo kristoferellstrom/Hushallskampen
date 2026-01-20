@@ -3,6 +3,7 @@ import type { DragEvent, ReactNode } from "react";
 type Props = {
   day: string;
   dayNumber: number;
+  weekdayLabel?: string;
 
   muted?: boolean;
   selected: boolean;
@@ -20,6 +21,7 @@ type Props = {
 export const CalendarDayCell = ({
   day,
   dayNumber,
+  weekdayLabel,
   muted,
   selected,
   dragOver,
@@ -59,7 +61,10 @@ export const CalendarDayCell = ({
       onDragLeave={onDragLeaveDay}
       onDrop={handleDrop}
     >
-      <div className="day-number">{dayNumber}</div>
+      <div className="day-number">
+        {weekdayLabel && <span className="weekday-label">{weekdayLabel}</span>}
+        {dayNumber}
+      </div>
       {children}
     </div>
   );

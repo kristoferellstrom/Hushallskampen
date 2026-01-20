@@ -139,7 +139,7 @@ export const CalendarBoard = ({
 
       </div>
 
-      <CalendarWeekdays />
+      {view === "month" && <CalendarWeekdays />}
 
       {view === "month" ? (
         <CalendarMonthView
