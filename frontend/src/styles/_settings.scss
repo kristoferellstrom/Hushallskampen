@@ -113,6 +113,11 @@
   margin: 0 auto;
 }
 
+.history-list {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
 .chores-layout {
   display: grid;
   grid-template-columns: minmax(220px, 0.6fr) 1.4fr;
