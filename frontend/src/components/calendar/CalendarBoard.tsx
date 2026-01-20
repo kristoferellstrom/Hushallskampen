@@ -88,7 +88,7 @@ export const CalendarBoard = ({
         };
 
   return (
-    <div className="card calendar-card">
+    <div className="card calendar-card hoverable">
       <div className="month-nav">
         <button type="button" onClick={onPrevMonth} style={arrowStyle}>
           ←
