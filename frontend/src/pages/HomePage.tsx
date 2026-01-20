@@ -4,7 +4,6 @@ import { ChoresPage } from "./ChoresPage";
 import { CalendarPage } from "./CalendarPage";
 import { ApprovalsPage } from "./ApprovalsPage";
 import { StatsPage } from "./StatsPage";
-import { Logo } from "../components/Logo";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { useEffect, useState } from "react";
 import { listMembers, listApprovals } from "../api";
@@ -82,7 +81,7 @@ export const HomePage = () => {
   }, [selected, sectionIds]);
 
   return (
-    <div className="shell" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: activeFg }}>
+    <div className="shell home-shell" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: activeFg }}>
       <header
         className="home-header"
         style={{
@@ -90,13 +89,12 @@ export const HomePage = () => {
           top: 0,
           zIndex: 50,
           background: "rgba(241, 245, 249, 0.92)",
-          paddingBottom: "10px",
+          padding: "6px 0",
           marginBottom: "12px",
           boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
         }}
       >
         <div className="home-left">
-          <h1>Hej {user?.name || user?.email}</h1>
           <nav className="nav-links">
             <a
               href="#kalender"
@@ -140,9 +138,6 @@ export const HomePage = () => {
               Statistik
             </a>
           </nav>
-        </div>
-        <div className="header-logo-large">
-          <Logo />
         </div>
         <div className="header-actions">
           <Link to="/settings" className="nav-link" style={{ marginRight: 8 }}>

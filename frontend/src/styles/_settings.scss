@@ -349,30 +349,23 @@
     flex: 0 0 auto;
     min-width: 280px;
     position: relative;
-    z-index: 1;
+    z-index: 3;
+  }
+
+  .nav-links {
+    position: relative;
+    z-index: 3;
   }
 
   .header-logo-large {
-    position: absolute;
-    left: 50%;
-    top: -180px;
-    transform: translateX(-50%);
-    z-index: 0;
-    pointer-events: none;
-
-    .logo-mark {
-      width: 520px;
-      max-width: 80vw;
-      height: auto;
-      margin: 0;
-    }
+    display: none;
   }
 
   .header-actions {
     flex: 0 0 auto;
     margin-left: auto;
     position: relative;
-    z-index: 1;
+    z-index: 3;
   }
 }
 
@@ -381,6 +374,10 @@
   align-items: center;
   gap: 12px;
   justify-content: flex-end;
+}
+
+.header-logo-standalone {
+  display: none;
 }
 
 .puzzle-grid {
