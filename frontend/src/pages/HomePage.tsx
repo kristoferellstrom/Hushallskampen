@@ -88,8 +88,8 @@ export const HomePage = () => {
           position: "sticky",
           top: 0,
           zIndex: 50,
-          background: "rgba(241, 245, 249, 0.92)",
-          padding: "6px 0",
+          background: "#ffffff",
+          padding: "0",
           marginBottom: "12px",
           boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
         }}

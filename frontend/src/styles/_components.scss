@@ -215,8 +215,9 @@ button {
   justify-content: space-between;
   gap: 16px;
   align-self: stretch;
-  background: #f1f5f9;
-  padding: 0;
+  background: #ffffff;
+  padding: 0 12px;
+  margin: 0;
 
   .nav-links {
     display: inline-flex;
