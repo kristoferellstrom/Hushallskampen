@@ -66,6 +66,14 @@ button {
       transform: translateY(-1px);
     }
   }
+
+  &.icon-only {
+    padding: 6px 8px;
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1;
+    border-radius: 6px;
+  }
 }
 
 .card {
