@@ -283,6 +283,15 @@ button {
   }
 }
 
+.logout-btn {
+  transition: transform 140ms ease, box-shadow 140ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
+  }
+}
+
 .list {
   list-style: none;
   padding: 0;

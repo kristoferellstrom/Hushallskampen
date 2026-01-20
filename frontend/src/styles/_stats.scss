@@ -1,10 +1,96 @@
 @use "./theme" as *;
 
 .stat-block {
-  border: 1px dashed #e2e8f0;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  border: none;
+  padding: 12px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f8fb 100%);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
+  }
+
+  > .hint {
+    margin: 0 0 8px;
+  }
+
+  ul.list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+      border-radius: 12px;
+      padding: 10px 12px;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08), 0 6px 14px rgba(15, 23, 42, 0.06);
+      font-weight: 700;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}
+
+.stats-card {
+  display: grid;
+  gap: 10px;
+
+  .stats-head h2 {
+    margin: 0;
+  }
+}
+
+.period-label {
+  margin-bottom: 6px !important;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.total-pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 13px;
+  margin: 4px 0 10px;
+}
+
+.user-row {
+  gap: 10px;
+  align-items: center;
+
+  .user-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    opacity: 0.55;
+  }
+
+  .user-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.1;
+  }
+
+  .user-name {
+    font-weight: 800;
+  }
+
+  .user-meta {
+    font-size: 12px;
+    opacity: 0.75;
+  }
+
+  .user-points {
+    margin-left: auto;
+    font-size: 16px;
+  }
 }
 
 .heatmap-grid {
@@ -53,4 +139,41 @@
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 8px;
   margin-top: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.leader-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  max-width: 900px;
+  margin: 0 auto 10px;
+}
+
+.leader-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f4f7fb 100%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  text-align: center;
+
+  .leader-name {
+    margin: 6px 0 2px;
+    font-weight: 800;
+    font-size: 16px;
+  }
+
+  .leader-points {
+    margin: 0;
+    font-weight: 700;
+    color: #0f172a;
+  }
 }
