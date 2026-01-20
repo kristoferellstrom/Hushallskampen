@@ -48,7 +48,7 @@ export const ChoreList = ({
         {!status && !error && <p className="hint">Totalt: {chores.length} sysslor</p>}
       </div>
 
-      <div className="chores-badges">
+      <div className="chores-badges inline-grid">
         {chores.map((c) => {
           const { bg, fg } = shadeFor(c.defaultPoints);
           return (

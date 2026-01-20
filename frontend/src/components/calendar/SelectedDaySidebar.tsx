@@ -123,7 +123,6 @@ export const SelectedDaySidebar = ({
                     )}
                   </div>
                 )}
-
               </div>
             </li>
           );

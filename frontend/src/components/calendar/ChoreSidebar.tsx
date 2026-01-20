@@ -33,7 +33,7 @@ export const ChoreSidebar = ({
   };
 
   return (
-    <div className="card sidebar left">
+    <div className="card sidebar left hoverable">
       <h3>Sysslor</h3>
 
       <label>
@@ -47,29 +47,24 @@ export const ChoreSidebar = ({
         </select>
       </label>
 
-      <div className="puzzle-grid">
+      <div className="chores-badges">
         {chores.map((c) => {
           const bg = shadeForPoints(selectedMember?.color, c.defaultPoints);
           const fg = textColorForBackground(bg);
           const label = titleMap[c.title.toLowerCase()] || c.title;
-          const score = Math.min(Math.max(c.defaultPoints, 1), 10);
-          const invertedScore = 11 - score; // högre poäng -> ljusare, lägre poäng -> mörkare
-          const pillBg = shadeForPoints(selectedMember?.color, invertedScore);
-          const pillFg = textColorForBackground(pillBg);
 
           return (
             <div
               key={c._id}
-              className="puzzle"
+              className="chore-badge"
               draggable
               onDragStart={(e) => onDragStartChore(c._id, e)}
               onDragEnd={onDragEndChore}
-              style={{ background: bg, color: fg }}
             >
-              <strong className="puzzle-title">{label}</strong>
-              <span className="pill puzzle-pill" style={{ background: pillBg, color: pillFg }}>
+              <div className="chore-dot" style={{ background: bg, color: fg }}>
                 {c.defaultPoints}p
-              </span>
+              </div>
+              <div className="chore-name">{label}</div>
             </div>
           );
         })}
