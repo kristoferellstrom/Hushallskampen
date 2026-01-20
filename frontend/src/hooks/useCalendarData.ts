@@ -55,7 +55,10 @@ export const useCalendarData = (token: string | null, user: UserLike) => {
   const heatmapData = useMemo(() => {
     return monthGrid.map((day) => {
       const dayEntries = entriesByDay[day.date] || [];
-      const totalPoints = dayEntries.reduce((sum, e) => sum + (e.choreId.defaultPoints || 0), 0);
+      const totalPoints = dayEntries.reduce(
+        (sum, e) => sum + (e.choreId?.defaultPoints ?? 0),
+        0,
+      );
       return { date: day.date, inMonth: day.inMonth, count: dayEntries.length, points: totalPoints };
     });
   }, [monthGrid, entriesByDay]);

@@ -37,7 +37,8 @@ export const ChoresPage = ({ embedded = false }: Props) => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const points = Number(forms.newPoints || 0);
+    const raw = Number(forms.newPoints || 0);
+    const points = Math.max(1, Math.min(10, raw));
 
     await choresApi.create({
       title: forms.newTitle,
@@ -52,7 +53,8 @@ export const ChoresPage = ({ embedded = false }: Props) => {
     e.preventDefault();
     if (!forms.editingId) return;
 
-    const points = Number(forms.editPoints || 0);
+    const raw = Number(forms.editPoints || 0);
+    const points = Math.max(1, Math.min(10, raw));
 
     await choresApi.update(forms.editingId, {
       title: forms.editTitle,

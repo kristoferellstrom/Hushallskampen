@@ -40,7 +40,8 @@ export const ChoreEditForm = ({
         Poäng
         <input
           type="number"
-          min={0}
+          min={1}
+          max={10}
           value={editPoints}
           onChange={(e) => onChangePoints(e.target.value)}
           required

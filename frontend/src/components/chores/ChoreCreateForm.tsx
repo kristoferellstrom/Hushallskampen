@@ -38,7 +38,8 @@ export const ChoreCreateForm = ({
         Poäng
         <input
           type="number"
-          min={0}
+          min={1}
+          max={10}
           value={newPoints}
           onChange={(e) => onChangePoints(e.target.value)}
           required

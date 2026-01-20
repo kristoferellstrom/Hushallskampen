@@ -18,7 +18,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
           <li key={a._id}>
             <div className="row" style={{ alignItems: "flex-start" }}>
               <div>
-                <strong>{a.calendarEntryId.choreId.title}</strong> · {a.calendarEntryId.choreId.defaultPoints}p
+                <strong>{a.calendarEntryId.choreId?.title || "Syssla"}</strong> · {a.calendarEntryId.choreId?.defaultPoints ?? 0}p
                 <p className="hint">Av: {a.submittedByUserId.name}</p>
                 <p className="hint">Tilldelad: {a.calendarEntryId.assignedToUserId.name}</p>
                 <p className="hint">Datum: {a.calendarEntryId.date.slice(0, 10)}</p>
@@ -66,9 +66,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
           <li key={h._id}>
             <div className="row" style={{ alignItems: "flex-start" }}>
               <div>
-                <strong>
-                  {h.calendarEntryId.choreId.title} · {h.calendarEntryId.choreId.defaultPoints}p
-                </strong>
+                <strong>{h.calendarEntryId.choreId?.title || "Syssla"} · {h.calendarEntryId.choreId?.defaultPoints ?? 0}p</strong>
                 <p className="hint">
                   {h.status === "approved" ? "Godkänd" : "Avvisad"} · {h.calendarEntryId.date.slice(0, 10)}
                 </p>
