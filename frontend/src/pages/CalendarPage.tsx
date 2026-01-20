@@ -132,6 +132,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
           loading={cal.loading}
           myPendingCount={cal.myPendingCount}
           userColor={userColor}
+          currentUserId={user?.id}
           isEligible={actions.isEligible}
           onSubmit={actions.handleSubmit}
           onDelete={actions.handleDelete}

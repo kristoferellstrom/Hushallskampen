@@ -8,6 +8,7 @@ type Props = {
   loading: boolean;
   myPendingCount: number;
   userColor: string;
+  currentUserId?: string | null;
 
   isEligible: (e: CalendarEntry) => boolean;
 
@@ -24,6 +25,7 @@ export const SelectedDaySidebar = ({
   loading,
   myPendingCount,
   userColor,
+  currentUserId,
   isEligible,
   onSubmit,
   onDelete,
@@ -191,7 +193,7 @@ export const SelectedDaySidebar = ({
                               {firstName(e.assignedToUserId.name)}
                             </p>
                           </div>
-                          {isEligible(e) && (
+                          {isEligible(e) && e.assignedToUserId?._id === currentUserId && (
                             <div
                               className="mini-actions"
                               style={{ width: "100%", justifyContent: "flex-end", marginTop: 18, gap: 12 }}
