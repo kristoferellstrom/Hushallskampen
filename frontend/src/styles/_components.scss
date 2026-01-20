@@ -68,11 +68,16 @@ button {
   }
 
   &.icon-only {
-    padding: 6px 8px;
+    padding: 4px 6px;
     min-width: 0;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1;
     border-radius: 6px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
   }
 }
 

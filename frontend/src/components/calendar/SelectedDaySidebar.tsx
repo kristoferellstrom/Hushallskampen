@@ -55,7 +55,10 @@ export const SelectedDaySidebar = ({
 
       <ul className="list compact">
         {plannedEntries.map((e) => {
-          const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+          const baseColor = e.assignedToUserId?.color;
+          const points = e.choreId?.defaultPoints ?? 0;
+          const safePoints = Number.isFinite(points) ? points : 0;
+          const shade = shadeForPoints(baseColor, safePoints);
           const textColor = textColorForBackground(shade);
           const statusLabel = e.status === "rejected" ? "Avvisad – gör om" : "";
 
@@ -74,9 +77,9 @@ export const SelectedDaySidebar = ({
                 <div className="mini-text">
                   <div className="mini-title">
                     <span className="mini-name" style={{ color: textColor }}>
-                      {e.choreId.title}
+                      {e.choreId?.title || "Syssla"}
                     </span>
-                    <span className="mini-points">{e.choreId.defaultPoints}p</span>
+                    <span className="mini-points">{safePoints}p</span>
                   </div>
                   <p className="hint mini-assignee" style={{ color: textColor }}>
                     {e.assignedToUserId.name}
@@ -136,7 +139,10 @@ export const SelectedDaySidebar = ({
               {showApproved && (
                 <ul className="list compact" style={{ marginTop: 6 }}>
                   {approvedEntries.map((e) => {
-                    const shade = shadeForPoints(e.assignedToUserId.color, e.choreId.defaultPoints);
+                    const baseColor = e.assignedToUserId?.color;
+                    const points = e.choreId?.defaultPoints ?? 0;
+                    const safePoints = Number.isFinite(points) ? points : 0;
+                    const shade = shadeForPoints(baseColor, safePoints);
                     const textColor = textColorForBackground(shade);
                     return (
                       <li
@@ -145,7 +151,7 @@ export const SelectedDaySidebar = ({
                         style={{ background: shade, color: textColor }}
                       >
                     <div>
-                      <strong>{e.choreId.title}</strong> · {e.choreId.defaultPoints}p
+                      <strong>{e.choreId?.title || "Syssla"}</strong> · {safePoints}p
                       <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
                         {e.assignedToUserId.name}
                       </p>
