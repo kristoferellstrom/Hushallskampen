@@ -53,7 +53,8 @@ export const CalendarWeekView = ({
               <div className="day-entries">
                 <ul className="list compact">
                 {dayEntries.map((en) => {
-                  const shade = shadeForPoints(en.assignedToUserId.color, en.choreId.defaultPoints);
+                  const pts = Number(en.choreId?.defaultPoints ?? 0);
+                  const shade = shadeForPoints(en.assignedToUserId?.color, pts);
                   const fg = textColorForBackground(shade);
                   const statusLabel = en.status === "rejected" ? "Avvisad – gör om" : "";
 
@@ -69,12 +70,12 @@ export const CalendarWeekView = ({
                         <div className="mini-text">
                           <div className="mini-title">
                             <span className="mini-name" style={{ color: fg }}>
-                              {en.choreId.title}
+                              {en.choreId?.title || "Syssla"}
                             </span>
-                            <span className="mini-points">{en.choreId.defaultPoints}p</span>
+                            <span className="mini-points">{pts}p</span>
                           </div>
                           <p className="hint mini-assignee" style={{ color: fg }}>
-                            {en.assignedToUserId.name}
+                            {en.assignedToUserId?.name || "-"}
                             {statusLabel ? ` — ${statusLabel}` : ""}
                           </p>
                         </div>
