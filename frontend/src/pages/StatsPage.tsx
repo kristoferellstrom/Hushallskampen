@@ -4,12 +4,14 @@ import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
 import { useStats } from "../hooks/useStats";
 import { StatsCard } from "../components/stats/StatsCard";
+import { useApprovalsPage } from "../hooks/useApprovalsPage";
 
 type Props = { embedded?: boolean };
 
 export const StatsPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
   const { weekly, monthly, error, balanceInfo, memberColors } = useStats(token);
+  const { monthlyChoreLeaders } = useApprovalsPage(200);
 
   const topFromRecord = (rec?: any) => {
     if (!rec) return null;
@@ -61,6 +63,25 @@ export const StatsPage = ({ embedded = false }: Props) => {
         <StatsCard title="Veckosummeringar" items={weekly} balanceInfo={balanceInfo} colorMap={memberColors} />
         <StatsCard title="Månads-summeringar" items={monthly} balanceInfo={balanceInfo} colorMap={memberColors} />
       </div>
+
+      {monthlyChoreLeaders.length > 0 && (
+        <div className="card stats-card" style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div className="stat-block">
+            <p className="eyebrow">Flest utförda per syssla (30 dagar)</p>
+            <ul className="list">
+              {monthlyChoreLeaders.map((row) => (
+                <li key={row.chore} className="row user-row">
+                  <div className="user-text">
+                    <span className="user-name">{row.chore}</span>
+                    <span className="user-meta">Flest av: {row.user}</span>
+                  </div>
+                  <strong className="user-points">{row.count} st</strong>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </>
   );
 

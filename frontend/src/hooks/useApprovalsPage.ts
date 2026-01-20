@@ -22,6 +22,10 @@ export const useApprovalsPage = (historyLimit = 10) => {
   const { token, user } = useAuth();
   const [approvals, setApprovals] = useState<Approval[]>([]);
   const [history, setHistory] = useState<Approval[]>([]);
+  const [lastMonthHistory, setLastMonthHistory] = useState<Approval[]>([]);
+  const [monthlyChoreLeaders, setMonthlyChoreLeaders] = useState<
+    { chore: string; user: string; count: number }[]
+  >([]);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,8 +42,32 @@ export const useApprovalsPage = (historyLimit = 10) => {
       const filtered = res.approvals.filter((a: any) => a.submittedByUserId?._id !== user?.id);
       setApprovals(filtered);
       setStatus(`Att granska: ${filtered.length}`);
-      const hist = await listApprovalHistory(token, historyLimit);
+      const hist = await listApprovalHistory(token, Math.max(historyLimit, 200));
       setHistory(hist.approvals);
+
+      const monthAgo = new Date();
+      monthAgo.setDate(monthAgo.getDate() - 30);
+      const recent = hist.approvals.filter((h: any) => {
+        const d = new Date(h.createdAt || h.calendarEntryId?.date || "");
+        return !isNaN(d.getTime()) && d >= monthAgo;
+      });
+      setLastMonthHistory(recent);
+
+      const choreMap: Record<string, { counts: Record<string, number>; names: Record<string, string> }> = {};
+      recent.forEach((h: any) => {
+        const title = h.calendarEntryId?.choreId?.title || "Syssla";
+        const uid = h.submittedByUserId?._id || "";
+        const uname = h.submittedByUserId?.name || "-";
+        if (!choreMap[title]) choreMap[title] = { counts: {}, names: {} };
+        choreMap[title].counts[uid] = (choreMap[title].counts[uid] || 0) + 1;
+        choreMap[title].names[uid] = uname;
+      });
+      const leaders = Object.entries(choreMap).map(([chore, data]) => {
+        const entries = Object.entries(data.counts).sort((a, b) => b[1] - a[1]);
+        const [uid, count] = entries[0] || ["", 0];
+        return { chore, user: data.names[uid] || "-", count };
+      });
+      setMonthlyChoreLeaders(leaders);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta godkännanden");
     }
@@ -85,6 +113,8 @@ export const useApprovalsPage = (historyLimit = 10) => {
   return {
     approvals,
     history,
+    lastMonthHistory,
+    monthlyChoreLeaders,
     status,
     error,
     loading,

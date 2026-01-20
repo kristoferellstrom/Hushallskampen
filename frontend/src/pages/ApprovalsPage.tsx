@@ -9,7 +9,19 @@ import { listMembers } from "../api";
 type Props = { embedded?: boolean };
 
 export const ApprovalsPage = ({ embedded = false }: Props) => {
-  const { approvals, history, status, error, loading, comments, quickComments, setQuickComment, setComment, handleReview } = useApprovalsPage(10);
+  const {
+    approvals,
+    history,
+    lastMonthHistory,
+    status,
+    error,
+    loading,
+    comments,
+    quickComments,
+    setQuickComment,
+    setComment,
+    handleReview,
+  } = useApprovalsPage(10);
   const { user, token } = useAuth();
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
 
@@ -144,10 +156,11 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
         <div>
           <p className="eyebrow">Historik</p>
           <h3>Senaste granskningar</h3>
+          <p className="hint">Visar senaste 30 dagarna</p>
         </div>
       </div>
       <ul className="list compact history-list">
-        {history.map((h) => {
+        {lastMonthHistory.map((h) => {
           const submitterColor =
             colorPreview(h.submittedByUserId?.color || userColor) ||
             h.submittedByUserId?.color ||
@@ -189,7 +202,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
             </li>
           );
         })}
-        {history.length === 0 && <p className="hint">Ingen historik ännu</p>}
+        {lastMonthHistory.length === 0 && <p className="hint">Ingen historik ännu</p>}
       </ul>
     </div>
   );
