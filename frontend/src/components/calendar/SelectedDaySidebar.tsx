@@ -30,11 +30,18 @@ export const SelectedDaySidebar = ({
   onDragStartEntry,
   onDragEndEntry,
 }: Props) => {
+  const firstName = (name?: string | null) => (name ? name.split(" ")[0] : "-");
   const [showApproved, setShowApproved] = useState(false);
   const dateBadgeBg = userColor;
-  const plannedEntries = useMemo(() => entries.filter((e) => e.status !== "approved"), [entries]);
+  const plannedEntries = useMemo(
+    () => entries.filter((e) => e.status !== "approved" && e.status !== "rejected"),
+    [entries],
+  );
   const approvedEntries = useMemo(() => entries.filter((e) => e.status === "approved"), [entries]);
+  const rejectedEntries = useMemo(() => entries.filter((e) => e.status === "rejected"), [entries]);
   const approvedCount = approvedEntries.length;
+  const rejectedCount = rejectedEntries.length;
+  const totalReviewed = approvedCount + rejectedCount;
 
   return (
     <div className="card sidebar right">
@@ -82,7 +89,7 @@ export const SelectedDaySidebar = ({
                     <span className="mini-points">{safePoints}p</span>
                   </div>
                   <p className="hint mini-assignee" style={{ color: textColor }}>
-                    {e.assignedToUserId.name}
+                    {firstName(e.assignedToUserId.name)}
                     {statusLabel ? ` — ${statusLabel}` : ""}
                   </p>
                 </div>
@@ -121,7 +128,7 @@ export const SelectedDaySidebar = ({
         })}
       </ul>
 
-      {approvedCount > 0 && (
+      {totalReviewed > 0 && (
         <div style={{ marginTop: 8 }}>
           <button
             type="button"
@@ -133,7 +140,7 @@ export const SelectedDaySidebar = ({
             }}
             onClick={() => setShowApproved((v) => !v)}
           >
-            {showApproved ? "Dölj klara" : `Visa klara (${approvedCount})`}
+            {showApproved ? "Dölj granskade" : `Visa granskade (${totalReviewed})`}
           </button>
 
               {showApproved && (
@@ -150,16 +157,66 @@ export const SelectedDaySidebar = ({
                         className="mini-item status-approved"
                         style={{ background: shade, color: textColor }}
                       >
-                    <div>
-                      <strong>{e.choreId?.title || "Syssla"}</strong> · {safePoints}p
-                      <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
-                        {e.assignedToUserId.name}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                        <div>
+                          <strong>{e.choreId?.title || "Syssla"}</strong> · {safePoints}p
+                          <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
+                            {firstName(e.assignedToUserId.name)}
+                          </p>
+                        </div>
+                      </li>
+                    );
+                  })}
+
+                  {rejectedEntries.map((e) => {
+                    const baseColor = e.assignedToUserId?.color;
+                    const points = e.choreId?.defaultPoints ?? 0;
+                    const safePoints = Number.isFinite(points) ? points : 0;
+                    const shade = shadeForPoints(baseColor, safePoints);
+                    const textColor = textColorForBackground(shade);
+
+                    return (
+                      <li
+                        key={e._id}
+                        className="mini-item status-rejected"
+                        style={{ background: shade, color: textColor }}
+                      >
+                        <div className="mini-content">
+                          <div className="mini-text">
+                            <div className="mini-title">
+                              <span className="mini-name" style={{ color: textColor }}>
+                                {e.choreId?.title || "Syssla"}
+                              </span>
+                            </div>
+                            <p className="hint" style={{ color: textColor, opacity: 0.9, fontSize: "12px" }}>
+                              {firstName(e.assignedToUserId.name)}
+                            </p>
+                          </div>
+                          {isEligible(e) && (
+                            <div
+                              className="mini-actions"
+                              style={{ width: "100%", justifyContent: "flex-end", marginTop: 18, gap: 12 }}
+                            >
+                              <button
+                                type="button"
+                                className="tiny-btn"
+                                style={{
+                                  background: userColor,
+                                  color: textColorForBackground(userColor),
+                                  boxShadow: "0 6px 16px rgba(0,0,0,0.18)",
+                                  fontWeight: 800,
+                                }}
+                                onClick={() => onSubmit(e._id)}
+                                disabled={loading || myPendingCount >= 5}
+                              >
+                                Gör om
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
           )}
         </div>
       )}
