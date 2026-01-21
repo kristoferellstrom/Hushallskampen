@@ -186,16 +186,16 @@
     text-align: center;
     overflow: hidden;
     height: 250px;
+    transition: transform 150ms ease, box-shadow 150ms ease;
 
     img {
-      margin-top: 30px;
+      margin-top: 10px;
       max-width: 100%;
-      height: 100px;
+      height: 140px;
       border-radius: 10px;
-      object-fit: cover;
+      object-fit: contain;
       object-position: center;
-      transform: scale(197%  
-          );
+      transform: scale(1.4);
     }
 
     figcaption {
@@ -211,6 +211,28 @@
         color: $color-muted-strong;
         font-size: 0.78rem;
       }
+    }
+
+    &.winner {
+      border: 2px solid #f5d37a;
+      box-shadow: 0 0 0 2px rgba(245, 211, 122, 0.25), 0 10px 20px rgba(15, 23, 42, 0.1);
+    }
+
+    &.muted {
+      filter: grayscale(0.75);
+      opacity: 0.5;
+    }
+
+    &.active {
+      filter: none;
+      opacity: 1;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 26px rgba(15, 23, 42, 0.12);
     }
   }
 }

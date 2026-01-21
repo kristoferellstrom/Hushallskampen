@@ -58,6 +58,14 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
+  const pickedColor =
+    memberColor ||
+    (user?.color ? colorPreview(user.color) || user.color : "") ||
+    "";
+  const baseTint = pickedColor || fallbackColorForUser(user?.id || "");
+  const tint = shadeForPoints(baseTint, 1);
+  const surface = tint;
+
   const renderList = () => (
     <div className="card hoverable approvals-card">
       <div className="row">
@@ -209,43 +217,56 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
 
   if (!embedded) {
     return (
-      <div className="shell" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}>
-        <Link className="back-link" to="/dashboard">
-          ← Till dashboard
-        </Link>
-        <Logo />
-        <header>
-          <div>
-            <p className="eyebrow">Godkännanden</p>
-            <h1>Granska klara sysslor</h1>
-            <p className="hint">Godkänn eller avvisa med kommentar</p>
-          </div>
-        </header>
-        {renderList()}
-        <div className="approvals-stack">
+      <div className="page-surface" style={{ background: surface }}>
+        <div
+          className="shell"
+          style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}
+        >
+          <Link className="back-link" to="/dashboard">
+            ← Till dashboard
+          </Link>
+          <Logo />
+          <header>
+            <div>
+              <p className="eyebrow">Godkännanden</p>
+              <h1>Granska klara sysslor</h1>
+              <p className="hint">Godkänn eller avvisa med kommentar</p>
+            </div>
+          </header>
           {renderList()}
-          {renderHistory()}
+          <div className="approvals-stack">
+            {renderList()}
+            {renderHistory()}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <section
-      id="godkannanden"
-      style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}
+    <div
+      className="page-surface"
+      style={{
+        background: surface,
+        width: "100vw",
+        marginLeft: "calc(-50vw + 50%)",
+        marginRight: "calc(-50vw + 50%)",
+        padding: "24px 0 32px",
+      }}
     >
-      <header>
-        <div>
-          <p className="eyebrow">Godkännanden</p>
-          <h2>Granska klara sysslor</h2>
-          <p className="hint">Godkänn eller avvisa med kommentar</p>
+      <section id="godkannanden" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}>
+        <header>
+          <div>
+            <p className="eyebrow">Godkännanden</p>
+            <h2>Granska klara sysslor</h2>
+            <p className="hint">Godkänn eller avvisa med kommentar</p>
+          </div>
+        </header>
+        <div className="approvals-stack">
+          {renderList()}
+          {renderHistory()}
         </div>
-      </header>
-      <div className="approvals-stack">
-        {renderList()}
-        {renderHistory()}
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };

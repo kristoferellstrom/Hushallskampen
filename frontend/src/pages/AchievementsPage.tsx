@@ -7,6 +7,7 @@ type Award = {
   title: string;
   description: string;
   image?: string;
+  month?: number;
 };
 
 const specialAwards: Award[] = [
@@ -20,6 +21,12 @@ const specialAwards: Award[] = [
   { title: "Månadens dammsugare", description: "Flest dammsugningar den här månaden.", image: "/badge/manadens_dammsugare.png" },
   { title: "Månadens tvättmästare", description: "Flest tvättar den här månaden.", image: "/badge/manadens_tvattmastare.png" },
   { title: "Månadens toalett", description: "Flest toalettrengöringar.", image: "/badge/manadesn_toalett.png" },
+  { title: "Månadens fixare", description: "Lagade eller fixade mest.", image: "/badge/manadens_fixare.png" },
+  { title: "Månadens handlare", description: "Styrde upp flest inköp.", image: "/badge/manadens_handlare.png" },
+  { title: "Månadens husdjurshjälte", description: "Bäst på djuransvar.", image: "/badge/manadens_husdjurshjälte.png" },
+  { title: "Månadens köksmästare", description: "Flest köksinsatser.", image: "/badge/manadens_koksmastare.png" },
+  { title: "Månadens latmask", description: "Skämtmärke – minst aktivitet.", image: "/badge/manadens_latmask.png" },
+  { title: "Månadens sopgeneral", description: "Bäst på sopor och återvinning.", image: "/badge/manadens_sopgeneral.png" },
 ];
 
 const monthAwards: Award[] = [
@@ -40,15 +47,27 @@ const monthAwards: Award[] = [
 export const AchievementsPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
   const { monthly } = useStats(token);
+  const today = new Date();
 
-  const getMonthWinner = (month: number) => {
+  const getMonthWinners = (month: number) => {
     const record = monthly.find((rec) => {
       const d = new Date(rec.periodStart);
-      return d.getMonth() === month;
+      return d.getMonth() === month && d.getFullYear() === today.getFullYear();
     });
-    if (!record || !record.totalsByUser.length) return null;
+    if (!record || !record.totalsByUser.length) return [];
     const sorted = [...record.totalsByUser].sort((a, b) => b.points - a.points);
-    return sorted[0]?.userId?.name || null;
+    const maxPoints = sorted[0]?.points ?? 0;
+    return record.totalsByUser
+      .filter((t) => t.points === maxPoints && maxPoints > 0)
+      .map((t) => t.userId?.name || "-");
+  };
+
+  const getMonthState = (month: number) => {
+    const start = new Date(today.getFullYear(), month, 1);
+    const end = new Date(today.getFullYear(), month + 1, 0);
+    if (end < today) return "past";
+    if (start > today) return "future";
+    return "current";
   };
 
   return (
@@ -87,20 +106,35 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
             </div>
             <h4 style={{ margin: "12px 0 6px" }}>Månadsbadges</h4>
             <div className="badge-grid">
-              {monthAwards.map((a) => (
-                <figure key={a.title} className="badge-card">
-                  {a.image && <img src={a.image} alt={a.title} />}
-                  <figcaption>
-                    <span className="hint" style={{ marginTop: 2 }}>
-                      {a.month !== undefined
-                        ? getMonthWinner(a.month)
-                          ? `Vinnare: ${getMonthWinner(a.month)}`
-                          : "Ingen vinnare än"
-                        : "Ingen vinnare än"}
-                    </span>
-                  </figcaption>
-                </figure>
-              ))}
+              {monthAwards.map((a) => {
+                const winners = a.month !== undefined ? getMonthWinners(a.month) : [];
+                const state = a.month !== undefined ? getMonthState(a.month) : "future";
+                const winnerText =
+                  state === "future"
+                    ? ""
+                    : state === "current"
+                      ? "Pågår"
+                      : winners.length
+                        ? `Vinnare: ${winners.join(", ")}`
+                        : "Ingen vinnare än";
+                return (
+                  <figure
+                    key={a.title}
+                    className={`badge-card ${winners.length && state === "past" ? "winner" : ""} ${
+                      state === "future" ? "muted" : ""
+                    } ${state === "current" ? "active" : ""}`}
+                  >
+                    {a.image && <img src={a.image} alt={a.title} />}
+                    {winnerText && (
+                      <figcaption>
+                        <span className="hint" style={{ marginTop: 2 }}>
+                          {winnerText}
+                        </span>
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -5,13 +5,13 @@ import { Logo } from "../components/Logo";
 import { useStats } from "../hooks/useStats";
 import { StatsCard } from "../components/stats/StatsCard";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
-import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { colorPreview, fallbackColorForUser, textColorForBackground, shadeForPoints } from "../utils/palette";
 import { useEffect, useMemo, useState } from "react";
 
 type Props = { embedded?: boolean };
 
 export const StatsPage = ({ embedded = false }: Props) => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { weekly, monthly, error, balanceInfo, memberColors } = useStats(token);
   const { monthlyChoreLeaders, yearChoreLeaders } = useApprovalsPage(200);
   const [weekIdx, setWeekIdx] = useState(0);
@@ -89,6 +89,11 @@ export const StatsPage = ({ embedded = false }: Props) => {
       },
     ];
   }, [monthly, currentYear]);
+
+  const ownColor = (user?.id && (memberColors as any)[user.id]) || user?.color || "";
+  const baseColor = ownColor || fallbackColorForUser(user?.id || "");
+  const bgBase = shadeForPoints(baseColor, 1); // ljusaste nyansen (poäng 1)
+  const surface = bgBase;
 
   const content = (
     <>
@@ -225,33 +230,55 @@ export const StatsPage = ({ embedded = false }: Props) => {
 
   if (embedded) {
     return (
-      <section id="statistik">
-        <header>
-          <div>
-            <p className="eyebrow">Statistik</p>
-            <h2>Poäng och balans</h2>
-            <p className="hint">Vecko- och månadssummor per hushåll</p>
-          </div>
-        </header>
-        {content}
-      </section>
+      <div
+        className="page-surface"
+        style={{
+          background: surface,
+          width: "100vw",
+          marginLeft: "calc(-50vw + 50%)",
+          marginRight: "calc(-50vw + 50%)",
+          padding: "24px 0 32px",
+        }}
+      >
+        <section id="statistik">
+          <header>
+            <div>
+              <p className="eyebrow">Statistik</p>
+              <h2>Poäng och balans</h2>
+              <p className="hint">Vecko- och månadssummor per hushåll</p>
+            </div>
+          </header>
+          {content}
+        </section>
+      </div>
     );
   }
 
   return (
-    <div className="shell">
-      <Link className="back-link" to="/dashboard">
-        ← Till dashboard
-      </Link>
-      <Logo />
-      <header>
-        <div>
-          <p className="eyebrow">Statistik</p>
-          <h1>Poäng och balans</h1>
-          <p className="hint">Vecko- och månadssummor per hushåll</p>
-        </div>
-      </header>
-      {content}
+    <div
+      className="page-surface"
+      style={{
+        background: surface,
+        width: "100vw",
+        marginLeft: "calc(-50vw + 50%)",
+        marginRight: "calc(-50vw + 50%)",
+        padding: "24px 0 32px",
+      }}
+    >
+      <div className="shell">
+        <Link className="back-link" to="/dashboard">
+          ← Till dashboard
+        </Link>
+        <Logo />
+        <header>
+          <div>
+            <p className="eyebrow">Statistik</p>
+            <h1>Poäng och balans</h1>
+            <p className="hint">Vecko- och månadssummor per hushåll</p>
+          </div>
+        </header>
+        {content}
+      </div>
     </div>
   );
 };

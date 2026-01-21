@@ -1,5 +1,12 @@
 @use "./theme" as *;
 
+.page-surface {
+  width: 100%;
+  background: #f8fafc;
+  padding: 24px 0 32px;
+  min-height: 100vh;
+}
+
 .shell {
   max-width: 1400px;
   margin: 0 auto;
