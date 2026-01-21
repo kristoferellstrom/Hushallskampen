@@ -11,7 +11,7 @@ type Props = { embedded?: boolean };
 export const ApprovalsPage = ({ embedded = false }: Props) => {
   const {
     approvals,
-    history,
+    history: _history,
     lastMonthHistory,
     status,
     error,

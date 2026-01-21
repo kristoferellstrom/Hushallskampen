@@ -18,9 +18,9 @@ export const HomePage = () => {
   useEffect(() => {
     const loadColor = async () => {
       try {
-        if (!token) return;
+        if (!token || !user?.id) return;
         const res = await listMembers(token);
-        const me = res.members.find((m: any) => m._id === user.id);
+        const me = res.members.find((m: any) => m._id === user?.id);
         if (me?.color) setMemberColor(me.color);
       } catch {
         /* ignore */

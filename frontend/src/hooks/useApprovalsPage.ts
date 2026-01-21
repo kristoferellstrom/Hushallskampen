@@ -4,8 +4,8 @@ import { useAuth } from "../context/AuthContext";
 
 export type Approval = {
   _id: string;
-  submittedByUserId: { _id: string; name: string; email: string };
-  reviewedByUserId?: { _id: string; name: string; email: string };
+  submittedByUserId: { _id: string; name: string; email: string; color?: string | null };
+  reviewedByUserId?: { _id: string; name: string; email: string; color?: string | null };
   status?: string;
   comment?: string;
   createdAt?: string;
@@ -24,7 +24,10 @@ export const useApprovalsPage = (historyLimit = 10) => {
   const [history, setHistory] = useState<Approval[]>([]);
   const [lastMonthHistory, setLastMonthHistory] = useState<Approval[]>([]);
   const [monthlyChoreLeaders, setMonthlyChoreLeaders] = useState<
-    { chore: string; user: string; count: number }[]
+    { chore: string; user: string; userId: string; count: number }[]
+  >([]);
+  const [yearChoreLeaders, setYearChoreLeaders] = useState<
+    { chore: string; user: string; userId: string; count: number }[]
   >([]);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
@@ -47,27 +50,56 @@ export const useApprovalsPage = (historyLimit = 10) => {
 
       const monthAgo = new Date();
       monthAgo.setDate(monthAgo.getDate() - 30);
+      const yearStart = new Date(new Date().getFullYear(), 0, 1);
       const recent = hist.approvals.filter((h: any) => {
         const d = new Date(h.createdAt || h.calendarEntryId?.date || "");
         return !isNaN(d.getTime()) && d >= monthAgo;
       });
       setLastMonthHistory(recent);
 
-      const choreMap: Record<string, { counts: Record<string, number>; names: Record<string, string> }> = {};
+      const choreMap: Record<
+        string,
+        { counts: Record<string, number>; names: Record<string, string>; ids: Record<string, string> }
+      > = {};
       recent.forEach((h: any) => {
         const title = h.calendarEntryId?.choreId?.title || "Syssla";
         const uid = h.submittedByUserId?._id || "";
         const uname = h.submittedByUserId?.name || "-";
-        if (!choreMap[title]) choreMap[title] = { counts: {}, names: {} };
+        if (!choreMap[title]) choreMap[title] = { counts: {}, names: {}, ids: {} };
         choreMap[title].counts[uid] = (choreMap[title].counts[uid] || 0) + 1;
         choreMap[title].names[uid] = uname;
+        choreMap[title].ids[uid] = uid;
       });
       const leaders = Object.entries(choreMap).map(([chore, data]) => {
         const entries = Object.entries(data.counts).sort((a, b) => b[1] - a[1]);
         const [uid, count] = entries[0] || ["", 0];
-        return { chore, user: data.names[uid] || "-", count };
+        return { chore, user: data.names[uid] || "-", userId: data.ids[uid] || uid, count };
       });
       setMonthlyChoreLeaders(leaders);
+
+      const yearRecent = hist.approvals.filter((h: any) => {
+        const d = new Date(h.createdAt || h.calendarEntryId?.date || "");
+        return !isNaN(d.getTime()) && d >= yearStart;
+      });
+      const yearMap: Record<
+        string,
+        { counts: Record<string, number>; names: Record<string, string>; ids: Record<string, string> }
+      > = {};
+      yearRecent.forEach((h: any) => {
+        const title = h.calendarEntryId?.choreId?.title || "Syssla";
+        const uid = h.submittedByUserId?._id || "";
+        const uname = h.submittedByUserId?.name || "-";
+        if (!yearMap[title]) yearMap[title] = { counts: {}, names: {}, ids: {} };
+        yearMap[title].counts[uid] = (yearMap[title].counts[uid] || 0) + 1;
+        yearMap[title].names[uid] = uname;
+        yearMap[title].ids[uid] = uid;
+      });
+      const yearLeaders = Object.entries(yearMap).map(([chore, data]) => {
+        const entries = Object.entries(data.counts).sort((a, b) => b[1] - a[1]);
+        const [uid, count] = entries[0] || ["", 0];
+        return { chore, user: data.names[uid] || "-", userId: data.ids[uid] || uid, count };
+      });
+      setYearChoreLeaders(yearLeaders);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta godkännanden");
     }
@@ -115,6 +147,7 @@ export const useApprovalsPage = (historyLimit = 10) => {
     history,
     lastMonthHistory,
     monthlyChoreLeaders,
+    yearChoreLeaders,
     status,
     error,
     loading,

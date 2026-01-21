@@ -9,24 +9,74 @@ type Props = {
   balanceInfo: (rec: StatItem) => BalanceInfo;
   emptyText?: string;
   colorMap?: Record<string, string>;
+  description?: string;
+  controls?: {
+    onPrev?: () => void;
+    onNext?: () => void;
+    canPrev?: boolean;
+    canNext?: boolean;
+    label?: string;
+  };
+  listClassName?: string;
+  hidePeriodLabel?: boolean;
+  hideTotal?: boolean;
+  stackedBalance?: boolean;
+  sortByPoints?: boolean;
 };
 
-export const StatsCard = ({ title, items, balanceInfo, colorMap = {}, emptyText = "Inga data ännu" }: Props) => {
+export const StatsCard = ({
+  title,
+  items,
+  balanceInfo,
+  colorMap = {},
+  emptyText = "Inga data ännu",
+  description,
+  controls,
+  listClassName,
+  hidePeriodLabel = false,
+  hideTotal = false,
+  stackedBalance = false,
+  sortByPoints = false,
+}: Props) => {
   return (
     <div className="card stats-card">
       <div className="stats-head">
-        <h2>{title}</h2>
+        <div className="stats-head-left">
+          <h2>{title}</h2>
+          {description && <p className="stat-desc">{description}</p>}
+        </div>
+        {controls && (
+          <div className="stat-controls">
+            <button
+              className="stat-nav-btn"
+              onClick={controls.onPrev}
+              disabled={!controls.canPrev}
+              aria-label="Föregående"
+            >
+              ←
+            </button>
+            <span className="stat-label">{controls.label}</span>
+            <button
+              className="stat-nav-btn"
+              onClick={controls.onNext}
+              disabled={!controls.canNext}
+              aria-label="Nästa"
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
 
       {items.map((rec) => (
         <div key={rec.periodStart} className="stat-block">
-          <p className="hint period-label">
-            {rec.periodStart.slice(0, 10)} – {rec.periodEnd.slice(0, 10)}
-          </p>
+          {!hidePeriodLabel && (
+            <p className="hint period-label">
+              {rec.periodStart.slice(0, 10)} – {rec.periodEnd.slice(0, 10)}
+            </p>
+          )}
 
-          <BalanceRow rec={rec} balanceInfo={balanceInfo} />
-
-          {(() => {
+          {!hideTotal && (() => {
             const total = rec.totalsByUser.reduce((sum, t) => sum + t.points, 0);
             return (
               <div className="pill total-pill">
@@ -35,8 +85,11 @@ export const StatsCard = ({ title, items, balanceInfo, colorMap = {}, emptyText 
             );
           })()}
 
-          <ul className="list">
-            {rec.totalsByUser.map((t) => {
+          <ul className={`list ${listClassName || ""}`}>
+            {(sortByPoints
+              ? [...rec.totalsByUser].sort((a, b) => b.points - a.points)
+              : rec.totalsByUser
+            ).map((t) => {
               const bg = (() => {
                 const explicit = t.userId.color || colorMap[t.userId._id];
                 if (!explicit) return fallbackColorForUser(t.userId._id);
@@ -61,6 +114,8 @@ export const StatsCard = ({ title, items, balanceInfo, colorMap = {}, emptyText 
               );
             })}
           </ul>
+
+          <BalanceRow rec={rec} balanceInfo={balanceInfo} stacked={stackedBalance} hideTotal={hideTotal} />
         </div>
       ))}
 
