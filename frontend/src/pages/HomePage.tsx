@@ -165,7 +165,9 @@ export const HomePage = () => {
       </header>
 
       <CalendarPage embedded />
-      <ApprovalsPage embedded />
+      <div style={{ marginTop: 64 }}>
+        <ApprovalsPage embedded />
+      </div>
       <ChoresPage embedded />
       <StatsPage embedded />
       <AchievementsPage embedded />

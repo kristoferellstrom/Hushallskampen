@@ -69,7 +69,14 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   const renderList = () => (
     <div className="card hoverable approvals-card">
       <div className="row">
-        {status && <p className="status ok">{status}</p>}
+        {status && (
+          <p
+            className="status ok"
+            style={status === "Inga att granska just nu" ? { color: "#0f172a" } : undefined}
+          >
+            {status}
+          </p>
+        )}
         {error && <p className="status error">{error}</p>}
       </div>
       <ul className="list">
@@ -153,7 +160,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
           </li>
           );
         })}
-        {approvals.length === 0 && <p className="hint">Inga att granska just nu</p>}
       </ul>
     </div>
   );

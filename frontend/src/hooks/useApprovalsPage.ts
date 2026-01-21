@@ -44,7 +44,7 @@ export const useApprovalsPage = (historyLimit = 10) => {
       const res = await listApprovals(token);
       const filtered = res.approvals.filter((a: any) => a.submittedByUserId?._id !== user?.id);
       setApprovals(filtered);
-      setStatus(`Att granska: ${filtered.length}`);
+      setStatus(filtered.length > 0 ? `Att granska: ${filtered.length}` : "Inga att granska just nu");
       const hist = await listApprovalHistory(token, Math.max(historyLimit, 200));
       setHistory(hist.approvals);
 
