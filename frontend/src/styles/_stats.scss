@@ -40,14 +40,14 @@
 
 .pie-wrap {
   display: grid;
-  grid-template-columns: 165px 150px auto;
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
+  justify-content: space-between;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  max-width: 640px;
 }
 
 .pie-figure {
@@ -73,6 +73,8 @@
   margin: 0;
   display: grid;
   gap: 6px;
+  justify-self: center;
+  width: 100%;
 }
 
 .pie-legend li {
@@ -92,18 +94,26 @@
 .legend-text {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   line-height: 1.2;
-  white-space: nowrap;
+  min-width: 0;
 }
 
 .legend-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 500;
   font-size: 13px;
   color: #0f172a;
 }
 
 .legend-meta {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 12px;
   color: #475569;
 }
