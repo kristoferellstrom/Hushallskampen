@@ -67,8 +67,8 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
       <ul className="list">
         {approvals.map((a) => {
           const submitterColor =
-            colorPreview(a.submittedByUserId?.color || userColor) ||
-            a.submittedByUserId?.color ||
+            colorPreview((a.submittedByUserId as any)?.color || userColor) ||
+            (a.submittedByUserId as any)?.color ||
             userColor;
 
           return (
@@ -87,7 +87,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                   <strong>{a.calendarEntryId.choreId?.title || "Syssla"}</strong>
                   {(() => {
                     const pts = a.calendarEntryId.choreId?.defaultPoints ?? 0;
-                    const baseColor = a.submittedByUserId?.color || userColor;
+                    const baseColor = (a.submittedByUserId as any)?.color || userColor;
                     const pillBg = shadeForPoints(baseColor, pts) || baseColor || userColor;
                     const pillFg = textColorForBackground(pillBg);
                     return (
@@ -162,12 +162,12 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
       <ul className="list compact history-list">
         {lastMonthHistory.map((h) => {
           const submitterColor =
-            colorPreview(h.submittedByUserId?.color || userColor) ||
-            h.submittedByUserId?.color ||
+            colorPreview((h.submittedByUserId as any)?.color || userColor) ||
+            (h.submittedByUserId as any)?.color ||
             userColor;
           const reviewerColor =
-            colorPreview(h.reviewedByUserId?.color || userColor) ||
-            h.reviewedByUserId?.color ||
+            colorPreview((h.reviewedByUserId as any)?.color || userColor) ||
+            (h.reviewedByUserId as any)?.color ||
             userColor;
           const pillBg = shadeForPoints(submitterColor, h.calendarEntryId.choreId?.defaultPoints ?? 0) || submitterColor;
           const pillFg = textColorForBackground(pillBg);

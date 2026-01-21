@@ -45,27 +45,6 @@ export const StatsCard = ({
           <h2>{title}</h2>
           {description && <p className="stat-desc">{description}</p>}
         </div>
-        {controls && (
-          <div className="stat-controls">
-            <button
-              className="stat-nav-btn"
-              onClick={controls.onPrev}
-              disabled={!controls.canPrev}
-              aria-label="Föregående"
-            >
-              ←
-            </button>
-            <span className="stat-label">{controls.label}</span>
-            <button
-              className="stat-nav-btn"
-              onClick={controls.onNext}
-              disabled={!controls.canNext}
-              aria-label="Nästa"
-            >
-              →
-            </button>
-          </div>
-        )}
       </div>
 
       {items.map((rec) => (
@@ -74,6 +53,28 @@ export const StatsCard = ({
             <p className="hint period-label">
               {rec.periodStart.slice(0, 10)} – {rec.periodEnd.slice(0, 10)}
             </p>
+          )}
+
+          {controls && (
+            <div className="stat-controls block-controls">
+              <button
+                className="stat-nav-btn"
+                onClick={controls.onPrev}
+                disabled={!controls.canPrev}
+                aria-label="Föregående"
+              >
+                ←
+              </button>
+              <span className="stat-label">{controls.label}</span>
+              <button
+                className="stat-nav-btn"
+                onClick={controls.onNext}
+                disabled={!controls.canNext}
+                aria-label="Nästa"
+              >
+                →
+              </button>
+            </div>
           )}
 
           {!hideTotal && (() => {

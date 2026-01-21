@@ -46,7 +46,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
     const map: Record<string, { name: string; points: number }> = {};
     monthly.forEach((rec) =>
       rec.totalsByUser.forEach((t) => {
-        const id = t.userId?._id || t.userId;
+        const id = t.userId?._id || String((t.userId as any)?._id || (t.userId as any));
         if (!map[id]) map[id] = { name: t.userId?.name || "-", points: 0 };
         map[id].points += t.points;
       }),
@@ -72,7 +72,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
     const map: Record<string, { name: string; points: number }> = {};
     monthly.forEach((rec) =>
       rec.totalsByUser.forEach((t) => {
-        const id = t.userId?._id || t.userId;
+        const id = t.userId?._id || String((t.userId as any)?._id || (t.userId as any));
         if (!map[id]) map[id] = { name: t.userId?.name || "-", points: 0 };
         map[id].points += t.points;
       }),
@@ -115,7 +115,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
       <div className="stats-grid">
         <StatsCard
           title="Veckosummeringar"
-          description="Summerar poäng per hushållsmedlem för aktuell vecka. Bläddra för tidigare veckor för att se hur fördelningen förändras."
+          description="Summerar poäng per hushållsmedlem för aktuell vecka. Bläddra för tidigare veckor för att se hur fördelningen förändras och om hushållet närmar sig era mål över tid."
           items={weekSlice}
           balanceInfo={balanceInfo}
           colorMap={memberColors}
