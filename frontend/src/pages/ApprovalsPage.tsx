@@ -33,7 +33,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
         const me = res.members.find((m: any) => m._id === user.id);
         if (me?.color) setMemberColor(me.color);
       } catch {
-        /* ignore */
       }
     };
     loadColor();
@@ -264,7 +263,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
         <header>
           <div>
             <p className="eyebrow">Godkännanden</p>
-            <h2>Granska klara sysslor</h2>
             <p className="hint">Godkänn eller avvisa med kommentar</p>
           </div>
         </header>

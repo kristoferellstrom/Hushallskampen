@@ -39,8 +39,8 @@ export const SettingsPage = () => {
     handleColor,
     setTargetShareForMember,
   } = useSettingsPage();
-  const earnedMonthlyBadges: string[] = []; // TODO: koppla mot verkliga månadspriser
-  const earnedSpecialBadges: string[] = []; // TODO: koppla mot verkliga specialpriser
+  const earnedMonthlyBadges: string[] = []; 
+  const earnedSpecialBadges: string[] = []; 
 
   return (
     <div className="shell">

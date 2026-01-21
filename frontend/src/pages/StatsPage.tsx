@@ -244,7 +244,6 @@ export const StatsPage = ({ embedded = false }: Props) => {
           <header>
             <div>
               <p className="eyebrow">Statistik</p>
-              <h2>Poäng och balans</h2>
               <p className="hint">Vecko- och månadssummor per hushåll</p>
             </div>
           </header>
