@@ -62,7 +62,7 @@ export const SelectedDaySidebar = ({
 
       {plannedEntries.length === 0 && <p className="hint">Inga åtaganden denna dag.</p>}
 
-      <ul className="list compact">
+      <ul className="list compact planned-list">
         {plannedEntries.map((e) => {
           const baseColor = e.assignedToUserId?.color;
           const points = e.choreId?.defaultPoints ?? 0;
@@ -145,7 +145,7 @@ export const SelectedDaySidebar = ({
           </button>
 
               {showApproved && (
-                <ul className="list compact" style={{ marginTop: 6 }}>
+                <ul className="list compact approved-list" style={{ marginTop: 6 }}>
                   {approvedEntries.map((e) => {
                     const baseColor = e.assignedToUserId?.color;
                     const points = e.choreId?.defaultPoints ?? 0;

@@ -658,6 +658,18 @@
   }
 }
 
+.approved-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.planned-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .invite-wrapper {
   margin-top: 8px;
 }

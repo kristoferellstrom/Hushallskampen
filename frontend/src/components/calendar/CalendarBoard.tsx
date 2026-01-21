@@ -222,6 +222,8 @@ export const CalendarBoard = ({
           <p className="heatmap-note">Heatmapen visar aktivitetsnivån per dag. Mörkare färg = fler utförda sysslor.</p>
         </div>
       )}
+
+      
     </div>
   );
 };

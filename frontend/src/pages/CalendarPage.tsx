@@ -87,7 +87,6 @@ export const CalendarPage = ({ embedded = false }: Props) => {
         <ChoreSidebar
           chores={cal.chores}
           members={cal.members}
-          myPendingCount={cal.myPendingCount}
           selectedAssignee={cal.selectedAssignee}
           onChangeAssignee={cal.setSelectedAssignee}
           onDragStartChore={(choreId, e) => {
@@ -98,33 +97,42 @@ export const CalendarPage = ({ embedded = false }: Props) => {
           onDragEndChore={drag.resetDrag}
         />
 
-        <CalendarBoard
-          monthLabel={cal.monthLabel}
-          loading={cal.loading}
-          currentMonth={cal.currentMonth}
-          userColor={userColor}
-          onPrevMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
-          onCopyLastWeek={actions.handleCopyLastWeek}
-          onManualAdd={handleManualAdd}
-          members={cal.members}
-          filter={cal.filter}
-          onChangeFilter={cal.setFilter}
-          view={cal.view}
-          onChangeView={cal.setView}
-          showHeatmap={cal.showHeatmap}
-          onToggleHeatmap={() => cal.setShowHeatmap((v) => !v)}
-          selectedDay={cal.selectedDay}
-          onSelectDay={cal.setSelectedDay}
-          monthGrid={cal.monthGrid}
-          weekGrid={cal.weekGrid}
-          entriesByDay={cal.entriesByDay}
-          heatmapData={cal.heatmapData}
-          dragOverDay={drag.dragOverDay}
-          onDragOverDay={drag.setDragOverDay}
-          onDragLeaveDay={() => drag.setDragOverDay(null)}
-          onDropDay={handleDropDay}
-        />
+        <div className="calendar-column">
+          <CalendarBoard
+            monthLabel={cal.monthLabel}
+            loading={cal.loading}
+            currentMonth={cal.currentMonth}
+            userColor={userColor}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            onCopyLastWeek={actions.handleCopyLastWeek}
+            onManualAdd={handleManualAdd}
+            members={cal.members}
+            filter={cal.filter}
+            onChangeFilter={cal.setFilter}
+            view={cal.view}
+            onChangeView={cal.setView}
+            showHeatmap={cal.showHeatmap}
+            onToggleHeatmap={() => cal.setShowHeatmap((v) => !v)}
+            selectedDay={cal.selectedDay}
+            onSelectDay={cal.setSelectedDay}
+            monthGrid={cal.monthGrid}
+            weekGrid={cal.weekGrid}
+            entriesByDay={cal.entriesByDay}
+            heatmapData={cal.heatmapData}
+            dragOverDay={drag.dragOverDay}
+            onDragOverDay={drag.setDragOverDay}
+            onDragLeaveDay={() => drag.setDragOverDay(null)}
+            onDropDay={handleDropDay}
+          />
+
+          {cal.myPendingCount >= 5 && (
+            <div className="banner warning pending-banner">
+              Du har 5 sysslor som väntar på godkännande. Max 5 kan ligga och vänta på granskning innan du markerar fler.
+            </div>
+          )}
+
+        </div>
 
         <SelectedDaySidebar
           selectedDay={cal.selectedDay}
