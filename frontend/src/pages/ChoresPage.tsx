@@ -142,6 +142,8 @@ export const ChoresPage = ({ embedded = false }: Props) => {
           {
             ["--user-color" as any]: userColor,
             ["--user-color-fg" as any]: textColorForBackground(userColor),
+            marginTop: "192px",
+            marginBottom: "256px",
           } as React.CSSProperties
         }
       >
@@ -157,6 +159,8 @@ export const ChoresPage = ({ embedded = false }: Props) => {
         {
           ["--user-color" as any]: userColor,
           ["--user-color-fg" as any]: textColorForBackground(userColor),
+          marginTop: "192px",
+          marginBottom: "256px",
         } as React.CSSProperties
       }
     >
