@@ -4,6 +4,7 @@ import { ChoresPage } from "./ChoresPage";
 import { CalendarPage } from "./CalendarPage";
 import { ApprovalsPage } from "./ApprovalsPage";
 import { StatsPage } from "./StatsPage";
+import { AchievementsPage } from "./AchievementsPage";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { useEffect, useState } from "react";
 import { listMembers, listApprovals } from "../api";
@@ -13,7 +14,7 @@ export const HomePage = () => {
   const [selected, setSelected] = useState<string>("kalender");
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
   const [approvalCount, setApprovalCount] = useState<number>(0);
-  const sectionIds = ["kalender", "sysslor", "godkannanden", "statistik"];
+  const sectionIds = ["kalender", "sysslor", "godkannanden", "statistik", "priser"];
 
   useEffect(() => {
     const loadColor = async () => {
@@ -137,6 +138,16 @@ export const HomePage = () => {
             >
               Statistik
             </a>
+            <a
+              href="#priser"
+              className={`nav-link subtle ${selected === "priser" ? "active" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToId("priser");
+              }}
+            >
+              Priser
+            </a>
           </nav>
         </div>
         <div className="header-actions">
@@ -157,6 +168,7 @@ export const HomePage = () => {
       <ApprovalsPage embedded />
       <ChoresPage embedded />
       <StatsPage embedded />
+      <AchievementsPage embedded />
     </div>
   );
 };

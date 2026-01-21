@@ -136,10 +136,14 @@ export const StatsPage = ({ embedded = false }: Props) => {
         />
         <StatsCard
           title="Månads-summeringar"
-          description="Visar varje medlems poäng och andel för aktuell månad. Bläddra bakåt för tidigare månader och jämför utvecklingen."
+          description="Visar varje medlems poäng och andel för aktuell månad. Bläddra bakåt för att se hur fördelningen ändras månad för månad och om hushållet håller jämna steg med era mål."
           items={monthSlice}
           balanceInfo={balanceInfo}
           colorMap={memberColors}
+          hidePeriodLabel
+          hideTotal
+          stackedBalance
+          sortByPoints
           controls={{
             onPrev: () => setMonthIdx((i) => Math.min(i + 1, monthly.length - 1)),
             onNext: () => setMonthIdx((i) => Math.max(i - 1, 0)),
@@ -153,10 +157,14 @@ export const StatsPage = ({ embedded = false }: Props) => {
         />
         <StatsCard
           title="Årssummering"
-          description="Ackumulerade poäng per hushållsmedlem för året. Uppdateras löpande när månaderna summeras."
+          description="Ackumulerade poäng per hushållsmedlem för året. Följ vem som leder när månaderna adderas ihop, se trenderna över längre tid och peppa familjen att kämpa om den spektakulära badge:n (märket) 'Årsvinnaren'. Perfekt för att utvärdera insatser och justera mål inför nästa år."
           items={yearAggregate}
           balanceInfo={balanceInfo}
           colorMap={memberColors}
+          hidePeriodLabel
+          hideTotal
+          stackedBalance
+          sortByPoints
           controls={{
             label: `${currentYear}`,
             canPrev: false,

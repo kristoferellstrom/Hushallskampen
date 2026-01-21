@@ -36,6 +36,7 @@ function App() {
             <Route path="/calendar" element={<HomePage />} />
             <Route path="/approvals" element={<HomePage />} />
             <Route path="/stats" element={<HomePage />} />
+            <Route path="/achievements" element={<HomePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
 

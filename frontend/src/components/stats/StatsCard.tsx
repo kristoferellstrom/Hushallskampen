@@ -22,6 +22,7 @@ type Props = {
   hideTotal?: boolean;
   stackedBalance?: boolean;
   sortByPoints?: boolean;
+  footer?: React.ReactNode;
 };
 
 export const StatsCard = ({
@@ -37,6 +38,7 @@ export const StatsCard = ({
   hideTotal = false,
   stackedBalance = false,
   sortByPoints = false,
+  footer,
 }: Props) => {
   return (
     <div className="card stats-card">
@@ -121,6 +123,8 @@ export const StatsCard = ({
       ))}
 
       {items.length === 0 && <p className="hint">{emptyText}</p>}
+
+      {footer && <div className="stat-footer">{footer}</div>}
     </div>
   );
 };
