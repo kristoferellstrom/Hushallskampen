@@ -17,6 +17,7 @@ type Props = {
     canNext?: boolean;
     label?: string;
   };
+  figureSrc?: string;
   listClassName?: string;
   hidePeriodLabel?: boolean;
   hideTotal?: boolean;
@@ -33,6 +34,7 @@ export const StatsCard = ({
   emptyText = "Inga data ännu",
   description,
   controls,
+  figureSrc = "/figure/woman_shopping.png",
   listClassName,
   hidePeriodLabel = false,
   hideTotal = false,
@@ -79,20 +81,12 @@ export const StatsCard = ({
             </div>
           )}
 
-          {!hideTotal && (() => {
+          {(() => {
             const total = rec.totalsByUser.reduce((sum, t) => sum + t.points, 0);
-            return (
-              <div className="pill total-pill">
-                Totalt {total}p
-              </div>
-            );
-          })()}
-
-          <ul className={`list ${listClassName || ""}`}>
-            {(sortByPoints
+            const ordered = sortByPoints
               ? [...rec.totalsByUser].sort((a, b) => b.points - a.points)
-              : rec.totalsByUser
-            ).map((t) => {
+              : rec.totalsByUser;
+            const segments = ordered.map((t) => {
               const bg = (() => {
                 const explicit = t.userId.color || colorMap[t.userId._id];
                 if (!explicit) return fallbackColorForUser(t.userId._id);
@@ -101,22 +95,58 @@ export const StatsCard = ({
                 const preview = colorPreview(col);
                 return preview || fallbackColorForUser(t.userId._id);
               })();
-              const fg = textColorForBackground(bg);
-              const total = rec.totalsByUser.reduce((sum, u) => sum + u.points, 0);
               const pct = total > 0 ? Math.round((t.points / total) * 100) : 0;
+              return {
+                id: t.userId._id,
+                name: t.userId.name,
+                points: t.points,
+                pct,
+                bg,
+                fg: textColorForBackground(bg),
+              };
+            });
 
-              return (
-                <li key={t.userId._id} className="row user-row" style={{ background: bg, color: fg }}>
-                  <span className="user-dot" style={{ background: fg }} />
-                  <div className="user-text">
-                    <span className="user-name">{t.userId.name}</span>
-                    <span className="user-meta">{pct}% av totalen</span>
-                  </div>
-                  <strong className="user-points">{t.points}p</strong>
-                </li>
-              );
-            })}
-          </ul>
+            const gradient = (() => {
+              if (segments.length === 0 || total === 0) return "#e2e8f0";
+              let start = 0;
+              return `conic-gradient(${segments
+                .map((s) => {
+                  const slice = Math.max((s.points / total) * 360, 0);
+                  const end = start + slice;
+                  const entry = `${s.bg} ${start}deg ${end}deg`;
+                  start = end;
+                  return entry;
+                })
+                .join(", ")})`;
+            })();
+
+            return (
+              <div className="pie-wrap">
+                {figureSrc && (
+                  <img
+                    className="pie-figure"
+                    src={figureSrc}
+                    alt="Shopping illustration"
+                    aria-hidden="true"
+                  />
+                )}
+                <div className="pie" style={{ background: gradient }} aria-label="Poängfördelning"></div>
+                <ul className="pie-legend">
+                  {segments.map((s) => (
+                    <li key={s.id}>
+                      <span className="legend-dot" style={{ background: s.bg }} />
+                      <div className="legend-text">
+                        <span className="legend-name">{s.name}</span>
+                        <span className="legend-meta">
+                          {s.points}p · {s.pct}%
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })()}
 
           <BalanceRow rec={rec} balanceInfo={balanceInfo} stacked={stackedBalance} hideTotal={hideTotal} />
         </div>

@@ -128,6 +128,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           hideTotal
           stackedBalance
           sortByPoints
+          figureSrc="/figure/woman_shopping.png"
           controls={{
             onPrev: () => setWeekIdx((i) => Math.min(i + 1, weekly.length - 1)),
             onNext: () => setWeekIdx((i) => Math.max(i - 1, 0)),
@@ -149,6 +150,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           hideTotal
           stackedBalance
           sortByPoints
+          figureSrc="/figure/man_washing.png"
           controls={{
             onPrev: () => setMonthIdx((i) => Math.min(i + 1, monthly.length - 1)),
             onNext: () => setMonthIdx((i) => Math.max(i - 1, 0)),
@@ -170,12 +172,20 @@ export const StatsPage = ({ embedded = false }: Props) => {
           hideTotal
           stackedBalance
           sortByPoints
+          figureSrc=""
           controls={{
             label: `${currentYear}`,
             canPrev: false,
             canNext: false,
           }}
           listClassName="scroll-5"
+          footer={
+            <img
+              src="/figure/stats.png"
+              alt="Statistikillustration"
+              className="stat-figure-wide"
+            />
+          }
         />
         {choreLeaders.length > 0 && (
           <div className="card stats-card">
