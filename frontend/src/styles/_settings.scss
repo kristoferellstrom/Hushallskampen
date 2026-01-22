@@ -170,8 +170,9 @@
 
   .actions {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 14px;
+    align-items: flex-start;
+    margin-top: 4px;
   }
 
   .item-head {
@@ -190,6 +191,12 @@
       font-size: 12px;
       color: rgba(15, 23, 42, 0.55);
     }
+
+    .submitted-by {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
   }
 }
 
@@ -199,11 +206,36 @@
   button.user-btn {
     background: var(--user-color, $color-primary);
     color: var(--user-color-fg, $color-surface);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+
+    &:hover:enabled {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+    }
   }
 
   .chip {
     border-color: var(--user-color, $color-primary);
     color: var(--user-color, $color-primary);
+  }
+}
+
+.comment-box {
+  width: 100%;
+  min-height: 96px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  resize: vertical;
+  overflow: hidden;
+  transition: box-shadow 140ms ease, border-color 140ms ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--user-color, $color-primary);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
   }
 }
 
@@ -436,6 +468,13 @@
     background: rgba(15, 23, 42, 0.08) !important;
     color: var(--user-color, $color-primary) !important;
     border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  }
+
+  &.action-icon {
+    background: transparent !important;
+    color: var(--user-color, $color-primary) !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 }
 

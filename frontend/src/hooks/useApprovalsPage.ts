@@ -35,7 +35,7 @@ export const useApprovalsPage = (historyLimit = 10) => {
   const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState<Record<string, string>>({});
 
-  const quickComments = useMemo(() => ["Bra jobbat 💪", "Behöver göras om", "Ok men slarvigt"], []);
+  const quickComments = useMemo(() => ["Bra jobbat 💪", "Ok men slarvigt", "Behöver göras om"], []);
 
   const load = async () => {
     if (!token) return;

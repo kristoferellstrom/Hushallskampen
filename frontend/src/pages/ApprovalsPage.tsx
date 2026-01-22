@@ -24,6 +24,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   } = useApprovalsPage(10);
   const { user, token } = useAuth();
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+  const [openComments, setOpenComments] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const loadColor = async () => {
@@ -45,6 +46,11 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
     return colorPreview(base) || fallbackColorForUser(user?.id || "");
   })();
   const userColorFg = textColorForBackground(userColor);
+  const reviewerBaseColor =
+    colorPreview(memberColor || user?.color || "") ||
+    memberColor ||
+    user?.color ||
+    fallbackColorForUser(user?.id || "");
   const toRgba = (hex: string, alpha: number) => {
     const color = colorPreview(hex) || hex || "#e2e8f0";
     if (!color.startsWith("#") || (color.length !== 7 && color.length !== 4)) return color;
@@ -64,6 +70,11 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   const baseTint = pickedColor || fallbackColorForUser(user?.id || "");
   const tint = shadeForPoints(baseTint, 1);
   const surface = tint;
+  const quickCommentStyles: Record<string, { bg: string; border: string; color: string }> = {
+    "Bra jobbat 💪": { bg: "#ecfdf3", border: "#10b981", color: "#065f46" },
+    "Ok men slarvigt": { bg: "#fffbeb", border: "#f59e0b", color: "#92400e" },
+    "Behöver göras om": { bg: "#fef2f2", border: "#ef4444", color: "#991b1b" },
+  };
 
   const renderList = () => (
     <div className="card hoverable approvals-card">
@@ -95,7 +106,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                 } as React.CSSProperties
               }
             >
-              <div className="row" style={{ alignItems: "flex-start" }}>
+              <div className="row" style={{ alignItems: "center" }}>
               <div>
                 <div className="item-head">
                   <strong>{a.calendarEntryId.choreId?.title || "Syssla"}</strong>
@@ -111,8 +122,8 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                     );
                   })()}
                   <span className="muted-date">{a.calendarEntryId.date.slice(0, 10)}</span>
+                  <span className="muted-date submitted-by">Av: {a.submittedByUserId.name}</span>
                 </div>
-                <p className="hint">Av: {a.submittedByUserId.name}</p>
                 <div className="chips">
                   {quickComments.map((c) => (
                     <button
@@ -120,8 +131,9 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                       type="button"
                       className="chip"
                       style={{
-                        color: submitterColor,
-                        borderColor: submitterColor,
+                        color: quickCommentStyles[c]?.color || submitterColor,
+                        borderColor: quickCommentStyles[c]?.border || submitterColor,
+                        background: quickCommentStyles[c]?.bg || undefined,
                       }}
                       onClick={() => setQuickComment(a._id, c)}
                       disabled={loading}
@@ -129,30 +141,63 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                       {c}
                     </button>
                   ))}
+                  <button
+                    type="button"
+                  className="chip ghost"
+                  style={{
+                    background: surface,
+                    color: shadeForPoints(memberColor || user?.color, 10),
+                    borderColor: shadeForPoints(memberColor || user?.color, 10),
+                    }}
+                    onClick={() => setOpenComments((prev) => ({ ...prev, [a._id]: true }))}
+                    disabled={loading}
+                  >
+                    Egen kommentar
+                  </button>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Lägg till kommentar (valfritt)"
-                  value={comments[a._id] || ""}
-                  onChange={(e) => setComment(a._id, e.target.value)}
-                  disabled={loading}
-                />
+                {(openComments[a._id] || (comments[a._id] ?? "") !== "") && (
+                  <textarea
+                    className="comment-box"
+                    rows={3}
+                    maxLength={280}
+                    placeholder="Lägg till kommentar (valfritt, max 280 tecken)"
+                    value={comments[a._id] || ""}
+                    onChange={(e) => setComment(a._id, e.target.value)}
+                    onInput={(e) => {
+                      e.currentTarget.style.height = "auto";
+                      e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                    }}
+                    disabled={loading}
+                  />
+                )}
               </div>
               <div className="actions">
                 <button
                   type="button"
-                  className="user-btn"
+                  className="user-btn action-icon"
+                  aria-label="Godkänn"
                   style={{
-                    background: submitterColor,
-                    color: textColorForBackground(submitterColor),
+                    background: "transparent",
+                    color: submitterColor,
+                    borderColor: "transparent",
                   }}
                   disabled={loading}
                   onClick={() => handleReview(a._id, "approve")}
                 >
-                  Godkänn
+                  <span
+                    className="thumb-icon thumb-up"
+                    style={{ ["--thumb-color" as any]: shadeForPoints(memberColor || user?.color, 10) }}
+                    aria-hidden="true"
+                  />
                 </button>
-                <button type="button" className="danger-btn" disabled={loading} onClick={() => handleReview(a._id, "reject")}>
-                  Avvisa
+                <button
+                  type="button"
+                  className="danger-btn action-icon danger-outline"
+                  aria-label="Avvisa"
+                  disabled={loading}
+                  onClick={() => handleReview(a._id, "reject")}
+                >
+                  <span className="thumb-icon thumb-down" aria-hidden="true" />
                 </button>
               </div>
             </div>

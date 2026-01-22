@@ -26,11 +26,28 @@ button {
   background: var(--user-color, $color-primary);
   color: var(--user-color-fg, $color-surface);
   border: none;
+  transition: transform 140ms ease, box-shadow 140ms ease;
 
   &.ghost {
     background: rgba(15, 23, 42, 0.08);
     color: var(--user-color, $color-primary);
     border: 1px solid rgba(15, 23, 42, 0.12);
+  }
+
+  &.action-icon {
+    background: transparent;
+    color: var(--user-color, $color-primary);
+    border: none;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: grid;
+    place-items: center;
+    box-shadow: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+    }
   }
 }
 
@@ -117,12 +134,54 @@ button {
   border: none;
   font-weight: 800;
   box-shadow: 0 10px 20px rgba(220, 38, 38, 0.2);
-  transition: transform 140ms ease, box-shadow 140ms ease;
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 12px 22px rgba(220, 38, 38, 0.25);
+    filter: brightness(0.98);
   }
+
+  &.action-icon {
+    background: transparent;
+    color: #dc2626;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    display: grid;
+    place-items: center;
+    box-shadow: none;
+    filter: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: none;
+      filter: none;
+    }
+  }
+}
+
+.thumb-icon {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--thumb-color, currentColor);
+}
+
+.thumb-up {
+  mask-image: url("/svg/thumb_up.svg");
+  -webkit-mask-image: url("/svg/thumb_up.svg");
+}
+
+.thumb-down {
+  mask-image: url("/svg/thumb_down.svg");
+  -webkit-mask-image: url("/svg/thumb_down.svg");
 }
 
 .hoverable {
@@ -156,7 +215,7 @@ button {
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
   margin: 8px 0;
 }
 
@@ -168,13 +227,26 @@ button {
   border-radius: 999px;
   cursor: pointer;
   font-weight: 600;
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
 
   &:hover:enabled {
     border-color: $color-primary;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
   }
 
   &:disabled {
     cursor: not-allowed;
+  }
+
+  &.ghost {
+    background: transparent;
+    color: #0f172a;
+    border-color: transparent;
+    border-width: 1.5px;
+    letter-spacing: 0.01em;
+    font-weight: 700;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
   }
 }
 
