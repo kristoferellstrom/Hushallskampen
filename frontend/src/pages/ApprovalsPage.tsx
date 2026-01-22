@@ -272,7 +272,13 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
 
   if (!embedded) {
     return (
-      <div className="page-surface" style={{ background: surface }}>
+      <div
+        className="page-surface"
+        style={{
+          background: surface,
+          padding: "24px 0 16px",
+        }}
+      >
         <div
           className="shell"
           style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}
@@ -299,7 +305,8 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
         width: "100vw",
         marginLeft: "calc(-50vw + 50%)",
         marginRight: "calc(-50vw + 50%)",
-        padding: "64px 0 72px",
+        paddingTop: "64px",
+        marginBottom: "0px",
       }}
     >
       <section id="godkannanden" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}>
