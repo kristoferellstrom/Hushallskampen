@@ -36,6 +36,17 @@ function monthKey(d: Date) {
   return `${year}-${month}`;
 }
 
+function isCurrentMonth(key: string) {
+  const now = new Date();
+  const currentKey = monthKey(now);
+  return key === currentKey;
+}
+
+function lastCompletedYear(): number {
+  const now = new Date();
+  return now.getFullYear() - 1;
+}
+
 router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
@@ -52,9 +63,10 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
     const allowedSlugs = new Set(defaultChores.map((c) => c.slug));
     const currentMonthKey = monthKey(new Date());
     const monthCounts = new Map<string, Map<string, number>>();
-    const monthPoints = new Map<string, number>();
+    const monthPointsByMonth = new Map<string, Map<string, number>>();
     const yearPoints = new Map<string, number>();
-    const currentYear = new Date().getFullYear();
+    const targetYear = lastCompletedYear();
+    let latestCompletedMonthKey: string | null = null;
 
     for (const entry of entries) {
       const chore: any = entry.choreId;
@@ -66,24 +78,26 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
       userNames.set(userId, assigned?.name || "");
 
       const key = monthKey(new Date(entry.date));
+      if (isCurrentMonth(key)) continue; // räkna bara avslutade månader
+      if (!latestCompletedMonthKey || key > latestCompletedMonthKey) latestCompletedMonthKey = key;
       const byMonth = perSlugMonth.get(chore.slug) || new Map<string, Map<string, number>>();
       const byUser = byMonth.get(key) || new Map<string, number>();
       byUser.set(userId, (byUser.get(userId) || 0) + 1);
       byMonth.set(key, byUser);
       perSlugMonth.set(chore.slug, byMonth);
 
-      if (key === currentMonthKey) {
-        const mCounts = monthCounts.get(chore.slug) || new Map<string, number>();
-        mCounts.set(userId, (mCounts.get(userId) || 0) + 1);
-        monthCounts.set(chore.slug, mCounts);
-        const pts = Number(chore.defaultPoints ?? 0);
-        monthPoints.set(userId, (monthPoints.get(userId) || 0) + pts);
-      }
+      const mCounts = monthCounts.get(chore.slug) || new Map<string, number>();
+      mCounts.set(userId, (mCounts.get(userId) || 0) + 1);
+      monthCounts.set(chore.slug, mCounts);
+      const pts = Number(chore.defaultPoints ?? 0);
+      const mp = monthPointsByMonth.get(key) || new Map<string, number>();
+      mp.set(userId, (mp.get(userId) || 0) + pts);
+      monthPointsByMonth.set(key, mp);
 
       const entryYear = new Date(entry.date).getFullYear();
-      if (entryYear === currentYear) {
-        const pts = Number(chore.defaultPoints ?? 0);
-        yearPoints.set(userId, (yearPoints.get(userId) || 0) + pts);
+      if (entryYear === targetYear) {
+        const ptsYear = Number(chore.defaultPoints ?? 0);
+        yearPoints.set(userId, (yearPoints.get(userId) || 0) + ptsYear);
       }
     }
 
@@ -93,6 +107,9 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
       const monthWinners: Array<{ userId: string; name: string; count: number }> = [];
 
       for (const [, counts] of byMonth.entries()) {
+        const totalCount = Array.from(counts.values()).reduce((sum, n) => sum + n, 0);
+        if (totalCount < 5) continue; // kräver minst 5 händelser i månaden för sysslan
+
         let top = 0;
         for (const [, n] of counts.entries()) {
           if (n > top) top = n;
@@ -111,7 +128,8 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
         for (const [, n] of monthCount.entries()) {
           if (n > top) top = n;
         }
-        if (top > 0) {
+        const totalCount = Array.from(monthCount.values()).reduce((sum, n) => sum + n, 0);
+        if (top > 0 && totalCount >= 5) {
           for (const [uid, n] of monthCount.entries()) {
             if (n === top) {
               monthWinners.push({ userId: uid, name: userNames.get(uid) || "", count: n });
@@ -134,9 +152,12 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
     });
 
     const monthPointsWinner = (() => {
+      if (!latestCompletedMonthKey) return null;
+      const mp = monthPointsByMonth.get(latestCompletedMonthKey);
+      if (!mp) return null;
       let topId: string | null = null;
       let topPoints = 0;
-      for (const [uid, pts] of monthPoints.entries()) {
+      for (const [uid, pts] of mp.entries()) {
         if (pts > topPoints) {
           topPoints = pts;
           topId = uid;
@@ -146,6 +167,7 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
     })();
 
     const yearPointsWinner = (() => {
+      if (yearPoints.size === 0) return null;
       let topId: string | null = null;
       let topPoints = 0;
       for (const [uid, pts] of yearPoints.entries()) {
