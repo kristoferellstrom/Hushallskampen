@@ -46,11 +46,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
     return colorPreview(base) || fallbackColorForUser(user?.id || "");
   })();
   const userColorFg = textColorForBackground(userColor);
-  const reviewerBaseColor =
-    colorPreview(memberColor || user?.color || "") ||
-    memberColor ||
-    user?.color ||
-    fallbackColorForUser(user?.id || "");
   const toRgba = (hex: string, alpha: number) => {
     const color = colorPreview(hex) || hex || "#e2e8f0";
     if (!color.startsWith("#") || (color.length !== 7 && color.length !== 4)) return color;
@@ -178,17 +173,13 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                   aria-label="Godkänn"
                   style={{
                     background: "transparent",
-                    color: submitterColor,
+                    color: "#1f2937",
                     borderColor: "transparent",
                   }}
                   disabled={loading}
                   onClick={() => handleReview(a._id, "approve")}
                 >
-                  <span
-                    className="thumb-icon thumb-up"
-                    style={{ ["--thumb-color" as any]: shadeForPoints(memberColor || user?.color, 10) }}
-                    aria-hidden="true"
-                  />
+                  <span className="thumb-icon thumb-up" aria-hidden="true" />
                 </button>
                 <button
                   type="button"

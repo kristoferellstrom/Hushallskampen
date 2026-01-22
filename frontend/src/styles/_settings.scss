@@ -326,13 +326,18 @@
   max-width: none;
   margin: 0;
   padding: 0;
+  background: $color-surface;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  overflow: hidden;
 
   img {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1);
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -472,7 +477,7 @@
 
   &.action-icon {
     background: transparent !important;
-    color: var(--user-color, $color-primary) !important;
+    color: #1f2937 !important;
     border: none !important;
     box-shadow: none !important;
   }
