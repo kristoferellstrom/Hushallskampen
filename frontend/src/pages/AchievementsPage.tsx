@@ -119,7 +119,7 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
             <div className="badge-grid">
               {specialAwards.map((a) => (
                 <figure key={a.title} className="badge-card">
-                  {a.image && <img src={a.image} alt={a.title} />}
+                  {a.image && <img src={a.image} alt={a.title} loading="lazy" />}
                   <figcaption>
                     <strong>{a.title}</strong>
                     <span>{a.description}</span>
@@ -163,7 +163,7 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
                     const win = b.monthWinners?.[0];
                     return (
                       <figure key={b.slug} className="badge-card">
-                        {b.image && <img src={b.image} alt={b.title} />}
+                        {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
                         <figcaption>
                           <strong>{b.title}</strong>
                           {win ? (
@@ -200,7 +200,7 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
                       state === "future" ? "muted" : ""
                     } ${state === "current" ? "active" : ""}`}
                   >
-                    {a.image && <img src={a.image} alt={a.title} />}
+                    {a.image && <img src={a.image} alt={a.title} loading="lazy" />}
                     {winnerText && (
                       <figcaption>
                         <span className="hint" style={{ marginTop: 2 }}>
@@ -223,7 +223,7 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
                   const leaders = b.winners.filter((w) => w.wins === topWins && topWins > 0);
                   return (
                     <figure key={b.slug} className={`badge-card ${myWin ? "winner" : ""}`}>
-                      {b.image && <img src={b.image} alt={b.title} />}
+                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
                       {myWin && myWin.wins > 1 && <span className="badge-count-pill">{myWin.wins}</span>}
                       <figcaption>
                         <strong>{b.title}</strong>

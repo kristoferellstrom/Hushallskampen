@@ -142,7 +142,7 @@ export const SettingsPage = () => {
                   const win = b.winners.find((w) => w.userId === myId);
                   return (
                     <figure key={b.slug} className="badge-thumb badge-count">
-                      {b.image && <img src={b.image} alt={b.title} />}
+                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
                       {win && win.wins > 1 && <span className="badge-count-pill">{win.wins}</span>}
                       <figcaption>
                         <strong>{b.title}</strong>
@@ -161,7 +161,7 @@ export const SettingsPage = () => {
             {!badgeError && monthPointsWinner && (
               <div className="badge-thumb-grid">
                 <figure className="badge-thumb">
-                  <img src="/month/januari.png" alt="Månadens poängvinnare" />
+                  <img src="/month/januari.png" alt="Månadens poängvinnare" loading="lazy" />
                   <figcaption style={{ textAlign: "center" }}>
                     <strong>{monthPointsWinner.name || "Okänd"}</strong>
                     <div className="hint" style={{ marginTop: 4 }}>{monthPointsWinner.points} poäng</div>
@@ -178,7 +178,7 @@ export const SettingsPage = () => {
             {!badgeError && yearPointsWinner && (
               <div className="badge-thumb-grid">
                 <figure className="badge-thumb">
-                  <img src="/arsvinnaren.png" alt="Årsvinnaren" />
+                  <img src="/arsvinnaren.png" alt="Årsvinnaren" loading="lazy" />
                   <figcaption style={{ textAlign: "center" }}>
                     <strong>{yearPointsWinner.name || "Okänd"}</strong>
                     <div className="hint" style={{ marginTop: 4 }}>{yearPointsWinner.points} poäng</div>
@@ -194,7 +194,7 @@ export const SettingsPage = () => {
               <div className="badge-thumb-grid">
                 {earnedSpecialBadges.map((src) => (
                   <figure key={src} className="badge-thumb">
-                    <img src={src} alt="Badge" />
+                    <img src={src} alt="Badge" loading="lazy" />
                   </figure>
                 ))}
               </div>

@@ -126,7 +126,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
         </div>
 
         <div className="chores-figure">
-          <img src="/figure/sysslor.png" alt="Illustration sysslor" />
+          <img src="/figure/sysslor.png" alt="Illustration sysslor" loading="lazy" />
         </div>
       </div>
 

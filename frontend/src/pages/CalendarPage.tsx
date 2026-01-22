@@ -99,7 +99,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
         <div className="calendar-column">
           <div className="calendar-corner-figure" aria-hidden="true">
-            <img src="/figure/man_vacuum.png" alt="" />
+            <img src="/figure/man_vacuum.png" alt="" loading="lazy" />
           </div>
           <CalendarBoard
             monthLabel={cal.monthLabel}

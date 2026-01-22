@@ -204,6 +204,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
                 <img
                   src="/figure/stats.png"
                   alt="Statistikillustration"
+                  loading="lazy"
                   className="stat-figure-wide"
                 />
               </div>
@@ -297,6 +298,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
                 <img
                   src="/figure/aret_runt.png"
                   alt="Året runt illustration"
+                  loading="lazy"
                   className="stat-figure-wide"
                 />
                 <p className="hint">

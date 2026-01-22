@@ -33,7 +33,7 @@ export const ChoreSidebar = ({
   return (
     <div className="card sidebar left hoverable">
       <div className="chore-corner-figure" aria-hidden="true">
-        <img src="/figure/woman_folding.png" alt="" />
+        <img src="/figure/woman_folding.png" alt="" loading="lazy" />
       </div>
       <h3>Sysslor</h3>
 

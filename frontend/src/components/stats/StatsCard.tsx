@@ -129,6 +129,7 @@ export const StatsCard = ({
                     className="pie-figure"
                     src={figureSrc}
                     alt="Shopping illustration"
+                    loading="lazy"
                     aria-hidden="true"
                   />
                 )}
