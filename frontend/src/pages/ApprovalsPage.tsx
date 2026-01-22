@@ -164,59 +164,64 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   );
 
   const renderHistory = () => (
-    <div className="card hoverable approvals-card">
-      <div className="row">
-        <div>
-          <p className="eyebrow">Historik</p>
-          <h3>Senaste granskningar</h3>
-          <p className="hint">Visar senaste 30 dagarna</p>
-        </div>
+    <div className="history-wrap">
+      <div className="history-figure">
+        <img src="/figure/woman_wash.png" alt="Kvinna tvättar" />
       </div>
-      <ul className="list compact history-list">
-        {lastMonthHistory.map((h) => {
-          const submitterColor =
-            colorPreview((h.submittedByUserId as any)?.color || userColor) ||
-            (h.submittedByUserId as any)?.color ||
-            userColor;
-          const reviewerColor =
-            colorPreview((h.reviewedByUserId as any)?.color || userColor) ||
-            (h.reviewedByUserId as any)?.color ||
-            userColor;
-          const pillBg = shadeForPoints(submitterColor, h.calendarEntryId.choreId?.defaultPoints ?? 0) || submitterColor;
-          const pillFg = textColorForBackground(pillBg);
-          const gradientBg = `linear-gradient(90deg, ${toRgba(submitterColor, 0.16)}, ${toRgba(reviewerColor, 0.16)})`;
+      <div className="card hoverable approvals-card history-card">
+        <div className="row">
+          <div>
+            <p className="eyebrow">Historik</p>
+            <h3>Senaste granskningar</h3>
+            <p className="hint">Visar senaste 30 dagarna</p>
+          </div>
+        </div>
+        <ul className="list compact history-list">
+          {lastMonthHistory.map((h) => {
+            const submitterColor =
+              colorPreview((h.submittedByUserId as any)?.color || userColor) ||
+              (h.submittedByUserId as any)?.color ||
+              userColor;
+            const reviewerColor =
+              colorPreview((h.reviewedByUserId as any)?.color || userColor) ||
+              (h.reviewedByUserId as any)?.color ||
+              userColor;
+            const pillBg = shadeForPoints(submitterColor, h.calendarEntryId.choreId?.defaultPoints ?? 0) || submitterColor;
+            const pillFg = textColorForBackground(pillBg);
+            const gradientBg = `linear-gradient(90deg, ${toRgba(submitterColor, 0.16)}, ${toRgba(reviewerColor, 0.16)})`;
 
-          return (
-            <li
-              key={h._id}
-              style={
-                {
-                  ["--user-color" as any]: submitterColor,
-                  ["--user-color-fg" as any]: textColorForBackground(submitterColor),
-                  background: gradientBg,
-                } as React.CSSProperties
-              }
-            >
-              <div className="row" style={{ alignItems: "flex-start" }}>
-                <div>
-                  <div className="item-head">
-                    <strong>{h.calendarEntryId.choreId?.title || "Syssla"}</strong>
-                    <span className="pill light" style={{ background: pillBg, color: pillFg }}>
-                      {h.calendarEntryId.choreId?.defaultPoints ?? 0}p
-                    </span>
-                    <span className="muted-date">{h.calendarEntryId.date.slice(0, 10)}</span>
+            return (
+              <li
+                key={h._id}
+                style={
+                  {
+                    ["--user-color" as any]: submitterColor,
+                    ["--user-color-fg" as any]: textColorForBackground(submitterColor),
+                    background: gradientBg,
+                  } as React.CSSProperties
+                }
+              >
+                <div className="row" style={{ alignItems: "flex-start" }}>
+                  <div>
+                    <div className="item-head">
+                      <strong>{h.calendarEntryId.choreId?.title || "Syssla"}</strong>
+                      <span className="pill light" style={{ background: pillBg, color: pillFg }}>
+                        {h.calendarEntryId.choreId?.defaultPoints ?? 0}p
+                      </span>
+                      <span className="muted-date">{h.calendarEntryId.date.slice(0, 10)}</span>
+                    </div>
+                    <p className="hint">
+                      Av: {h.submittedByUserId.name} · Granskad av: {h.reviewedByUserId?.name || "-"}
+                    </p>
+                    {h.comment && <p className="hint">Kommentar: {h.comment}</p>}
                   </div>
-                  <p className="hint">
-                    Av: {h.submittedByUserId.name} · Granskad av: {h.reviewedByUserId?.name || "-"}
-                  </p>
-                  {h.comment && <p className="hint">Kommentar: {h.comment}</p>}
                 </div>
-              </div>
-            </li>
-          );
-        })}
-        {lastMonthHistory.length === 0 && <p className="hint">Ingen historik ännu</p>}
-      </ul>
+              </li>
+            );
+          })}
+          {lastMonthHistory.length === 0 && <p className="hint">Ingen historik ännu</p>}
+        </ul>
+      </div>
     </div>
   );
 
@@ -231,13 +236,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
             ← Till dashboard
           </Link>
           <Logo />
-          <header>
-            <div>
-              <p className="eyebrow">Godkännanden</p>
-              <h1>Granska klara sysslor</h1>
-              <p className="hint">Godkänn eller avvisa med kommentar</p>
-            </div>
-          </header>
           {renderList()}
           <div className="approvals-stack">
             {renderList()}
@@ -260,12 +258,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
       }}
     >
       <section id="godkannanden" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}>
-        <header>
-          <div>
-            <p className="eyebrow">Godkännanden</p>
-            <p className="hint">Godkänn eller avvisa med kommentar</p>
-          </div>
-        </header>
         <div className="approvals-stack">
           {renderList()}
           {renderHistory()}

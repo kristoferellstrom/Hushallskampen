@@ -73,7 +73,7 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
   return (
     <section id="priser" className="shell" style={{ paddingTop: embedded ? 0 : undefined }}>
       {!embedded && (
-        <header>
+        <header className="page-title-header">
           <div>
             <p className="eyebrow">Priser & märken</p>
             <h1>Samla dina badges</h1>

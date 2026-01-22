@@ -307,7 +307,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
                   Du kan se vem som samlat flest poäng totalt, hur stor andel varje medlem bidrar med och vem som ligger
                   närmast (eller längst ifrån) sitt mål. Listan över årets mest gjorda sysslor visar vilka uppgifter som
                   återkommer mest i vardagen, och vem som oftast tar ansvar för dem. Genom att växla mellan senaste 30
-                  dagar och hela året kan du jämföra kortsiktiga förändringar med långsiktiga mönster – vilket gör det
+                  dagar och hela året kan du jämföra kortsiktiga förändringar med långsiktiga mönster - vilket gör det
                   lättare att upptäcka obalans, följa trender och justera mål eller fördelning inför nästa år.
                 </p>
               </div>
@@ -327,20 +327,15 @@ export const StatsPage = ({ embedded = false }: Props) => {
           width: "100vw",
           marginLeft: "calc(-50vw + 50%)",
           marginRight: "calc(-50vw + 50%)",
-          padding: "24px 0 32px",
-        }}
-      >
-        <section id="statistik">
-          <header className="stats-page-header">
-            <div>
-              <p className="eyebrow">Statistik</p>
-            </div>
-          </header>
+        padding: "24px 0 32px",
+      }}
+    >
+      <section id="statistik">
           {content}
-        </section>
-      </div>
-    );
-  }
+      </section>
+    </div>
+  );
+}
 
   return (
     <div
@@ -358,13 +353,6 @@ export const StatsPage = ({ embedded = false }: Props) => {
           ← Till dashboard
         </Link>
         <Logo />
-        <header className="stats-page-header">
-          <div>
-            <p className="eyebrow">Statistik</p>
-            <h1>Poäng och balans</h1>
-            <p className="hint">Vecko- och månadssummor per hushåll</p>
-          </div>
-        </header>
         {content}
       </div>
     </div>
