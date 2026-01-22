@@ -6,3 +6,4 @@ export * from "./calendar";
 export * from "./approvals";
 export * from "./stats";
 export * from "./users";
+export * from "./achievements";

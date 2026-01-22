@@ -1,4 +1,12 @@
-export type Chore = { _id: string; title: string; defaultPoints: number; description?: string };
+export type Chore = {
+  _id: string;
+  title: string;
+  defaultPoints: number;
+  description?: string;
+  isDefault?: boolean;
+  isActive?: boolean;
+  slug?: string;
+};
 
 const EditIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -24,6 +32,7 @@ type Props = {
   error: string;
   onEdit: (chore: Chore) => void;
   onDelete: (id: string) => void;
+  onToggleActive?: (id: string, next: boolean) => void;
   buttonColor?: string;
   buttonTextColor?: string;
   shadeFor: (points: number) => { bg: string; fg: string };
@@ -36,10 +45,56 @@ export const ChoreList = ({
   error,
   onEdit,
   onDelete,
+  onToggleActive,
   buttonColor,
   buttonTextColor,
   shadeFor,
 }: Props) => {
+  const defaultTitles: Record<string, string> = {
+    diska: "Diska",
+    dammsuga: "Dammsuga",
+    tvatta: "Tvätta",
+    toalett: "Toalett",
+    fixare: "Fixare",
+    handla: "Handla",
+    husdjur: "Husdjur",
+    kock: "Kock",
+    sopor: "Sopor",
+  };
+  const normalize = (s?: string) =>
+    (s || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
+
+  const order: Record<string, number> = {
+    diska: 0,
+    dammsuga: 1,
+    tvatta: 2,
+    toalett: 3,
+    fixare: 4,
+    handla: 5,
+    husdjur: 6,
+    kock: 7,
+    sopor: 8,
+  };
+
+  const sortedChores = [...chores].sort((a, b) => {
+    const aSlug = a.slug || normalize(a.title);
+    const bSlug = b.slug || normalize(b.title);
+    const aDefault = Boolean(a.isDefault || defaultTitles[aSlug]);
+    const bDefault = Boolean(b.isDefault || defaultTitles[bSlug]);
+    if (aDefault && !bDefault) return -1;
+    if (!aDefault && bDefault) return 1;
+    if (aDefault && bDefault) {
+      const ai = order[a.slug || normalize(a.title) || ""] ?? 999;
+      const bi = order[b.slug || normalize(b.title) || ""] ?? 999;
+      return ai - bi;
+    }
+    return a.title.localeCompare(b.title, "sv");
+  });
+
   return (
     <div className="card">
       <div className="row">
@@ -49,16 +104,52 @@ export const ChoreList = ({
       </div>
 
       <div className="chores-badges inline-grid">
-        {chores.map((c) => {
+        {sortedChores.map((c) => {
           const { bg, fg } = shadeFor(c.defaultPoints);
+          const slugKey = c.slug || normalize(c.title);
+          const isDefault = Boolean(c.isDefault || defaultTitles[slugKey]);
+          const isInactive = c.isActive === false;
+          const displayTitle =
+            isDefault && (defaultTitles[c.slug || ""] || defaultTitles[slugKey])
+              ? defaultTitles[c.slug || ""] || defaultTitles[slugKey]
+              : c.title;
           return (
-            <div key={c._id} className="chore-badge" title={c.description || ""}>
+            <div key={c._id} className={`chore-badge ${isInactive ? "inactive" : ""}`} title={c.description || ""}>
               <div className="chore-dot" style={{ background: bg, color: fg }}>
                 <span className="chore-points">{c.defaultPoints}p</span>
               </div>
-              <div className="chore-name">{c.title}</div>
+              <div className="chore-name">{displayTitle}</div>
+
+              {isDefault && (
+                <span className="micro-hint" style={{ color: "#64748b" }}>
+                  Standard
+                </span>
+              )}
 
               <div className="actions">
+                {onToggleActive && isDefault && (
+                  <button
+                    type="button"
+                    className={`tiny-btn user-btn ${isInactive ? "" : "ghost"}`}
+                    aria-label={isInactive ? "Aktivera" : "Inaktivera"}
+                    onClick={() => onToggleActive(c._id, !isInactive)}
+                    disabled={loading}
+                    style={
+                      buttonColor
+                        ? isInactive
+                          ? { background: buttonColor, color: buttonTextColor, border: "none" }
+                          : {
+                              background: "rgba(15, 23, 42, 0.08)",
+                              color: buttonColor,
+                              border: "1px solid rgba(15, 23, 42, 0.12)",
+                            }
+                        : undefined
+                    }
+                  >
+                    {isInactive ? "Aktivera" : "Pausa"}
+                  </button>
+                )}
+
                 <button
                   type="button"
                   className="tiny-btn user-btn icon-only"
@@ -78,24 +169,26 @@ export const ChoreList = ({
                   <EditIcon />
                 </button>
 
-                <button
-                  type="button"
-                  className="tiny-btn user-btn ghost icon-only"
-                  style={
-                    buttonColor
-                      ? {
-                          background: "rgba(15, 23, 42, 0.08)",
-                          color: buttonColor,
-                          border: "1px solid rgba(15, 23, 42, 0.12)",
-                        }
-                      : undefined
-                  }
-                  aria-label="Ta bort"
-                  onClick={() => onDelete(c._id)}
-                  disabled={loading}
-                >
-                  <TrashIcon />
-                </button>
+                {!isDefault && (
+                    <button
+                      type="button"
+                      className="tiny-btn user-btn ghost icon-only"
+                      style={
+                        buttonColor
+                          ? {
+                              background: "rgba(15, 23, 42, 0.08)",
+                              color: buttonColor,
+                              border: "1px solid rgba(15, 23, 42, 0.12)",
+                            }
+                          : undefined
+                      }
+                      aria-label="Ta bort"
+                      onClick={() => onDelete(c._id)}
+                      disabled={loading}
+                    >
+                      <TrashIcon />
+                    </button>
+                )}
               </div>
             </div>
           );

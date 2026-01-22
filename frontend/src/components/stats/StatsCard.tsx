@@ -18,7 +18,6 @@ type Props = {
     label?: string;
   };
   figureSrc?: string;
-  listClassName?: string;
   hidePeriodLabel?: boolean;
   hideTotal?: boolean;
   stackedBalance?: boolean;
@@ -37,7 +36,6 @@ export const StatsCard = ({
   description,
   controls,
   figureSrc = "/figure/woman_shopping.png",
-  listClassName,
   hidePeriodLabel = false,
   hideTotal = false,
   stackedBalance = false,

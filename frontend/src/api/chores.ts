@@ -1,7 +1,7 @@
 import { request } from "./http";
 
 export async function fetchChores(token: string) {
-  return request<{ chores: Array<{ _id: string; title: string; defaultPoints: number }> }>("/chores", {
+  return request<{ chores: Array<{ _id: string; title: string; defaultPoints: number; description?: string; isDefault?: boolean; isActive?: boolean; slug?: string }> }>("/chores", {
     method: "GET",
     token,
   });

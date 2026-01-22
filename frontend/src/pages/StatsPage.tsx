@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
 import { useStats } from "../hooks/useStats";
 import { StatsCard } from "../components/stats/StatsCard";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
 import { colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 type Props = { embedded?: boolean };
 
@@ -158,7 +158,6 @@ export const StatsPage = ({ embedded = false }: Props) => {
               ? `${weekSlice[0].periodStart.slice(0, 10)} – ${weekSlice[0].periodEnd.slice(0, 10)}`
               : "Ingen data",
           }}
-          listClassName="scroll-5"
         />
         <StatsCard
           title="Månadssummering"
@@ -181,7 +180,6 @@ export const StatsPage = ({ embedded = false }: Props) => {
               ? `${monthSlice[0].periodStart.slice(0, 10)} – ${monthSlice[0].periodEnd.slice(0, 10)}`
               : "Ingen data",
           }}
-          listClassName="scroll-5"
         />
         <StatsCard
           title="Årssummering"
@@ -200,7 +198,6 @@ export const StatsPage = ({ embedded = false }: Props) => {
             canPrev: false,
             canNext: false,
           }}
-          listClassName="scroll-5"
           footer={
             <div className="year-extras">
               <div className="stat-block figure-block">

@@ -31,9 +31,15 @@ const run = async () => {
   await user.save();
 
   const chores = [
-    { householdId: household._id, title: "Dishes", defaultPoints: 1 },
-    { householdId: household._id, title: "Vacuum", defaultPoints: 2 },
-    { householdId: household._id, title: "Laundry", defaultPoints: 2 },
+    { householdId: household._id, title: "Diska", defaultPoints: 2, slug: "diska", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Dammsuga", defaultPoints: 2, slug: "dammsuga", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Tvätta", defaultPoints: 2, slug: "tvatta", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Toalett", defaultPoints: 3, slug: "toalett", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Fixare", defaultPoints: 3, slug: "fixare", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Handla", defaultPoints: 2, slug: "handla", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Husdjur", defaultPoints: 2, slug: "husdjur", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Kock", defaultPoints: 3, slug: "kock", isDefault: true, isActive: true },
+    { householdId: household._id, title: "Sopor", defaultPoints: 1, slug: "sopor", isDefault: true, isActive: true },
   ];
   await Chore.insertMany(chores);
 

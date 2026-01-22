@@ -196,6 +196,40 @@
       grid-area: desc;
     }
 
+    .badge-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      font-weight: 700;
+    }
+
+    .badge-name {
+      color: #0f172a;
+    }
+
+    .badge-meta {
+      color: #475569;
+      font-weight: 600;
+
+      &.muted {
+        color: #94a3b8;
+        font-weight: 500;
+      }
+    }
+
     .stat-controls {
       grid-area: controls;
       display: inline-flex;

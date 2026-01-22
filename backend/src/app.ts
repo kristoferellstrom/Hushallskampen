@@ -11,6 +11,7 @@ import calendarRouter from "./routes/calendar";
 import approvalsRouter from "./routes/approvals";
 import statsRouter from "./routes/stats";
 import usersRouter from "./routes/users";
+import achievementsRouter from "./routes/achievements";
 
 export const createApp = () => {
   const app = express();
@@ -37,6 +38,7 @@ export const createApp = () => {
   app.use("/api/approvals", approvalsRouter);
   app.use("/api/stats", statsRouter);
   app.use("/api/users", usersRouter);
+  app.use("/api/achievements", achievementsRouter);
 
   app.get("/health", (_req: Request, res: Response) => {
     res.json({ status: "ok" });

@@ -72,6 +72,16 @@ export const ChoresPage = ({ embedded = false }: Props) => {
     return colorPreview(base) || fallbackColorForUser(user?.id || "");
   })();
 
+  const handleToggleActive = async (id: string, next: boolean) => {
+    const current = choresApi.chores.find((c) => c._id === id);
+    await choresApi.update(id, {
+      title: current?.title || "",
+      defaultPoints: current?.defaultPoints || 1,
+      description: current?.description,
+      isActive: next,
+    });
+  };
+
   const body = (
     <div
       className="chores-stack"
@@ -110,6 +120,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
               onCancel={forms.cancelEdit}
               buttonColor={userColor}
               buttonTextColor={textColorForBackground(userColor)}
+              disableTitle={forms.editingIsDefault}
             />
           )}
         </div>
@@ -127,6 +138,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
           error={choresApi.error}
           onEdit={forms.startEdit}
           onDelete={choresApi.remove}
+          onToggleActive={handleToggleActive}
           buttonColor={userColor}
           buttonTextColor={textColorForBackground(userColor)}
           shadeFor={(points: number) => {

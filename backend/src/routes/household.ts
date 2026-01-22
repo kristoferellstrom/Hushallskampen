@@ -7,10 +7,15 @@ import { authMiddleware, AuthRequest } from "../middleware/auth";
 const router = Router();
 
 const defaultChores = [
-  { title: "Dishes", defaultPoints: 1 },
-  { title: "Vacuum", defaultPoints: 2 },
-  { title: "Clean toilet", defaultPoints: 3 },
-  { title: "Laundry", defaultPoints: 2 },
+  { title: "Diska", defaultPoints: 2, slug: "diska" },
+  { title: "Dammsuga", defaultPoints: 2, slug: "dammsuga" },
+  { title: "Tvätta", defaultPoints: 2, slug: "tvatta" },
+  { title: "Toalett", defaultPoints: 3, slug: "toalett" },
+  { title: "Fixare", defaultPoints: 3, slug: "fixare" },
+  { title: "Handla", defaultPoints: 2, slug: "handla" },
+  { title: "Husdjur", defaultPoints: 2, slug: "husdjur" },
+  { title: "Kock", defaultPoints: 3, slug: "kock" },
+  { title: "Sopor", defaultPoints: 1, slug: "sopor" },
 ];
 
 async function genInvite() {
@@ -39,7 +44,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     user.householdId = household._id;
     await user.save();
 
-    const chores = defaultChores.map((c) => ({ ...c, householdId: household._id }));
+    const chores = defaultChores.map((c) => ({ ...c, householdId: household._id, isDefault: true, isActive: true }));
     await Chore.insertMany(chores);
 
     res.json({ household });

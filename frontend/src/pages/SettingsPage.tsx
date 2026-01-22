@@ -1,12 +1,17 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Logo } from "../components/Logo";
 import { useSettingsPage } from "../hooks/useSettingsPage";
+import { useAuth } from "../context/AuthContext";
+import { fetchMonthlyBadges } from "../api";
+import type { MonthlyBadge, PointsWinner } from "../api";
 
 import { InviteCard } from "../components/settings/InviteCard";
 import { HouseholdSettingsCard } from "../components/settings/HouseholdSettingsCard";
 import { ColorPickerCard } from "../components/settings/ColorPickerCard";
 
 export const SettingsPage = () => {
+  const { token, user } = useAuth();
   const {
     invite,
     name,
@@ -39,8 +44,30 @@ export const SettingsPage = () => {
     handleColor,
     setTargetShareForMember,
   } = useSettingsPage();
-  const earnedMonthlyBadges: string[] = []; 
-  const earnedSpecialBadges: string[] = []; 
+  const [monthlyBadges, setMonthlyBadges] = useState<MonthlyBadge[]>([]);
+  const [badgeError, setBadgeError] = useState("");
+  const [monthPointsWinner, setMonthPointsWinner] = useState<PointsWinner | null>(null);
+  const [yearPointsWinner, setYearPointsWinner] = useState<PointsWinner | null>(null);
+  const earnedSpecialBadges: string[] = [];
+
+  useEffect(() => {
+    const load = async () => {
+      if (!token) return;
+      try {
+        const res = await fetchMonthlyBadges(token);
+        setMonthlyBadges(res.badges || []);
+        setMonthPointsWinner((res as any).monthPointsWinner || null);
+        setYearPointsWinner((res as any).yearPointsWinner || null);
+        setBadgeError("");
+      } catch (err) {
+        setBadgeError(err instanceof Error ? err.message : "Kunde inte hämta badges");
+      }
+    };
+    load();
+  }, [token]);
+
+  const myId = user?.id;
+  const myMonthlyBadges = monthlyBadges.filter((b) => b.winners.some((w) => w.userId === myId && w.wins > 0));
 
   return (
     <div className="shell">
@@ -107,16 +134,57 @@ export const SettingsPage = () => {
           </div>
           <div className="badge-section">
             <p className="eyebrow">Månadsbadges</p>
-            {earnedMonthlyBadges.length > 0 ? (
+            {badgeError && <p className="status error">{badgeError}</p>}
+            {!badgeError && myMonthlyBadges.length === 0 && <p className="hint">Inga vunna månadsbadges ännu.</p>}
+            {!badgeError && myMonthlyBadges.length > 0 && (
               <div className="badge-thumb-grid">
-                {earnedMonthlyBadges.map((src) => (
-                  <figure key={src} className="badge-thumb">
-                    <img src={src} alt="Badge" />
-                  </figure>
-                ))}
+                {myMonthlyBadges.map((b) => {
+                  const win = b.winners.find((w) => w.userId === myId);
+                  return (
+                    <figure key={b.slug} className="badge-thumb badge-count">
+                      {b.image && <img src={b.image} alt={b.title} />}
+                      {win && win.wins > 1 && <span className="badge-count-pill">{win.wins}</span>}
+                      <figcaption>
+                        <strong>{b.title}</strong>
+                      </figcaption>
+                    </figure>
+                  );
+                })}
               </div>
-            ) : (
-              <p className="hint">Inga vunna månadsbadges ännu.</p>
+            )}
+          </div>
+
+          <div className="badge-section">
+            <p className="eyebrow">Månadens poängvinnare</p>
+            {badgeError && <p className="status error">{badgeError}</p>}
+            {!badgeError && !monthPointsWinner && <p className="hint">Ingen vinnare ännu denna månad.</p>}
+            {!badgeError && monthPointsWinner && (
+              <div className="badge-thumb-grid">
+                <figure className="badge-thumb">
+                  <img src="/month/januari.png" alt="Månadens poängvinnare" />
+                  <figcaption style={{ textAlign: "center" }}>
+                    <strong>{monthPointsWinner.name || "Okänd"}</strong>
+                    <div className="hint" style={{ marginTop: 4 }}>{monthPointsWinner.points} poäng</div>
+                  </figcaption>
+                </figure>
+              </div>
+            )}
+          </div>
+
+          <div className="badge-section">
+            <p className="eyebrow">Årsvinnare (poäng)</p>
+            {badgeError && <p className="status error">{badgeError}</p>}
+            {!badgeError && !yearPointsWinner && <p className="hint">Ingen årsvinnare ännu.</p>}
+            {!badgeError && yearPointsWinner && (
+              <div className="badge-thumb-grid">
+                <figure className="badge-thumb">
+                  <img src="/arsvinnaren.png" alt="Årsvinnaren" />
+                  <figcaption style={{ textAlign: "center" }}>
+                    <strong>{yearPointsWinner.name || "Okänd"}</strong>
+                    <div className="hint" style={{ marginTop: 4 }}>{yearPointsWinner.points} poäng</div>
+                  </figcaption>
+                </figure>
+              </div>
             )}
           </div>
 

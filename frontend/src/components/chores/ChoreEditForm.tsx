@@ -12,6 +12,7 @@ type Props = {
   onCancel: () => void;
   buttonColor?: string;
   buttonTextColor?: string;
+  disableTitle?: boolean;
 };
 
 export const ChoreEditForm = ({
@@ -26,6 +27,7 @@ export const ChoreEditForm = ({
   onCancel,
   buttonColor,
   buttonTextColor,
+  disableTitle = false,
 }: Props) => {
   return (
     <form className="card" onSubmit={onSubmit}>
@@ -33,7 +35,7 @@ export const ChoreEditForm = ({
 
       <label>
         Titel
-        <input value={editTitle} onChange={(e) => onChangeTitle(e.target.value)} required />
+        <input value={editTitle} onChange={(e) => onChangeTitle(e.target.value)} required disabled={disableTitle} />
       </label>
 
       <label>

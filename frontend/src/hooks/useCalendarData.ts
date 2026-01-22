@@ -78,7 +78,8 @@ export const useCalendarData = (token: string | null, user: UserLike) => {
       ]);
 
       setEntries(cal.entries);
-      setChores(ch.chores);
+      const activeChores = (ch.chores || []).filter((c: any) => c.isActive !== false);
+      setChores(activeChores);
       setMembers(mem.members);
 
       if (!selectedAssignee && mem.members.length) {

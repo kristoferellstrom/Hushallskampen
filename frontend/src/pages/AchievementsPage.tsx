@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useStats } from "../hooks/useStats";
+import { fetchMonthlyBadges } from "../api";
+import type { MonthlyBadge } from "../api";
 
 type Props = { embedded?: boolean };
 
@@ -45,9 +48,29 @@ const monthAwards: Award[] = [
 ];
 
 export const AchievementsPage = ({ embedded = false }: Props) => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { monthly } = useStats(token);
   const today = new Date();
+  const [monthlyBadges, setMonthlyBadges] = useState<MonthlyBadge[]>([]);
+  const [badgeError, setBadgeError] = useState("");
+  const [monthPointsWinner, setMonthPointsWinner] = useState<{ userId: string; name?: string; points: number } | null>(null);
+  const [yearPointsWinner, setYearPointsWinner] = useState<{ userId: string; name?: string; points: number } | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!token) return;
+      try {
+        const res = await fetchMonthlyBadges(token);
+        setMonthlyBadges(res.badges || []);
+        setBadgeError("");
+        setMonthPointsWinner((res as any).monthPointsWinner || null);
+        setYearPointsWinner((res as any).yearPointsWinner || null);
+      } catch (err) {
+        setBadgeError(err instanceof Error ? err.message : "Kunde inte hämta badges");
+      }
+    };
+    load();
+  }, [token]);
 
   const getMonthWinners = (month: number) => {
     const record = monthly.find((rec) => {
@@ -104,6 +127,59 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
                 </figure>
               ))}
             </div>
+
+            <h4 style={{ margin: "12px 0 6px" }}>Månadens badges</h4>
+            {badgeError && <p className="status error">{badgeError}</p>}
+            {!badgeError && (
+              <>
+                <div className="badge-grid" style={{ marginBottom: 8 }}>
+                  <figure className="badge-card">
+                    <figcaption>
+                      <strong>Månadens poängvinnare</strong>
+                      {monthPointsWinner ? (
+                        <span className="hint">
+                          {monthPointsWinner.name || "Okänd"} · {monthPointsWinner.points}p
+                        </span>
+                      ) : (
+                        <span className="hint">Ingen data ännu.</span>
+                      )}
+                    </figcaption>
+                  </figure>
+                  <figure className="badge-card">
+                    <figcaption>
+                      <strong>Årsvinnare (poäng, live)</strong>
+                      {yearPointsWinner ? (
+                        <span className="hint">
+                          {yearPointsWinner.name || "Okänd"} · {yearPointsWinner.points}p
+                        </span>
+                      ) : (
+                        <span className="hint">Ingen data ännu.</span>
+                      )}
+                    </figcaption>
+                  </figure>
+                </div>
+                <div className="badge-grid">
+                  {monthlyBadges.map((b) => {
+                    const win = b.monthWinners?.[0];
+                    return (
+                      <figure key={b.slug} className="badge-card">
+                        {b.image && <img src={b.image} alt={b.title} />}
+                        <figcaption>
+                          <strong>{b.title}</strong>
+                          {win ? (
+                            <span className="hint">
+                              {win.name || "Okänd"} · {win.count} st
+                            </span>
+                          ) : (
+                            <span className="hint">Ingen vinnare ännu.</span>
+                          )}
+                        </figcaption>
+                      </figure>
+                    );
+                  })}
+                </div>
+              </>
+            )}
             <h4 style={{ margin: "12px 0 6px" }}>Månadsbadges</h4>
             <div className="badge-grid">
               {monthAwards.map((a) => {
@@ -136,6 +212,34 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
                 );
               })}
             </div>
+
+            <h4 style={{ margin: "12px 0 6px" }}>Sysslor & vinnare (månad)</h4>
+            {badgeError && <p className="status error">{badgeError}</p>}
+            {!badgeError && (
+              <div className="badge-grid">
+                {monthlyBadges.map((b) => {
+                  const myWin = b.winners.find((w) => w.userId === user?.id);
+                  const topWins = b.winners.reduce((max, w) => Math.max(max, w.wins), 0);
+                  const leaders = b.winners.filter((w) => w.wins === topWins && topWins > 0);
+                  return (
+                    <figure key={b.slug} className={`badge-card ${myWin ? "winner" : ""}`}>
+                      {b.image && <img src={b.image} alt={b.title} />}
+                      {myWin && myWin.wins > 1 && <span className="badge-count-pill">{myWin.wins}</span>}
+                      <figcaption>
+                        <strong>{b.title}</strong>
+                        {leaders.length ? (
+                          <span className="hint">
+                            {leaders.map((l) => `${l.name || "Okänd"} (${l.wins}x)`).join(", ")}
+                          </span>
+                        ) : (
+                          <span className="hint">Ingen vinnare än</span>
+                        )}
+                      </figcaption>
+                    </figure>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
