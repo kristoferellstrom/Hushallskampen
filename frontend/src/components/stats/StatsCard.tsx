@@ -24,6 +24,8 @@ type Props = {
   stackedBalance?: boolean;
   sortByPoints?: boolean;
   footer?: React.ReactNode;
+  renderExtra?: (rec: StatItem) => React.ReactNode;
+  blockClassName?: string;
 };
 
 export const StatsCard = ({
@@ -41,6 +43,8 @@ export const StatsCard = ({
   stackedBalance = false,
   sortByPoints = false,
   footer,
+  renderExtra,
+  blockClassName,
 }: Props) => {
   return (
     <div className="card stats-card">
@@ -52,7 +56,7 @@ export const StatsCard = ({
       </div>
 
       {items.map((rec) => (
-        <div key={rec.periodStart} className="stat-block">
+        <div key={rec.periodStart} className={`stat-block${blockClassName ? ` ${blockClassName}` : ""}`}>
           {!hidePeriodLabel && (
             <p className="hint period-label">
               {rec.periodStart.slice(0, 10)} – {rec.periodEnd.slice(0, 10)}
@@ -148,7 +152,11 @@ export const StatsCard = ({
             );
           })()}
 
-          <BalanceRow rec={rec} balanceInfo={balanceInfo} stacked={stackedBalance} hideTotal={hideTotal} />
+          <div className="balance-wrap">
+            <BalanceRow rec={rec} balanceInfo={balanceInfo} stacked={stackedBalance} hideTotal={hideTotal} />
+          </div>
+
+          {renderExtra && <div className="stat-extra">{renderExtra(rec)}</div>}
         </div>
       ))}
 

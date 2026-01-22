@@ -5,31 +5,19 @@ import { Logo } from "../components/Logo";
 import { useStats } from "../hooks/useStats";
 import { StatsCard } from "../components/stats/StatsCard";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
-import { colorPreview, fallbackColorForUser, textColorForBackground, shadeForPoints } from "../utils/palette";
-import { useEffect, useMemo, useState } from "react";
+import { colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 type Props = { embedded?: boolean };
 
 export const StatsPage = ({ embedded = false }: Props) => {
   const { token, user } = useAuth();
   const { weekly, monthly, error, balanceInfo, memberColors } = useStats(token);
-  const { monthlyChoreLeaders, yearChoreLeaders } = useApprovalsPage(200);
+  const { monthlyChoreLeaders, yearChoreLeaders, yearChoreTotals } = useApprovalsPage(200);
   const [weekIdx, setWeekIdx] = useState(0);
   const [monthIdx, setMonthIdx] = useState(0);
   const currentYear = new Date().getFullYear();
   const [choreRange, setChoreRange] = useState<"30d" | "year">("30d");
-
-  const toAlpha = (hex: string, alpha: number) => {
-    const color = colorPreview(hex) || hex;
-    if (!color.startsWith("#") || (color.length !== 7 && color.length !== 4)) return color;
-    const full = color.length === 4
-      ? `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`
-      : color;
-    const r = parseInt(full.slice(1, 3), 16);
-    const g = parseInt(full.slice(3, 5), 16);
-    const b = parseInt(full.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
 
   const topFromRecord = (rec?: any) => {
     if (!rec) return null;
@@ -67,6 +55,11 @@ export const StatsPage = ({ embedded = false }: Props) => {
   const monthSlice = useMemo(() => (monthly[monthIdx] ? [monthly[monthIdx]] : []), [monthly, monthIdx]);
   const choreLeaders: Array<{ chore: string; user: string; userId: string; count: number }> =
     (choreRange === "30d" ? monthlyChoreLeaders : yearChoreLeaders) as any;
+
+  const maxChoreCount = useMemo(
+    () => choreLeaders.reduce((m, row) => Math.max(m, row.count), 0),
+    [choreLeaders]
+  );
   const yearAggregate = useMemo(() => {
     if (!monthly.length) return [];
     const map: Record<string, { name: string; points: number }> = {};
@@ -89,6 +82,32 @@ export const StatsPage = ({ embedded = false }: Props) => {
       },
     ];
   }, [monthly, currentYear]);
+
+  const yearChoreSlices = useMemo(() => {
+    const sorted = [...yearChoreTotals].sort((a, b) => b.count - a.count);
+    return sorted.slice(0, 8);
+  }, [yearChoreTotals]);
+
+  const yearChorePie = useMemo(() => {
+    const total = yearChoreSlices.reduce((sum, c) => sum + c.count, 0);
+    let start = 0;
+    const segments = yearChoreSlices.map((c) => {
+      const base = colorPreview(fallbackColorForUser(c.chore)) || fallbackColorForUser(c.chore);
+      const slice = total > 0 ? (c.count / total) * 360 : 0;
+      const pct = total > 0 ? Math.round((c.count / total) * 100) : 0;
+      const entryStart = start;
+      const entryEnd = start + slice;
+      start = entryEnd;
+      return { ...c, color: base, pct, start: entryStart, end: entryEnd };
+    });
+
+    const gradient =
+      total > 0 && segments.length
+        ? `conic-gradient(${segments.map((s) => `${s.color} ${s.start}deg ${s.end}deg`).join(", ")})`
+        : "#e2e8f0";
+
+    return { segments, gradient, total };
+  }, [yearChoreSlices]);
 
   const ownColor = (user?.id && (memberColors as any)[user.id]) || user?.color || "";
   const baseColor = ownColor || fallbackColorForUser(user?.id || "");
@@ -119,7 +138,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
 
       <div className="stats-grid">
         <StatsCard
-          title="Veckosummeringar"
+          title="Veckosummering"
           description="Summerar poäng per hushållsmedlem för aktuell vecka. Bläddra för tidigare veckor för att se hur fördelningen förändras och om hushållet närmar sig era mål över tid."
           items={weekSlice}
           balanceInfo={balanceInfo}
@@ -129,6 +148,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           stackedBalance
           sortByPoints
           figureSrc="/figure/woman_shopping.png"
+          blockClassName="flat weekly-shift"
           controls={{
             onPrev: () => setWeekIdx((i) => Math.min(i + 1, weekly.length - 1)),
             onNext: () => setWeekIdx((i) => Math.max(i - 1, 0)),
@@ -141,7 +161,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           listClassName="scroll-5"
         />
         <StatsCard
-          title="Månads-summeringar"
+          title="Månadssummering"
           description="Visar varje medlems poäng och andel för aktuell månad. Bläddra bakåt för att se hur fördelningen ändras månad för månad och om hushållet håller jämna steg med era mål."
           items={monthSlice}
           balanceInfo={balanceInfo}
@@ -151,6 +171,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           stackedBalance
           sortByPoints
           figureSrc="/figure/man_washing.png"
+          blockClassName="flat monthly-shift"
           controls={{
             onPrev: () => setMonthIdx((i) => Math.min(i + 1, monthly.length - 1)),
             onNext: () => setMonthIdx((i) => Math.max(i - 1, 0)),
@@ -173,6 +194,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           stackedBalance
           sortByPoints
           figureSrc=""
+          blockClassName="year-shift"
           controls={{
             label: `${currentYear}`,
             canPrev: false,
@@ -180,21 +202,57 @@ export const StatsPage = ({ embedded = false }: Props) => {
           }}
           listClassName="scroll-5"
           footer={
-            <img
-              src="/figure/stats.png"
-              alt="Statistikillustration"
-              className="stat-figure-wide"
-            />
+            <div className="year-extras">
+              <div className="stat-block figure-block">
+                <img
+                  src="/figure/stats.png"
+                  alt="Statistikillustration"
+                  className="stat-figure-wide"
+                />
+              </div>
+              <div className="stat-block">
+                <div className="subhead">
+                  <h3>Årets mest gjorda sysslor</h3>
+                  <p className="stat-desc">
+                    Vilka sysslor har gjorts flest gånger i år? Tårtdiagrammet visar fördelningen mellan toppsysslorna.
+                  </p>
+                </div>
+                {yearChorePie.segments.length === 0 ? (
+                  <p className="hint">Ingen data för året ännu.</p>
+                ) : (
+                  <div className="pie-wrap chore-pie">
+                    <div
+                      className="pie"
+                      style={{ background: yearChorePie.gradient }}
+                      aria-label="Fördelning av sysslor under året"
+                    />
+                    <ul className="pie-legend two-col">
+                      {yearChorePie.segments.map((s) => (
+                        <li key={s.chore}>
+                          <span className="legend-dot" style={{ background: s.color }} />
+                          <div className="legend-text">
+                            <span className="legend-name">{s.chore}</span>
+                            <span className="legend-meta">
+                              {s.count} st · {s.pct}%
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
           }
         />
         {choreLeaders.length > 0 && (
           <div className="card stats-card">
             <div className="stats-head">
-              <h2>Flest utförda per syssla</h2>
+              <h2>Vem har gjort mest?</h2>
               <p className="stat-desc">
                 Se vem som gjort flest av varje syssla. Växla mellan senaste 30 dagarna och året för att följa trender.
               </p>
-              <div className="stat-controls">
+              <div className="stat-controls mode-toggle">
                 <button
                   className={`stat-nav-btn ${choreRange === "30d" ? "active" : ""}`}
                   onClick={() => setChoreRange("30d")}
@@ -210,27 +268,49 @@ export const StatsPage = ({ embedded = false }: Props) => {
               </div>
             </div>
             <div className="stat-block">
-              <ul className="list scroll-10">
-                {choreLeaders.map((row) => (
-                  (() => {
+              {choreLeaders.length === 0 ? (
+                <p className="hint">Ingen data ännu.</p>
+              ) : (
+                <div className="chore-chip-grid">
+                  {choreLeaders.map((row) => {
                     const base = memberColors[row.userId] || row.userId || "";
                     const strong = colorPreview(base) || base || fallbackColorForUser(row.userId || "");
-                    const bgStart = toAlpha(strong, 1);
-                    const bgEnd = toAlpha(strong, 0.85);
-                    const bg = `linear-gradient(90deg, ${bgStart}, ${bgEnd})`;
-                    const fg = textColorForBackground(strong);
+                    const widthPct = maxChoreCount ? Math.round((row.count / maxChoreCount) * 100) : 0;
                     return (
-                      <li key={`${row.chore}-${choreRange}`} className="row user-row" style={{ background: bg, color: fg }}>
-                        <div className="user-text">
+                      <div
+                        key={`${row.chore}-${choreRange}`}
+                        className="chore-chip"
+                        style={{ "--chore-color": strong } as CSSProperties}
+                      >
+                        <div className="chore-chip-top">
+                          <span className="chip-dot" />
                           <span className="user-name">{row.chore}</span>
-                          <span className="user-meta">Flest av: {row.user}</span>
+                          <span className="chore-count">{row.count} st</span>
                         </div>
-                        <strong className="user-points">{row.count} st</strong>
-                      </li>
-                    );
-                  })()
-                ))}
-              </ul>
+                        <span className="user-meta">Flest av: {row.user}</span>
+                        <div className="chore-chip-bar">
+                          <div className="chore-chip-fill" style={{ width: `${widthPct}%` }} />
+                        </div>
+                      </div>
+                      );
+                    })}
+                </div>
+              )}
+              <div className="chore-figure">
+                <img
+                  src="/figure/aret_runt.png"
+                  alt="Året runt illustration"
+                  className="stat-figure-wide"
+                />
+                <p className="hint">
+                  Statistiken här ger en tydlig bild av hur hushållets sysslor har fördelats och utvecklats över året.
+                  Du kan se vem som samlat flest poäng totalt, hur stor andel varje medlem bidrar med och vem som ligger
+                  närmast (eller längst ifrån) sitt mål. Listan över årets mest gjorda sysslor visar vilka uppgifter som
+                  återkommer mest i vardagen, och vem som oftast tar ansvar för dem. Genom att växla mellan senaste 30
+                  dagar och hela året kan du jämföra kortsiktiga förändringar med långsiktiga mönster – vilket gör det
+                  lättare att upptäcka obalans, följa trender och justera mål eller fördelning inför nästa år.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -251,10 +331,9 @@ export const StatsPage = ({ embedded = false }: Props) => {
         }}
       >
         <section id="statistik">
-          <header>
+          <header className="stats-page-header">
             <div>
               <p className="eyebrow">Statistik</p>
-              <p className="hint">Vecko- och månadssummor per hushåll</p>
             </div>
           </header>
           {content}
@@ -279,7 +358,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           ← Till dashboard
         </Link>
         <Logo />
-        <header>
+        <header className="stats-page-header">
           <div>
             <p className="eyebrow">Statistik</p>
             <h1>Poäng och balans</h1>

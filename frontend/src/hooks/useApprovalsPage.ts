@@ -29,6 +29,7 @@ export const useApprovalsPage = (historyLimit = 10) => {
   const [yearChoreLeaders, setYearChoreLeaders] = useState<
     { chore: string; user: string; userId: string; count: number }[]
   >([]);
+  const [yearChoreTotals, setYearChoreTotals] = useState<{ chore: string; count: number }[]>([]);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,6 +101,14 @@ export const useApprovalsPage = (historyLimit = 10) => {
         return { chore, user: data.names[uid] || "-", userId: data.ids[uid] || uid, count };
       });
       setYearChoreLeaders(yearLeaders);
+
+      const yearTotals = Object.entries(yearMap)
+        .map(([chore, data]) => {
+          const totalCount = Object.values(data.counts).reduce((sum, val) => sum + val, 0);
+          return { chore, count: totalCount };
+        })
+        .sort((a, b) => b.count - a.count);
+      setYearChoreTotals(yearTotals);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte hämta godkännanden");
     }
@@ -148,6 +157,7 @@ export const useApprovalsPage = (historyLimit = 10) => {
     lastMonthHistory,
     monthlyChoreLeaders,
     yearChoreLeaders,
+    yearChoreTotals,
     status,
     error,
     loading,
