@@ -74,7 +74,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
 
   const body = (
     <div
-      className="chores-layout"
+      className="chores-stack"
       style={
         {
           ["--user-color" as any]: userColor,
@@ -82,38 +82,44 @@ export const ChoresPage = ({ embedded = false }: Props) => {
         } as React.CSSProperties
       }
     >
-      <div className="chores-left">
-        <ChoreCreateForm
-          loading={choresApi.loading}
-          newTitle={forms.newTitle}
-          newPoints={forms.newPoints}
-          newDescription={forms.newDescription}
-          onChangeTitle={forms.setNewTitle}
-          onChangePoints={forms.setNewPoints}
-          onChangeDescription={forms.setNewDescription}
-          onSubmit={handleCreate}
-          buttonColor={userColor}
-          buttonTextColor={textColorForBackground(userColor)}
-        />
-
-        {forms.editingId && (
-          <ChoreEditForm
+      <div className="chores-hero">
+        <div className="chores-left">
+          <ChoreCreateForm
             loading={choresApi.loading}
-            editTitle={forms.editTitle}
-            editPoints={forms.editPoints}
-            editDescription={forms.editDescription}
-            onChangeTitle={forms.setEditTitle}
-          onChangePoints={forms.setEditPoints}
-          onChangeDescription={forms.setEditDescription}
-          onSubmit={handleUpdate}
-          onCancel={forms.cancelEdit}
-          buttonColor={userColor}
-          buttonTextColor={textColorForBackground(userColor)}
-        />
-      )}
+            newTitle={forms.newTitle}
+            newPoints={forms.newPoints}
+            newDescription={forms.newDescription}
+            onChangeTitle={forms.setNewTitle}
+            onChangePoints={forms.setNewPoints}
+            onChangeDescription={forms.setNewDescription}
+            onSubmit={handleCreate}
+            buttonColor={userColor}
+            buttonTextColor={textColorForBackground(userColor)}
+          />
+
+          {forms.editingId && (
+            <ChoreEditForm
+              loading={choresApi.loading}
+              editTitle={forms.editTitle}
+              editPoints={forms.editPoints}
+              editDescription={forms.editDescription}
+              onChangeTitle={forms.setEditTitle}
+              onChangePoints={forms.setEditPoints}
+              onChangeDescription={forms.setEditDescription}
+              onSubmit={handleUpdate}
+              onCancel={forms.cancelEdit}
+              buttonColor={userColor}
+              buttonTextColor={textColorForBackground(userColor)}
+            />
+          )}
+        </div>
+
+        <div className="chores-figure">
+          <img src="/figure/sysslor.png" alt="Illustration sysslor" />
+        </div>
       </div>
 
-      <div className="chores-right">
+      <div className="chores-list-full">
         <ChoreList
           chores={choresApi.chores}
           loading={choresApi.loading}
