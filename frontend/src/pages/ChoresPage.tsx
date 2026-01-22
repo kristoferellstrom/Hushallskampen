@@ -28,7 +28,6 @@ export const ChoresPage = ({ embedded = false }: Props) => {
         const me = res.members.find((m: any) => m._id === user.id);
         if (me?.color) setMemberColor(me.color);
       } catch {
-        /* ignore */
       }
     };
     loadColor();
