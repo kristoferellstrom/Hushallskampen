@@ -254,7 +254,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
         width: "100vw",
         marginLeft: "calc(-50vw + 50%)",
         marginRight: "calc(-50vw + 50%)",
-        padding: "24px 0 32px",
+        padding: "64px 0 72px",
       }}
     >
       <section id="godkannanden" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: userColorFg }}>

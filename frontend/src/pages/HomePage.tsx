@@ -164,13 +164,21 @@ export const HomePage = () => {
         </div>
       </header>
 
-      <CalendarPage embedded />
-      <div style={{ marginTop: 64 }}>
+      <div className="page-section">
+        <CalendarPage embedded />
+      </div>
+      <div className="page-section">
         <ApprovalsPage embedded />
       </div>
-      <ChoresPage embedded />
-      <StatsPage embedded />
-      <AchievementsPage embedded />
+      <div className="page-section">
+        <ChoresPage embedded />
+      </div>
+      <div className="page-section">
+        <StatsPage embedded />
+      </div>
+      <div className="page-section">
+        <AchievementsPage embedded />
+      </div>
     </div>
   );
 };

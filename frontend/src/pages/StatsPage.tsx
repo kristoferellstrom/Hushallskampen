@@ -320,13 +320,13 @@ export const StatsPage = ({ embedded = false }: Props) => {
   if (embedded) {
     return (
       <div
-        className="page-surface"
-        style={{
-          background: surface,
-          width: "100vw",
-          marginLeft: "calc(-50vw + 50%)",
-          marginRight: "calc(-50vw + 50%)",
-        padding: "24px 0 32px",
+      className="page-surface"
+      style={{
+        background: surface,
+        width: "100vw",
+        marginLeft: "calc(-50vw + 50%)",
+        marginRight: "calc(-50vw + 50%)",
+        padding: "60px 0 60px",
       }}
     >
       <section id="statistik">
@@ -344,7 +344,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
         width: "100vw",
         marginLeft: "calc(-50vw + 50%)",
         marginRight: "calc(-50vw + 50%)",
-        padding: "24px 0 32px",
+        padding: "48px 0 32px",
       }}
     >
       <div className="shell">
