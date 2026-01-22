@@ -89,54 +89,53 @@ export const CalendarBoard = ({
 
   return (
     <div className="card calendar-card hoverable">
-      <div className="month-nav">
-        <button type="button" onClick={onPrevMonth} style={arrowStyle}>
-          ←
-        </button>
-
-        <div>
-          <strong>{monthLabel}</strong>
-        </div>
-
-        <button type="button" onClick={onNextMonth} style={arrowStyle}>
-          →
-        </button>
-
-      </div>
-
-      <div className="row" style={{ marginBottom: 8, gap: 8, flexWrap: "wrap" }}>
-        <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          Filter
-          <select value={filter} onChange={(e) => onChangeFilter(e.target.value)}>
-            <option value="all">Alla</option>
-            <option value="submitted">Väntar godkännande</option>
-            {members.map((m) => (
-              <option key={m._id} value={m._id}>
-                {m.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div className="mode-toggle" style={{ marginLeft: "auto" }}>
-          <button
-            type="button"
-            className={view === "month" ? "active" : ""}
-            style={toggleStyle(view === "month")}
-            onClick={() => onChangeView("month")}
-          >
-            Månad
+      <div className="calendar-topbar">
+        <div className="month-nav">
+          <button type="button" onClick={onPrevMonth} style={arrowStyle}>
+            ←
           </button>
-          <button
-            type="button"
-            className={view === "week" ? "active" : ""}
-            style={toggleStyle(view === "week")}
-            onClick={() => onChangeView("week")}
-          >
-            Vecka
+
+          <div className="month-label">
+            <strong>{monthLabel}</strong>
+          </div>
+
+          <button type="button" onClick={onNextMonth} style={arrowStyle}>
+            →
           </button>
         </div>
 
+        <div className="calendar-top-controls">
+          <div className="mode-toggle">
+            <button
+              type="button"
+              className={view === "month" ? "active" : ""}
+              style={toggleStyle(view === "month")}
+              onClick={() => onChangeView("month")}
+            >
+              Månad
+            </button>
+            <button
+              type="button"
+              className={view === "week" ? "active" : ""}
+              style={toggleStyle(view === "week")}
+              onClick={() => onChangeView("week")}
+            >
+              Vecka
+            </button>
+          </div>
+          <label className="calendar-filter">
+            Filter
+            <select value={filter} onChange={(e) => onChangeFilter(e.target.value)}>
+              <option value="all">Alla</option>
+              <option value="submitted">Väntar godkännande</option>
+              {members.map((m) => (
+                <option key={m._id} value={m._id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </div>
 
       {view === "month" && <CalendarWeekdays />}
