@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Logo } from "../components/Logo";
 import { useSettingsPage } from "../hooks/useSettingsPage";
 import { useAuth } from "../context/AuthContext";
-import { fetchMonthlyBadges } from "../api";
+import { fetchMonthlyBadges, listMembers } from "../api";
 import type { MonthlyBadge, PointsWinner } from "../api";
+import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { listApprovals } from "../api";
 
 import { InviteCard } from "../components/settings/InviteCard";
 import { HouseholdSettingsCard } from "../components/settings/HouseholdSettingsCard";
 import { ColorPickerCard } from "../components/settings/ColorPickerCard";
 
 export const SettingsPage = () => {
-  const { token, user } = useAuth();
+  const { token, user, logout } = useAuth();
   const {
     invite,
     name,
@@ -49,6 +50,45 @@ export const SettingsPage = () => {
   const [monthPointsWinner, setMonthPointsWinner] = useState<PointsWinner | null>(null);
   const [yearPointsWinner, setYearPointsWinner] = useState<PointsWinner | null>(null);
   const earnedSpecialBadges: string[] = [];
+  const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+  const [approvalCount, setApprovalCount] = useState<number>(0);
+
+  useEffect(() => {
+    const loadColor = async () => {
+      try {
+        if (!token || !user?.id) return;
+        const res = await listMembers(token);
+        const me = res.members.find((m: any) => m._id === user.id);
+        if (me?.color) setMemberColor(me.color);
+      } catch {
+        /* ignore */
+      }
+    };
+    loadColor();
+  }, [token, user?.id]);
+
+  useEffect(() => {
+    const loadApprovals = async () => {
+      try {
+        if (!token) return;
+        const res = await listApprovals(token);
+        const mine = user?.id;
+        const pendingForMe = res.approvals.filter((a: any) => a.submittedByUserId?._id !== mine);
+        setApprovalCount(pendingForMe.length || 0);
+      } catch {
+        setApprovalCount(0);
+      }
+    };
+    loadApprovals();
+  }, [token, user?.id]);
+
+  const shellColor = (() => {
+    const base = memberColor || user?.color;
+    if (!base) return fallbackColorForUser(user?.id || "");
+    if (base.startsWith("#")) return base;
+    return colorPreview(base) || fallbackColorForUser(user?.id || "");
+  })();
+  const shellColorFg = textColorForBackground(shellColor);
 
   useEffect(() => {
     const load = async () => {
@@ -70,18 +110,57 @@ export const SettingsPage = () => {
   const myMonthlyBadges = monthlyBadges.filter((b) => b.winners.some((w) => w.userId === myId && w.wins > 0));
 
   return (
-    <div className="shell">
-      <Link className="back-link" to="/dashboard">
-        ← Till dashboard
-      </Link>
-
-      <Logo />
-
-      <header>
-        <div>
-          <p className="eyebrow">Inställningar</p>
-          <h1>{name || "Hushåll"}</h1>
-          <p className="hint">Hantera hushållsinformation</p>
+    <div
+      className="shell home-shell"
+      style={{
+        ["--user-color" as any]: shellColor,
+        ["--user-color-fg" as any]: shellColorFg,
+        paddingTop: 0,
+      }}
+    >
+      <header
+        className="home-header"
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          background: "#ffffff",
+          padding: "0",
+          marginBottom: "12px",
+          boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
+        }}
+      >
+        <div className="home-left">
+          <nav className="nav-links">
+            <Link to="/dashboard#kalender" className="nav-link subtle">
+              Kalender
+            </Link>
+            <Link to="/dashboard#godkannanden" className="nav-link subtle">
+              Godkännanden
+              {approvalCount > 0 && <span className="nav-badge">{approvalCount}</span>}
+            </Link>
+            <Link to="/dashboard#sysslor" className="nav-link subtle">
+              Sysslor
+            </Link>
+            <Link to="/dashboard#statistik" className="nav-link subtle">
+              Statistik
+            </Link>
+            <Link to="/dashboard#priser" className="nav-link subtle">
+              Priser
+            </Link>
+          </nav>
+        </div>
+        <div className="header-actions" style={{ gap: 8, justifyContent: "flex-end", marginLeft: "auto" }}>
+          <Link to="/settings" className="nav-link subtle active" style={{ marginRight: 4 }}>
+            Inställningar
+          </Link>
+          <button
+            className="logout-btn"
+            onClick={logout}
+            style={{ background: shellColor, color: shellColorFg, border: "none" }}
+          >
+            Logga ut
+          </button>
         </div>
       </header>
 
