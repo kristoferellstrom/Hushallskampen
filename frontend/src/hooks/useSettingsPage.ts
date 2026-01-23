@@ -17,6 +17,8 @@ export const useSettingsPage = () => {
   const [colorError, setColorError] = useState("");
   const [mode, setMode] = useState<Mode>("competition");
   const [prize, setPrize] = useState("");
+  const [monthPrize, setMonthPrize] = useState("");
+  const [yearPrize, setYearPrize] = useState("");
   const [updatingHousehold, setUpdatingHousehold] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [rulesText, setRulesText] = useState("");
@@ -50,6 +52,8 @@ export const useSettingsPage = () => {
         setName("");
         setMode("competition");
         setPrize("");
+        setMonthPrize("");
+        setYearPrize("");
         setRulesText("");
         setTargetShares({});
         return;
@@ -59,6 +63,8 @@ export const useSettingsPage = () => {
       setName(res.household.name);
       setMode(res.household.mode === "equality" ? "equality" : "competition");
       setPrize(res.household.weeklyPrizeText || "");
+      setMonthPrize((res.household as any).monthlyPrizeText || "");
+      setYearPrize((res.household as any).yearlyPrizeText || "");
       setRulesText(res.household.rulesText || "");
 
       if (res.household.targetShares && res.household.targetShares.length > 0) {
@@ -120,6 +126,8 @@ export const useSettingsPage = () => {
         name,
         mode,
         weeklyPrizeText: prize,
+        monthlyPrizeText: monthPrize,
+        yearlyPrizeText: yearPrize,
         rulesText,
         targetShares: targetShareArray.length ? targetShareArray : undefined,
       });
@@ -171,6 +179,8 @@ export const useSettingsPage = () => {
     colorError,
     mode,
     prize,
+    monthPrize,
+    yearPrize,
     updatingHousehold,
     members,
     rulesText,
@@ -184,6 +194,8 @@ export const useSettingsPage = () => {
     setName,
     setMode,
     setPrize,
+    setMonthPrize,
+    setYearPrize,
     setRulesText,
 
     loadInvite,

@@ -25,6 +25,8 @@ export async function getHousehold(token: string) {
           inviteCode: string;
           mode?: string;
           weeklyPrizeText?: string;
+          monthlyPrizeText?: string;
+          yearlyPrizeText?: string;
           rulesText?: string;
           targetShares?: Array<{ userId: string; targetPct: number }>;
         }
@@ -48,6 +50,8 @@ export async function updateHousehold(
     name?: string;
     mode?: "competition" | "equality";
     weeklyPrizeText?: string;
+    monthlyPrizeText?: string;
+    yearlyPrizeText?: string;
     rulesText?: string;
     targetShares?: Array<{ userId: string; targetPct: number }>;
   },

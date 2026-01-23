@@ -39,7 +39,14 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     if (user.householdId) return res.status(409).json({ error: "User already belongs to a household" });
 
     const inviteCode = await genInvite();
-    const household = await Household.create({ name, inviteCode, mode: mode || "competition" });
+    const household = await Household.create({
+      name,
+      inviteCode,
+      mode: mode || "competition",
+      weeklyPrizeText: "",
+      monthlyPrizeText: "",
+      yearlyPrizeText: "",
+    });
 
     user.householdId = household._id;
     await user.save();
@@ -92,7 +99,7 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
     const user = await User.findById(req.userId).select("householdId");
     if (!user || !user.householdId) return res.status(400).json({ error: "No household" });
 
-    const { mode, weeklyPrizeText, name, rulesText, approvalTimeoutHours, targetShares } = req.body;
+    const { mode, weeklyPrizeText, monthlyPrizeText, yearlyPrizeText, name, rulesText, approvalTimeoutHours, targetShares } = req.body;
 
     const household = await Household.findById(user.householdId);
     if (!household) return res.status(404).json({ error: "Household not found" });
@@ -102,6 +109,8 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
       household.mode = mode;
     }
     if (weeklyPrizeText !== undefined) household.weeklyPrizeText = weeklyPrizeText;
+    if (monthlyPrizeText !== undefined) household.monthlyPrizeText = monthlyPrizeText;
+    if (yearlyPrizeText !== undefined) household.yearlyPrizeText = yearlyPrizeText;
     if (name !== undefined) household.name = name;
     if (rulesText !== undefined) household.rulesText = rulesText;
     if (approvalTimeoutHours !== undefined) {

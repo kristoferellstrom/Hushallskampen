@@ -19,6 +19,8 @@ export const SettingsPage = () => {
     colorError,
     mode,
     prize,
+    monthPrize,
+    yearPrize,
     updatingHousehold,
     members,
     rulesText,
@@ -32,6 +34,8 @@ export const SettingsPage = () => {
     setName,
     setMode,
     setPrize,
+    setMonthPrize,
+    setYearPrize,
     setRulesText,
 
     handleUpdateHousehold,
@@ -276,15 +280,33 @@ export const SettingsPage = () => {
           <div className="prize-row">
             <label>
               Veckans pris
-              <input type="text" value={prize} onChange={(e) => setPrize(e.target.value)} placeholder="Ex: Välj film, middag, etc." />
+              <input
+                type="text"
+                maxLength={200}
+                value={prize}
+                onChange={(e) => setPrize(e.target.value.slice(0, 200))}
+                placeholder="Ex: Välj film, middag, etc."
+              />
             </label>
             <label>
               Månadens pris
-              <input type="text" placeholder="Ex: Välj aktivitet, upplevelse, etc." />
+              <input
+                type="text"
+                maxLength={200}
+                value={monthPrize}
+                onChange={(e) => setMonthPrize(e.target.value.slice(0, 200))}
+                placeholder="Ex: Välj aktivitet, upplevelse, etc."
+              />
             </label>
             <label>
               Årets pris
-              <input type="text" placeholder="Ex: Resa, större överraskning, etc." />
+              <input
+                type="text"
+                maxLength={200}
+                value={yearPrize}
+                onChange={(e) => setYearPrize(e.target.value.slice(0, 200))}
+                placeholder="Ex: Resa, större överraskning, etc."
+              />
             </label>
           </div>
           <div className="color-actions">

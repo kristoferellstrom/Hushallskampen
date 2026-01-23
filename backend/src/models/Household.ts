@@ -5,6 +5,8 @@ export interface IHousehold extends Document {
   inviteCode: string;
   mode: "competition" | "equality";
   weeklyPrizeText?: string;
+  monthlyPrizeText?: string;
+  yearlyPrizeText?: string;
   rulesText?: string;
   approvalTimeoutHours?: number;
   targetShares?: Array<{ userId: string; targetPct: number }>;
@@ -16,6 +18,8 @@ const HouseholdSchema = new Schema<IHousehold>({
   inviteCode: { type: String, required: true, unique: true },
   mode: { type: String, required: true, default: "competition" },
   weeklyPrizeText: { type: String },
+  monthlyPrizeText: { type: String },
+  yearlyPrizeText: { type: String },
   rulesText: { type: String },
   approvalTimeoutHours: { type: Number },
   targetShares: [
