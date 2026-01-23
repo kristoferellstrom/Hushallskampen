@@ -45,15 +45,17 @@ export const HouseholdSettingsCard = ({
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       </label>
 
-      <label>
-        Veckans pris
-        <input
-          type="text"
-          value={prize}
-          onChange={(e) => setPrize(e.target.value)}
-          placeholder="Ex: Välj film, middag, etc."
-        />
-      </label>
+      {mode === "competition" && (
+        <label>
+          Veckans pris
+          <input
+            type="text"
+            value={prize}
+            onChange={(e) => setPrize(e.target.value)}
+            placeholder="Ex: Välj film, middag, etc."
+          />
+        </label>
+      )}
 
       <div>
         <h3>Målfördelning (%) per vecka</h3>

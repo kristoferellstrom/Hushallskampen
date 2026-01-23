@@ -231,13 +231,19 @@ export const SettingsPage = () => {
           />
         </div>
       </div>
-      <div className="settings-card glass hero-empty-card">
+      <div className="settings-card glass hero-extra-card">
         <img src="/figure/insallningar.png" alt="Inställningar" loading="lazy" />
       </div>
       <div className="settings-card glass hero-mode-card">
         <h3>Välj hushållsläge</h3>
-        <p className="hint">Tävling = poäng och priser. Rättvisa = insats i procent per person.</p>
-        <div className="mode-toggle" style={{ marginTop: 8 }}>
+        <p className="hint">
+          <strong>Tävling:</strong> samla poäng, tävla om badges och se veckans vinnare.
+          <br />
+          <strong>Rättvisa:</strong> fokusera på att dela upp insatsen i procent per person så att alla bidrar jämnt.
+          <br />
+          Du kan byta läge när ni vill men läget styr hur statistiken, badges och mål räknas.
+        </p>
+        <div className="mode-toggle">
           <button type="button" className={mode === "competition" ? "active" : ""} onClick={() => setMode("competition")}>
             Tävling
           </button>
@@ -253,21 +259,22 @@ export const SettingsPage = () => {
         <HouseholdSettingsCard
           name={name}
           mode={mode}
-            prize={prize}
-            members={members}
-            targetShares={targetShares}
-            updatingHousehold={updatingHousehold}
-            status={status}
-            error={error}
-            invite={invite}
-            setName={setName}
-            setMode={setMode}
-            setPrize={setPrize}
-            setTargetShareForMember={setTargetShareForMember}
-            handleUpdateHousehold={handleUpdateHousehold}
-          />
-        </div>
+          prize={prize}
+          members={members}
+          targetShares={targetShares}
+          updatingHousehold={updatingHousehold}
+          status={status}
+          error={error}
+          invite={invite}
+          setName={setName}
+          setMode={setMode}
+          setPrize={setPrize}
+          setTargetShareForMember={setTargetShareForMember}
+          handleUpdateHousehold={handleUpdateHousehold}
+        />
+      </div>
 
+      {mode === "competition" && (
         <div className="settings-card glass badges-panel full-span">
           <div className="card-head">
             <p className="eyebrow">Badges</p>
@@ -345,7 +352,8 @@ export const SettingsPage = () => {
             )}
           </div>
         </div>
-      </div>
+      )}
+    </div>
     </div>
   );
 };
