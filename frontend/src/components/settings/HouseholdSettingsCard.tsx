@@ -45,15 +45,6 @@ export const HouseholdSettingsCard = ({
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
       </label>
 
-      <div className="mode-toggle" style={{ marginTop: 8, marginBottom: 8 }}>
-        <button type="button" className={mode === "competition" ? "active" : ""} onClick={() => setMode("competition")}>
-          Tävling
-        </button>
-        <button type="button" className={mode === "equality" ? "active" : ""} onClick={() => setMode("equality")}>
-          Rättvisa
-        </button>
-      </div>
-
       <label>
         Veckans pris
         <input

@@ -804,26 +804,13 @@
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 12px;
   margin-bottom: 12px;
-
-  .hero-left-card,
-  .hero-right-card {
-    height: 100%;
-    display: grid;
-    align-content: center;
-    justify-items: start;
-  }
-
-  .hero-right-card {
-    justify-items: center;
-    img {
-      width: 220px;
-      height: auto;
-      object-fit: contain;
-      display: block;
-    }
-  }
+  grid-auto-rows: 1fr;
 
   .hero-left-card {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+
     h2 {
       margin: 0 0 4px;
     }
@@ -855,12 +842,50 @@
     .color-picker-hero {
       margin-top: 10px;
       width: 100%;
-
-      // Visa färgerna på två rader (4 per rad) i hero-sektionen
       .color-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
         max-width: 560px;
       }
+    }
+  }
+
+  .hero-mode-card {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    padding: 12px;
+  }
+
+  .hero-empty-card {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 0;
+
+    img {
+      width: 100%;
+      height: 105%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+
+    .hero-left-card {
+      grid-row: 1 / span 2;
+    }
+
+    .hero-empty-card {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .hero-mode-card {
+      grid-column: 2;
+      grid-row: 2;
     }
   }
 }
