@@ -7,6 +7,7 @@ import { useStats } from "../hooks/useStats";
 import { StatsCard } from "../components/stats/StatsCard";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
 import { colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
+import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
 
@@ -18,6 +19,10 @@ export const StatsPage = ({ embedded = false }: Props) => {
   const [monthIdx, setMonthIdx] = useState(0);
   const currentYear = new Date().getFullYear();
   const [choreRange, setChoreRange] = useState<"30d" | "year">("30d");
+  const [householdMode, setHouseholdMode] = useState<"competition" | "equality">(
+    () => (localStorage.getItem("householdMode") === "equality" ? "equality" : "competition"),
+  );
+  const showPoints = householdMode !== "equality";
 
   const topFromRecord = (rec?: any) => {
     if (!rec) return null;
@@ -50,6 +55,22 @@ export const StatsPage = ({ embedded = false }: Props) => {
   useEffect(() => {
     setMonthIdx(0);
   }, [monthly]);
+
+  useEffect(() => {
+    const loadMode = async () => {
+      try {
+        if (!token) return;
+        const res = await getHousehold(token);
+        const mode = res.household?.mode === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+        localStorage.setItem("householdMode", mode);
+      } catch {
+        const mode = localStorage.getItem("householdMode") === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+      }
+    };
+    loadMode();
+  }, [token]);
 
   const weekSlice = useMemo(() => (weekly[weekIdx] ? [weekly[weekIdx]] : []), [weekly, weekIdx]);
   const monthSlice = useMemo(() => (monthly[monthIdx] ? [monthly[monthIdx]] : []), [monthly, monthIdx]);
@@ -118,23 +139,25 @@ export const StatsPage = ({ embedded = false }: Props) => {
     <>
       {error && <p className="status error">{error}</p>}
 
-      <div className="leader-strip">
-        <div className="leader-card">
-          <p className="eyebrow">Vecka</p>
-          <p className="leader-name">{weeklyLeader?.name || "Ingen data"}</p>
-          <p className="leader-points">{weeklyLeader ? `${weeklyLeader.points}p` : "–"}</p>
+      {showPoints && (
+        <div className="leader-strip">
+          <div className="leader-card">
+            <p className="eyebrow">Vecka</p>
+            <p className="leader-name">{weeklyLeader?.name || "Ingen data"}</p>
+            <p className="leader-points">{weeklyLeader ? `${weeklyLeader.points}p` : "–"}</p>
+          </div>
+          <div className="leader-card">
+            <p className="eyebrow">Månad</p>
+            <p className="leader-name">{monthlyLeader?.name || "Ingen data"}</p>
+            <p className="leader-points">{monthlyLeader ? `${monthlyLeader.points}p` : "–"}</p>
+          </div>
+          <div className="leader-card">
+            <p className="eyebrow">År</p>
+            <p className="leader-name">{yearlyLeader?.name || "Ingen data"}</p>
+            <p className="leader-points">{yearlyLeader ? `${yearlyLeader.points}p` : "–"}</p>
+          </div>
         </div>
-        <div className="leader-card">
-          <p className="eyebrow">Månad</p>
-          <p className="leader-name">{monthlyLeader?.name || "Ingen data"}</p>
-          <p className="leader-points">{monthlyLeader ? `${monthlyLeader.points}p` : "–"}</p>
-        </div>
-        <div className="leader-card">
-          <p className="eyebrow">År</p>
-          <p className="leader-name">{yearlyLeader?.name || "Ingen data"}</p>
-          <p className="leader-points">{yearlyLeader ? `${yearlyLeader.points}p` : "–"}</p>
-        </div>
-      </div>
+      )}
 
       <div className="stats-grid">
         <StatsCard
@@ -149,6 +172,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           sortByPoints
           figureSrc="/figure/woman_shopping.png"
           blockClassName="flat weekly-shift"
+          hidePoints={!showPoints}
           controls={{
             onPrev: () => setWeekIdx((i) => Math.min(i + 1, weekly.length - 1)),
             onNext: () => setWeekIdx((i) => Math.max(i - 1, 0)),
@@ -171,6 +195,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           sortByPoints
           figureSrc="/figure/man_washing.png"
           blockClassName="flat monthly-shift"
+          hidePoints={!showPoints}
           controls={{
             onPrev: () => setMonthIdx((i) => Math.min(i + 1, monthly.length - 1)),
             onNext: () => setMonthIdx((i) => Math.max(i - 1, 0)),
@@ -193,6 +218,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           sortByPoints
           figureSrc=""
           blockClassName="year-shift"
+          hidePoints={!showPoints}
           controls={{
             label: `${currentYear}`,
             canPrev: false,
@@ -269,7 +295,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
               {choreLeaders.length === 0 ? (
                 <p className="hint">Ingen data ännu.</p>
               ) : (
-                <div className="chore-chip-grid">
+                <div className={`chore-chip-grid ${choreLeaders.length > 8 ? "scrollable" : ""}`}>
                   {choreLeaders.map((row) => {
                     const base = memberColors[row.userId] || row.userId || "";
                     const strong = colorPreview(base) || base || fallbackColorForUser(row.userId || "");
@@ -302,12 +328,20 @@ export const StatsPage = ({ embedded = false }: Props) => {
                   className="stat-figure-wide"
                 />
                 <p className="hint">
-                  Statistiken här ger en tydlig bild av hur hushållets sysslor har fördelats och utvecklats över året.
+                  {showPoints
+                    ? `Statistiken här ger en tydlig bild av hur hushållets sysslor har fördelats och utvecklats över året.
                   Du kan se vem som samlat flest poäng totalt, hur stor andel varje medlem bidrar med och vem som ligger
                   närmast (eller längst ifrån) sitt mål. Listan över årets mest gjorda sysslor visar vilka uppgifter som
                   återkommer mest i vardagen, och vem som oftast tar ansvar för dem. Genom att växla mellan senaste 30
                   dagar och hela året kan du jämföra kortsiktiga förändringar med långsiktiga mönster - vilket gör det
-                  lättare att upptäcka obalans, följa trender och justera mål eller fördelning inför nästa år.
+                  lättare att upptäcka obalans, följa trender och justera mål eller fördelning inför nästa år.`
+                    : `Statistiken här ger en tydlig bild av hur hushållets sysslor har fördelats och utvecklats över året.
+                  Du kan se hur stor andel (%) varje medlem står för, vem som bidrar mest totalt och vem som ligger
+                  närmast (eller längst ifrån) sin målnivå. Listan över årets mest gjorda sysslor visar vilka uppgifter
+                  som återkommer mest i vardagen, hur de fördelar sig mellan olika sysslor och vem som oftast tar ansvar
+                  för dem. Genom att växla mellan senaste 30 dagar och hela året kan du jämföra kortsiktiga förändringar
+                  med långsiktiga mönster – vilket gör det lättare att upptäcka obalans, följa trender och justera mål
+                  eller fördelning inför nästa år.`}
                 </p>
               </div>
             </div>

@@ -102,6 +102,21 @@
   white-space: nowrap;
 }
 
+.chore-chip-grid.scrollable {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.chore-chip-grid.scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chore-chip-grid.scrollable::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.2);
+  border-radius: 999px;
+}
+
 .legend-dot {
   width: 14px;
   height: 14px;

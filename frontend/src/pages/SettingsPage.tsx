@@ -173,9 +173,11 @@ export const SettingsPage = () => {
             <Link to="/dashboard#statistik" className="nav-link subtle">
               Statistik
             </Link>
-            <Link to="/dashboard#priser" className="nav-link subtle">
-              Priser
-            </Link>
+            {mode === "competition" && (
+              <Link to="/dashboard#priser" className="nav-link subtle">
+                Priser
+              </Link>
+            )}
           </nav>
         </div>
         <div className="header-actions" style={{ gap: 8, justifyContent: "flex-end", marginLeft: "auto" }}>

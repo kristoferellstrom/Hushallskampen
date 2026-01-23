@@ -25,6 +25,7 @@ type Props = {
   footer?: React.ReactNode;
   renderExtra?: (rec: StatItem) => React.ReactNode;
   blockClassName?: string;
+  hidePoints?: boolean;
 };
 
 export const StatsCard = ({
@@ -43,6 +44,7 @@ export const StatsCard = ({
   footer,
   renderExtra,
   blockClassName,
+  hidePoints = false,
 }: Props) => {
   return (
     <div className="card stats-card">
@@ -140,9 +142,7 @@ export const StatsCard = ({
                       <span className="legend-dot" style={{ background: s.bg }} />
                       <div className="legend-text">
                         <span className="legend-name">{s.name}</span>
-                        <span className="legend-meta">
-                          {s.points}p · {s.pct}%
-                        </span>
+                        <span className="legend-meta">{hidePoints ? `${s.pct}%` : `${s.points}p · ${s.pct}%`}</span>
                       </div>
                     </li>
                   ))}
@@ -152,7 +152,12 @@ export const StatsCard = ({
           })()}
 
           <div className="balance-wrap">
-            <BalanceRow rec={rec} balanceInfo={balanceInfo} stacked={stackedBalance} hideTotal={hideTotal} />
+            <BalanceRow
+              rec={rec}
+              balanceInfo={balanceInfo}
+              stacked={stackedBalance}
+              hideTotal={hideTotal || hidePoints}
+            />
           </div>
 
           {renderExtra && <div className="stat-extra">{renderExtra(rec)}</div>}

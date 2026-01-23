@@ -7,14 +7,18 @@ import { StatsPage } from "./StatsPage";
 import { AchievementsPage } from "./AchievementsPage";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { useEffect, useState } from "react";
-import { listMembers, listApprovals } from "../api";
+import { listMembers, listApprovals, getHousehold } from "../api";
 
 export const HomePage = () => {
   const { user, token, logout } = useAuth();
   const [selected, setSelected] = useState<string>("kalender");
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
   const [approvalCount, setApprovalCount] = useState<number>(0);
-  const sectionIds = ["kalender", "sysslor", "godkannanden", "statistik", "priser"];
+  const [householdMode, setHouseholdMode] = useState<"competition" | "equality">(
+    () => (localStorage.getItem("householdMode") === "equality" ? "equality" : "competition"),
+  );
+  const showPrizes = householdMode !== "equality";
+  const sectionIds = showPrizes ? ["kalender", "sysslor", "godkannanden", "statistik", "priser"] : ["kalender", "sysslor", "godkannanden", "statistik"];
 
   useEffect(() => {
     const loadColor = async () => {
@@ -44,6 +48,25 @@ export const HomePage = () => {
     };
     loadApprovals();
   }, [token, user?.id]);
+
+  useEffect(() => {
+    const loadHousehold = async () => {
+      try {
+        if (!token) return;
+        const res = await getHousehold(token);
+        const mode = res.household?.mode === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+        localStorage.setItem("householdMode", mode);
+        if (mode === "equality") {
+          setSelected((prev) => (prev === "priser" ? "kalender" : prev));
+        }
+      } catch {
+        const mode = localStorage.getItem("householdMode") === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+      }
+    };
+    loadHousehold();
+  }, [token]);
 
   const userColor = (() => {
     const c = memberColor || user?.color;
@@ -138,16 +161,18 @@ export const HomePage = () => {
             >
               Statistik
             </a>
-            <a
-              href="#priser"
-              className={`nav-link subtle ${selected === "priser" ? "active" : ""}`}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToId("priser");
-              }}
-            >
-              Priser
-            </a>
+            {showPrizes && (
+              <a
+                href="#priser"
+                className={`nav-link subtle ${selected === "priser" ? "active" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToId("priser");
+                }}
+              >
+                Priser
+              </a>
+            )}
           </nav>
         </div>
         <div className="header-actions">
@@ -176,9 +201,11 @@ export const HomePage = () => {
       <div className="page-section">
         <StatsPage embedded />
       </div>
-      <div className="page-section">
-        <AchievementsPage embedded />
-      </div>
+      {showPrizes && (
+        <div className="page-section">
+          <AchievementsPage embedded />
+        </div>
+      )}
     </div>
   );
 };

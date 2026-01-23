@@ -62,6 +62,7 @@ export const useSettingsPage = () => {
       setInvite(res.household.inviteCode);
       setName(res.household.name);
       setMode(res.household.mode === "equality" ? "equality" : "competition");
+      localStorage.setItem("householdMode", res.household.mode === "equality" ? "equality" : "competition");
       setPrize(res.household.weeklyPrizeText || "");
       setMonthPrize((res.household as any).monthlyPrizeText || "");
       setYearPrize((res.household as any).yearlyPrizeText || "");
@@ -131,6 +132,7 @@ export const useSettingsPage = () => {
         rulesText,
         targetShares: targetShareArray.length ? targetShareArray : undefined,
       });
+      localStorage.setItem("householdMode", mode);
       await loadInvite(); // hämta om hushållet så fälten speglar sparade värden
       setStatus("Hushållet uppdaterat");
     } catch (err) {
