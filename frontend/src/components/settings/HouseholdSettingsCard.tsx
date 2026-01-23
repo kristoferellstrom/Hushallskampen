@@ -4,7 +4,6 @@ type Props = {
   name: string;
   mode: "competition" | "equality";
   prize: string;
-  rulesText: string;
   approvalTimeout?: number;
   members: Member[];
   targetShares: Record<string, number>;
@@ -17,7 +16,6 @@ type Props = {
   setName: (v: string) => void;
   setMode: (v: "competition" | "equality") => void;
   setPrize: (v: string) => void;
-  setRulesText: (v: string) => void;
   setApprovalTimeout: (v: number | undefined) => void;
 
   setTargetShareForMember: (memberId: string, value: string) => void;
@@ -28,7 +26,6 @@ export const HouseholdSettingsCard = ({
   name,
   mode,
   prize,
-  rulesText,
   approvalTimeout,
   members,
   targetShares,
@@ -39,7 +36,6 @@ export const HouseholdSettingsCard = ({
   setName,
   setMode,
   setPrize,
-  setRulesText,
   setApprovalTimeout,
   setTargetShareForMember,
   handleUpdateHousehold,
@@ -69,16 +65,6 @@ export const HouseholdSettingsCard = ({
           value={prize}
           onChange={(e) => setPrize(e.target.value)}
           placeholder="Ex: Välj film, middag, etc."
-        />
-      </label>
-
-      <label>
-        Hushållsregler
-        <textarea
-          value={rulesText}
-          onChange={(e) => setRulesText(e.target.value)}
-          rows={3}
-          placeholder="Vad räknas som godkänt? Hur snabbt ska man granska? Vad händer vid avslag?"
         />
       </label>
 

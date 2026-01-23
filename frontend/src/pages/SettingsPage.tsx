@@ -7,7 +7,6 @@ import type { MonthlyBadge, PointsWinner } from "../api";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { listApprovals } from "../api";
 
-import { InviteCard } from "../components/settings/InviteCard";
 import { HouseholdSettingsCard } from "../components/settings/HouseholdSettingsCard";
 import { ColorPickerCard } from "../components/settings/ColorPickerCard";
 
@@ -52,6 +51,10 @@ export const SettingsPage = () => {
   const earnedSpecialBadges: string[] = [];
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
   const [approvalCount, setApprovalCount] = useState<number>(0);
+  const [editingRules, setEditingRules] = useState(false);
+  const [lastSavedRules, setLastSavedRules] = useState<string>("");
+  const [lastSavedColor, setLastSavedColor] = useState<string | undefined>(undefined);
+  const [initializedBaseline, setInitializedBaseline] = useState(false);
 
   useEffect(() => {
     const loadColor = async () => {
@@ -66,6 +69,19 @@ export const SettingsPage = () => {
     };
     loadColor();
   }, [token, user?.id]);
+
+  useEffect(() => {
+    const me = members?.find((m: any) => m._id === user?.id);
+    if (me?.color) setMemberColor(me.color);
+  }, [members, user?.id]);
+
+  useEffect(() => {
+    if (!initializedBaseline && (userColor !== undefined || rulesText !== undefined)) {
+      setLastSavedColor(userColor ?? "");
+      setLastSavedRules(rulesText ?? "");
+      setInitializedBaseline(true);
+    }
+  }, [initializedBaseline, userColor, rulesText]);
 
   useEffect(() => {
     const loadApprovals = async () => {
@@ -108,6 +124,8 @@ export const SettingsPage = () => {
 
   const myId = user?.id;
   const myMonthlyBadges = monthlyBadges.filter((b) => b.winners.some((w) => w.userId === myId && w.wins > 0));
+  const memberNames = (members || []).map((m) => m.name).join(", ");
+  const memberCount = members?.length ?? 0;
 
   return (
     <div
@@ -164,17 +182,55 @@ export const SettingsPage = () => {
         </div>
       </header>
 
-      <div className="settings-grid">
-        <div className="settings-card glass">
-          <InviteCard invite={invite} status={status} error={error} loadInvite={loadInvite} copyInvite={copyInvite} />
-        </div>
+      <div className="settings-hero-grid">
+        <div className="settings-card glass hero-left-card">
+          <h2>Hushåll: {name || "Hushåll"}</h2>
+          <p className="hint">
+            Medlemmar ({memberCount}): {memberNames || "–"}
+          </p>
+          <div className="hero-code">
+            <span className="hint">Inbjudningskod:</span>
+            <span className="invite-pill">{invite || "–"}</span>
+          </div>
 
-        <div className="settings-card glass">
+          <div className="color-picker-hero">
+            <ColorPickerCard
+              availableColors={availableColors}
+              colorLabels={colorLabels}
+              usedColors={usedColors.filter((c): c is string => Boolean(c))}
+              userColor={userColor}
+              members={members}
+              colorStatus={colorStatus}
+              colorError={colorError}
+              rulesText={rulesText}
+              onRulesChange={setRulesText}
+              editingRules={editingRules}
+              onEditToggle={() => setEditingRules(true)}
+              lastSavedRules={lastSavedRules}
+              lastSavedColor={lastSavedColor}
+              initializedBaseline={initializedBaseline}
+              onSave={async (c) => {
+                await handleColor(c);
+                await handleUpdateHousehold();
+                setEditingRules(false);
+                setLastSavedRules(rulesText || "");
+                setLastSavedColor(c);
+              }}
+              saving={updatingHousehold}
+            />
+          </div>
+        </div>
+        <div className="settings-card glass hero-right-card">
+          <img src="/figure/insallningar.png" alt="Inställningar" loading="lazy" />
+        </div>
+      </div>
+
+      <div className="settings-grid">
+        <div className="settings-card glass household-card">
           <HouseholdSettingsCard
             name={name}
             mode={mode}
             prize={prize}
-            rulesText={rulesText}
             approvalTimeout={approvalTimeout}
             members={members}
             targetShares={targetShares}
@@ -185,23 +241,9 @@ export const SettingsPage = () => {
             setName={setName}
             setMode={setMode}
             setPrize={setPrize}
-            setRulesText={setRulesText}
             setApprovalTimeout={setApprovalTimeout}
             setTargetShareForMember={setTargetShareForMember}
             handleUpdateHousehold={handleUpdateHousehold}
-          />
-        </div>
-
-        <div className="settings-card glass">
-          <ColorPickerCard
-            availableColors={availableColors}
-            colorLabels={colorLabels}
-            usedColors={usedColors.filter((c): c is string => Boolean(c))}
-            userColor={userColor}
-            members={members}
-            colorStatus={colorStatus}
-            colorError={colorError}
-            handleColor={handleColor}
           />
         </div>
 
