@@ -1,4 +1,4 @@
-type Member = { _id: string; name: string };
+type Member = { _id: string; name: string; color?: string };
 
 type Props = {
   name: string;
@@ -38,12 +38,16 @@ export const HouseholdSettingsCard = ({
 }: Props) => {
   return (
     <div className="card">
-      <h2>Hushållets läge & pris</h2>
+      {mode === "competition" && (
+        <>
+          <h2>Hushållets läge & pris</h2>
 
-      <label>
-        Namn
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
+          <label>
+            Namn
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+        </>
+      )}
 
       {mode === "competition" && (
         <label>
@@ -57,35 +61,45 @@ export const HouseholdSettingsCard = ({
         </label>
       )}
 
-      <div>
-        <h3>Målfördelning (%) per vecka</h3>
-        {members.map((m) => (
-          <label key={m._id}>
-            {m.name}
-            <input
-              type="number"
-              min={0}
-              max={100}
-              value={targetShares[m._id] ?? ""}
-              onChange={(e) => setTargetShareForMember(m._id, e.target.value)}
-              placeholder={`${Math.round(100 / (members.length || 1))}%`}
-            />
-          </label>
-        ))}
-        <p className="hint">Låt summan bli runt 100%. Lämna tomt för att auto-fördela lika.</p>
+      <div className="target-share-grid">
+        <div className="target-share-head">
+          <h3>Målfördelning (%) per vecka</h3>
+          <p className="hint">Låt summan bli runt 100%. Lämna tomt för att auto-fördela lika.</p>
+        </div>
+        <div className="target-row horizontal">
+          {members.map((m) => (
+            <div className="target-chip" key={m._id} style={{ ["--row-color" as any]: m.color }}>
+              <span className="dot" aria-hidden="true" />
+              <span className="name">{m.name}</span>
+              <div className="target-input-wrap">
+                <input
+                  className="target-input"
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={targetShares[m._id] ?? ""}
+                  onChange={(e) => setTargetShareForMember(m._id, e.target.value)}
+                  placeholder={`${Math.round(100 / (members.length || 1))}`}
+                />
+                <span className="suffix">%</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <button type="button" onClick={handleUpdateHousehold} disabled={updatingHousehold}>
-        Spara inställningar
-      </button>
+      <div className="color-actions">
+        <button
+          type="button"
+          className="save-colors-btn"
+          style={{ background: "var(--user-color, #0f172a)", color: "var(--user-color-fg, #ffffff)" }}
+          onClick={handleUpdateHousehold}
+          disabled={updatingHousehold}
+        >
+          {updatingHousehold ? "Sparar..." : "Spara inställningarna"}
+        </button>
+      </div>
 
-      {status && invite && <p className="status ok">{status}</p>}
-
-      {error && (
-        <p className="status error" aria-live="assertive">
-          {error}
-        </p>
-      )}
     </div>
   );
 };

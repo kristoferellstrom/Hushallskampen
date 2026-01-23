@@ -255,103 +255,104 @@ export const SettingsPage = () => {
     </div>
 
     <div className="settings-grid">
-      <div className="settings-card glass household-card">
-        <HouseholdSettingsCard
-          name={name}
-          mode={mode}
-          prize={prize}
-          members={members}
-          targetShares={targetShares}
-          updatingHousehold={updatingHousehold}
-          status={status}
-          error={error}
-          invite={invite}
-          setName={setName}
-          setMode={setMode}
-          setPrize={setPrize}
-          setTargetShareForMember={setTargetShareForMember}
-          handleUpdateHousehold={handleUpdateHousehold}
-        />
-      </div>
+      {mode === "equality" && (
+        <div className="settings-card glass household-card">
+          <HouseholdSettingsCard
+            name={name}
+            mode={mode}
+            prize={prize}
+            members={members}
+            targetShares={targetShares}
+            updatingHousehold={updatingHousehold}
+            status={status}
+            error={error}
+            invite={invite}
+            setName={setName}
+            setMode={setMode}
+            setPrize={setPrize}
+            setTargetShareForMember={setTargetShareForMember}
+            handleUpdateHousehold={handleUpdateHousehold}
+          />
+        </div>
+      )}
 
       {mode === "competition" && (
-        <div className="settings-card glass badges-panel full-span">
-          <div className="card-head">
-            <p className="eyebrow">Badges</p>
-            <h2>Dina priser</h2>
-            <p className="hint">Badges du har tjänat syns här när de låses upp. Besök sidan Priser för full översikt.</p>
+        <div className="settings-card glass prize-card">
+          <h3>Priser</h3>
+          <p className="hint">
+            Frivilligt: lämna tomt om ni inte kör med egna priser. Belöningen går automatiskt till den med flest poäng för perioden (vecka/månad/år).
+          </p>
+          <div className="prize-row">
+            <label>
+              Veckans pris
+              <input type="text" value={prize} onChange={(e) => setPrize(e.target.value)} placeholder="Ex: Välj film, middag, etc." />
+            </label>
+            <label>
+              Månadens pris
+              <input type="text" placeholder="Ex: Välj aktivitet, upplevelse, etc." />
+            </label>
+            <label>
+              Årets pris
+              <input type="text" placeholder="Ex: Resa, större överraskning, etc." />
+            </label>
           </div>
-          <div className="badge-section">
-            <p className="eyebrow">Månadsbadges</p>
-            {badgeError && <p className="status error">{badgeError}</p>}
-            {!badgeError && myMonthlyBadges.length === 0 && <p className="hint">Inga vunna månadsbadges ännu.</p>}
-            {!badgeError && myMonthlyBadges.length > 0 && (
-              <div className="badge-thumb-grid">
-                {myMonthlyBadges.map((b) => {
-                  const win = b.winners.find((w) => w.userId === myId);
-                  return (
-                    <figure key={b.slug} className="badge-thumb badge-count">
-                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
-                      {win && win.wins > 1 && <span className="badge-count-pill">{win.wins}</span>}
-                      <figcaption>
-                        <strong>{b.title}</strong>
-                      </figcaption>
-                    </figure>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div className="badge-section">
-            <p className="eyebrow">Månadens poängvinnare</p>
-            {badgeError && <p className="status error">{badgeError}</p>}
-            {!badgeError && !monthPointsWinner && <p className="hint">Ingen vinnare ännu denna månad.</p>}
-            {!badgeError && monthPointsWinner && (
-              <div className="badge-thumb-grid">
-                <figure className="badge-thumb">
-                  <img src="/month/januari.png" alt="Månadens poängvinnare" loading="lazy" />
-                  <figcaption style={{ textAlign: "center" }}>
-                    <strong>{monthPointsWinner.name || "Okänd"}</strong>
-                    <div className="hint" style={{ marginTop: 4 }}>{monthPointsWinner.points} poäng</div>
-                  </figcaption>
-                </figure>
-              </div>
-            )}
-          </div>
-
-          <div className="badge-section">
-            <p className="eyebrow">Årsvinnare (poäng)</p>
-            {badgeError && <p className="status error">{badgeError}</p>}
-            {!badgeError && !yearPointsWinner && <p className="hint">Ingen årsvinnare ännu.</p>}
-            {!badgeError && yearPointsWinner && (
-              <div className="badge-thumb-grid">
-                <figure className="badge-thumb">
-                  <img src="/arsvinnaren.png" alt="Årsvinnaren" loading="lazy" />
-                  <figcaption style={{ textAlign: "center" }}>
-                    <strong>{yearPointsWinner.name || "Okänd"}</strong>
-                    <div className="hint" style={{ marginTop: 4 }}>{yearPointsWinner.points} poäng</div>
-                  </figcaption>
-                </figure>
-              </div>
-            )}
-          </div>
-
-          <div className="badge-section">
-            <p className="eyebrow">Specialbadges</p>
-            {earnedSpecialBadges.length > 0 ? (
-              <div className="badge-thumb-grid">
-                {earnedSpecialBadges.map((src) => (
-                  <figure key={src} className="badge-thumb">
-                    <img src={src} alt="Badge" loading="lazy" />
-                  </figure>
-                ))}
-              </div>
-            ) : (
-              <p className="hint">Inga vunna specialbadges ännu.</p>
-            )}
+          <div className="color-actions">
+            <button
+              type="button"
+              className="save-colors-btn"
+              style={{ background: "var(--user-color, #0f172a)", color: "var(--user-color-fg, #ffffff)" }}
+              onClick={handleUpdateHousehold}
+              disabled={updatingHousehold}
+            >
+              {updatingHousehold ? "Sparar..." : "Spara inställningarna"}
+            </button>
           </div>
         </div>
+      )}
+
+      {mode === "competition" && (
+        <>
+          <div className="settings-card glass badges-panel">
+            <div className="badge-section">
+              <p className="eyebrow">Special Badge</p>
+              {badgeError && <p className="status error">{badgeError}</p>}
+              {!badgeError && earnedSpecialBadges.length === 0 && <p className="hint">Inga vunna specialbadges ännu.</p>}
+              {!badgeError && earnedSpecialBadges.length > 0 && (
+                <div className="badge-thumb-grid">
+                  {earnedSpecialBadges.map((src) => (
+                    <figure key={src} className="badge-thumb">
+                      <img src={src} alt="Badge" loading="lazy" />
+                    </figure>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="settings-card glass badges-panel">
+            <div className="badge-section">
+              <p className="eyebrow">Månadens badge</p>
+              {badgeError && <p className="status error">{badgeError}</p>}
+              {!badgeError && myMonthlyBadges.length === 0 && !monthPointsWinner && <p className="hint">Ingen vinnare ännu denna månad.</p>}
+              {!badgeError && myMonthlyBadges.length > 0 && (
+                <div className="badge-thumb-grid">
+                  {myMonthlyBadges.map((b) => (
+                    <figure key={b.slug} className="badge-thumb">
+                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
+                    </figure>
+                  ))}
+                </div>
+              )}
+              {!badgeError && monthPointsWinner && myMonthlyBadges.length === 0 && (
+                <div className="badge-thumb-grid">
+                  <figure className="badge-thumb">
+                    <img src="/month/januari.png" alt="Månadens badge" loading="lazy" />
+                  </figure>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
     </div>

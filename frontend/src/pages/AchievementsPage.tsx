@@ -86,13 +86,11 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
           <div className="stats-head">
             <div className="stats-head-left">
               <h2>Badges & priser</h2>
-              <p className="stat-desc">
-                Årsvinnaren märket och månadsmärkena samlade på en plats. Tävlingsmärkena uppdateras varje månad och år.
-              </p>
+              <p className="stat-desc">Special badges och månads badges. Märkena uppdateras varje månad och år.</p>
             </div>
           </div>
           <div className="stat-block badge-block">
-            <h4 style={{ margin: "0 0 6px" }}>Årsvinnare</h4>
+            <h4 style={{ margin: "0 0 6px" }}>Special badges</h4>
             <div className="badge-grid">
               {specialAwards.map((a) => (
                 <figure key={a.title} className="badge-card">
@@ -105,7 +103,7 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
               ))}
             </div>
 
-            <h4 style={{ margin: "12px 0 6px" }}>Månadsbadges</h4>
+            <h4 style={{ margin: "12px 0 6px" }}>Månadens badge</h4>
             <div className="badge-grid">
               {monthAwards.map((a) => {
                 const winners = a.month !== undefined ? getMonthWinners(a.month) : [];
