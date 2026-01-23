@@ -640,7 +640,7 @@
 
   .header-actions {
     flex: 0 0 auto;
-    margin-left: auto;
+    margin-left: 0;
     position: relative;
     z-index: 3;
   }
@@ -649,8 +649,8 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  justify-content: flex-end;
+  gap: 8px;
+  justify-content: flex-start;
 }
 
 .header-logo-standalone {

@@ -65,6 +65,10 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   const baseTint = pickedColor || fallbackColorForUser(user?.id || "");
   const tint = shadeForPoints(baseTint, 1);
   const surface = tint;
+  const thumbShade =
+    shadeForPoints(memberColor || user?.color, 10) ||
+    shadeForPoints(userColor, 10) ||
+    userColor;
   const quickCommentStyles: Record<string, { bg: string; border: string; color: string }> = {
     "Bra jobbat 💪": { bg: "#ecfdf3", border: "#10b981", color: "#065f46" },
     "Ok men slarvigt": { bg: "#fffbeb", border: "#f59e0b", color: "#92400e" },
@@ -175,20 +179,39 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                     background: "transparent",
                     color: "#1f2937",
                     borderColor: "transparent",
+                    ["--thumb-hover-color" as any]: shadeForPoints(userColor, 10),
                   }}
                   disabled={loading}
                   onClick={() => handleReview(a._id, "approve")}
                 >
-                  <span className="thumb-icon thumb-up" aria-hidden="true" />
+                  <span
+                    className="thumb-icon thumb-up"
+                    aria-hidden="true"
+                    style={{
+                      ["--thumb-color" as any]: "#1f2937",
+                      ["--thumb-hover-color" as any]: thumbShade,
+                    }}
+                  />
                 </button>
                 <button
                   type="button"
                   className="danger-btn action-icon danger-outline"
                   aria-label="Avvisa"
+                  style={{
+                    color: "#1f2937",
+                    ["--thumb-hover-color" as any]: thumbShade,
+                  }}
                   disabled={loading}
                   onClick={() => handleReview(a._id, "reject")}
                 >
-                  <span className="thumb-icon thumb-down" aria-hidden="true" />
+                  <span
+                    className="thumb-icon thumb-down"
+                    aria-hidden="true"
+                    style={{
+                      ["--thumb-color" as any]: "#1f2937",
+                      ["--thumb-hover-color" as any]: thumbShade,
+                    }}
+                  />
                 </button>
               </div>
             </div>

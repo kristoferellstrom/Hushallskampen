@@ -171,7 +171,8 @@ button {
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
-  background: var(--thumb-color, currentColor);
+  background: var(--thumb-color, currentColor) !important;
+  transition: background 140ms ease, transform 140ms ease;
 }
 
 .thumb-up {
@@ -182,6 +183,16 @@ button {
 .thumb-down {
   mask-image: url("/svg/thumb_down.svg");
   -webkit-mask-image: url("/svg/thumb_down.svg");
+}
+
+.action-icon:hover .thumb-icon {
+  background: var(--thumb-hover-color, var(--user-color, #2563eb)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+}
+
+.action-icon:hover {
+  color: var(--thumb-hover-color, var(--user-color, #2563eb)) !important;
 }
 
 .hoverable {
