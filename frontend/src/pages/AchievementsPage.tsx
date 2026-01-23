@@ -45,7 +45,7 @@ const monthAwards: Award[] = [
 ];
 
 export const AchievementsPage = ({ embedded = false }: Props) => {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const { monthly } = useStats(token);
   const today = new Date();
 

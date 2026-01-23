@@ -8,12 +8,8 @@ type Props = {
   targetShares: Record<string, number>;
 
   updatingHousehold: boolean;
-  status: string;
-  error: string;
-  invite: string;
 
   setName: (v: string) => void;
-  setMode: (v: "competition" | "equality") => void;
   setPrize: (v: string) => void;
 
   setTargetShareForMember: (memberId: string, value: string) => void;
@@ -27,11 +23,7 @@ export const HouseholdSettingsCard = ({
   members,
   targetShares,
   updatingHousehold,
-  status,
-  error,
-  invite,
   setName,
-  setMode,
   setPrize,
   setTargetShareForMember,
   handleUpdateHousehold,

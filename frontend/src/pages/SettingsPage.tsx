@@ -15,8 +15,6 @@ export const SettingsPage = () => {
   const {
     invite,
     name,
-    status,
-    error,
     colorStatus,
     colorError,
     mode,
@@ -36,16 +34,13 @@ export const SettingsPage = () => {
     setPrize,
     setRulesText,
 
-    loadInvite,
     handleUpdateHousehold,
-    copyInvite,
     handleColor,
     setTargetShareForMember,
   } = useSettingsPage();
   const [monthlyBadges, setMonthlyBadges] = useState<MonthlyBadge[]>([]);
   const [badgeError, setBadgeError] = useState("");
   const [monthPointsWinner, setMonthPointsWinner] = useState<PointsWinner | null>(null);
-  const [yearPointsWinner, setYearPointsWinner] = useState<PointsWinner | null>(null);
   const earnedSpecialBadges: string[] = [];
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
   const [approvalCount, setApprovalCount] = useState<number>(0);
@@ -124,7 +119,6 @@ export const SettingsPage = () => {
         const res = await fetchMonthlyBadges(token);
         setMonthlyBadges(res.badges || []);
         setMonthPointsWinner((res as any).monthPointsWinner || null);
-        setYearPointsWinner((res as any).yearPointsWinner || null);
         setBadgeError("");
       } catch (err) {
         setBadgeError(err instanceof Error ? err.message : "Kunde inte hämta badges");
@@ -264,11 +258,7 @@ export const SettingsPage = () => {
             members={members}
             targetShares={targetShares}
             updatingHousehold={updatingHousehold}
-            status={status}
-            error={error}
-            invite={invite}
             setName={setName}
-            setMode={setMode}
             setPrize={setPrize}
             setTargetShareForMember={setTargetShareForMember}
             handleUpdateHousehold={handleUpdateHousehold}
