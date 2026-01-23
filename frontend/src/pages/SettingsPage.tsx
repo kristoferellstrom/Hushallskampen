@@ -38,10 +38,10 @@ export const SettingsPage = () => {
     handleColor,
     setTargetShareForMember,
   } = useSettingsPage();
-  const [monthlyBadges, setMonthlyBadges] = useState<MonthlyBadge[]>([]);
+  const [choreBadges, setChoreBadges] = useState<MonthlyBadge[]>([]);
   const [badgeError, setBadgeError] = useState("");
   const [monthPointsWinner, setMonthPointsWinner] = useState<PointsWinner | null>(null);
-  const earnedSpecialBadges: string[] = [];
+  const [latestMonthKey, setLatestMonthKey] = useState<string | null>(null);
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
   const [approvalCount, setApprovalCount] = useState<number>(0);
   const [editingRules, setEditingRules] = useState(false);
@@ -117,8 +117,9 @@ export const SettingsPage = () => {
       if (!token) return;
       try {
         const res = await fetchMonthlyBadges(token);
-        setMonthlyBadges(res.badges || []);
+        setChoreBadges(res.badges || []);
         setMonthPointsWinner((res as any).monthPointsWinner || null);
+        setLatestMonthKey((res as any).latestCompletedMonthKey || null);
         setBadgeError("");
       } catch (err) {
         setBadgeError(err instanceof Error ? err.message : "Kunde inte hämta badges");
@@ -128,7 +129,7 @@ export const SettingsPage = () => {
   }, [token]);
 
   const myId = user?.id;
-  const myMonthlyBadges = monthlyBadges.filter((b) => b.winners.some((w) => w.userId === myId && w.wins > 0));
+  const myChoreBadges = choreBadges.filter((b) => b.winners.some((w) => w.userId === myId && w.wins > 0));
   const memberNames = (members || []).map((m) => m.name).join(", ");
   const memberCount = members?.length ?? 0;
 
@@ -306,12 +307,13 @@ export const SettingsPage = () => {
             <div className="badge-section">
               <p className="eyebrow">Special Badge</p>
               {badgeError && <p className="status error">{badgeError}</p>}
-              {!badgeError && earnedSpecialBadges.length === 0 && <p className="hint">Inga vunna specialbadges ännu.</p>}
-              {!badgeError && earnedSpecialBadges.length > 0 && (
+              {!badgeError && myChoreBadges.length === 0 && <p className="hint">Inga vunna specialbadges ännu.</p>}
+              {!badgeError && myChoreBadges.length > 0 && (
                 <div className="badge-thumb-grid">
-                  {earnedSpecialBadges.map((src) => (
-                    <figure key={src} className="badge-thumb">
-                      <img src={src} alt="Badge" loading="lazy" />
+                  {myChoreBadges.map((b) => (
+                    <figure key={b.slug} className="badge-thumb">
+                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
+                      <figcaption className="hint">{b.title}</figcaption>
                     </figure>
                   ))}
                 </div>
@@ -323,23 +325,7 @@ export const SettingsPage = () => {
             <div className="badge-section">
               <p className="eyebrow">Månadens badge</p>
               {badgeError && <p className="status error">{badgeError}</p>}
-              {!badgeError && myMonthlyBadges.length === 0 && !monthPointsWinner && <p className="hint">Ingen vinnare ännu denna månad.</p>}
-              {!badgeError && myMonthlyBadges.length > 0 && (
-                <div className="badge-thumb-grid">
-                  {myMonthlyBadges.map((b) => (
-                    <figure key={b.slug} className="badge-thumb">
-                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
-                    </figure>
-                  ))}
-                </div>
-              )}
-              {!badgeError && monthPointsWinner && myMonthlyBadges.length === 0 && (
-                <div className="badge-thumb-grid">
-                  <figure className="badge-thumb">
-                    <img src="/month/januari.png" alt="Månadens badge" loading="lazy" />
-                  </figure>
-                </div>
-              )}
+              {renderMonthlyBadge(latestMonthKey, monthPointsWinner, myId)}
             </div>
           </div>
         </>
@@ -348,3 +334,40 @@ export const SettingsPage = () => {
     </div>
   );
 };
+
+function renderMonthlyBadge(latestMonthKey: string | null, monthPointsWinner: PointsWinner | null, myId?: string) {
+  if (!latestMonthKey || !monthPointsWinner) {
+    return <p className="hint">Ingen vinnare ännu för den senaste avslutade månaden.</p>;
+  }
+  const isWinner = monthPointsWinner.userId === myId;
+  if (!isWinner) {
+    return <p className="hint">Den senaste månaden vanns av någon annan.</p>;
+  }
+  const monthIndex = (() => {
+    const [, month] = latestMonthKey.split("-");
+    const num = Number(month) - 1;
+    return Number.isFinite(num) && num >= 0 && num < 12 ? num : null;
+  })();
+  const monthImages = [
+    "/month/januari.png",
+    "/month/februari.png",
+    "/month/mars.png",
+    "/month/april.png",
+    "/month/maj.png",
+    "/month/juni.png",
+    "/month/juli.png",
+    "/month/augusti.png",
+    "/month/september.png",
+    "/month/oktober.png",
+    "/month/november.png",
+    "/month/december.png",
+  ];
+  const src = monthIndex !== null ? monthImages[monthIndex] : undefined;
+  return (
+    <div className="badge-thumb-grid">
+      <figure className="badge-thumb">
+        {src ? <img src={src} alt="Månadens badge" loading="lazy" /> : <span className="hint">Månadens badge</span>}
+      </figure>
+    </div>
+  );
+}

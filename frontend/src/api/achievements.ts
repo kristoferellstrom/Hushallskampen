@@ -12,7 +12,12 @@ export type MonthlyBadge = {
 export type PointsWinner = { userId: string; name?: string; points: number };
 
 export async function fetchMonthlyBadges(token: string) {
-  return request<{ badges: MonthlyBadge[]; monthPointsWinner?: PointsWinner | null; yearPointsWinner?: PointsWinner | null }>(
+  return request<{
+    badges: MonthlyBadge[];
+    monthPointsWinner?: PointsWinner | null;
+    yearPointsWinner?: PointsWinner | null;
+    latestCompletedMonthKey?: string | null;
+  }>(
     "/achievements/monthly-badges",
     {
       method: "GET",

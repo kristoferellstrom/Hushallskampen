@@ -23,6 +23,7 @@ router.get("/monthly-badges", authMiddleware, async (req: AuthRequest, res) => {
       badges: result.badges,
       monthPointsWinner: firstMonthWinner,
       yearPointsWinner: firstYearWinner,
+      latestCompletedMonthKey: result.latestCompletedMonthKey ?? null,
     });
   } catch (err) {
     console.error(err);

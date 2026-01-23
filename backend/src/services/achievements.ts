@@ -221,5 +221,5 @@ export async function computeAchievements(householdId: string) {
     return winners;
   })();
 
-  return { badges: [...badges, ...extraBadges], monthPointsWinner, yearPointsWinner };
+  return { badges: [...badges, ...extraBadges], monthPointsWinner, yearPointsWinner, latestCompletedMonthKey };
 }
