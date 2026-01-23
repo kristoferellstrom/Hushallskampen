@@ -10,7 +10,7 @@ import { ChoreCreateForm } from "../components/chores/ChoreCreateForm";
 import { ChoreEditForm } from "../components/chores/ChoreEditForm";
 import { ChoreList } from "../components/chores/ChoreList";
 import { colorPreview, fallbackColorForUser, textColorForBackground, shadeForPoints } from "../utils/palette";
-import { listMembers } from "../api";
+import { listMembers, getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
 
@@ -19,6 +19,9 @@ export const ChoresPage = ({ embedded = false }: Props) => {
   const choresApi = useChores(token);
   const forms = useChoreForms();
   const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+  const [householdMode, setHouseholdMode] = useState<"competition" | "equality">(
+    () => (localStorage.getItem("householdMode") === "equality" ? "equality" : "competition"),
+  );
 
   useEffect(() => {
     const loadColor = async () => {
@@ -32,6 +35,22 @@ export const ChoresPage = ({ embedded = false }: Props) => {
     };
     loadColor();
   }, [token, user?.id]);
+
+  useEffect(() => {
+    const loadMode = async () => {
+      try {
+        if (!token) return;
+        const res = await getHousehold(token);
+        const mode = res.household?.mode === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+        localStorage.setItem("householdMode", mode);
+      } catch {
+        const mode = localStorage.getItem("householdMode") === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+      }
+    };
+    loadMode();
+  }, [token]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +89,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
     if (base.startsWith("#")) return base;
     return colorPreview(base) || fallbackColorForUser(user?.id || "");
   })();
+  const pointsLabel = householdMode === "equality" ? "Timmar" : "Poäng";
 
   const handleToggleActive = async (id: string, next: boolean) => {
     const current = choresApi.chores.find((c) => c._id === id);
@@ -104,6 +124,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
             onSubmit={handleCreate}
             buttonColor={userColor}
             buttonTextColor={textColorForBackground(userColor)}
+            pointsLabel={pointsLabel}
           />
 
           {forms.editingId && (
@@ -120,6 +141,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
               buttonColor={userColor}
               buttonTextColor={textColorForBackground(userColor)}
               disableTitle={forms.editingIsDefault}
+              pointsLabel={pointsLabel}
             />
           )}
         </div>
@@ -140,6 +162,7 @@ export const ChoresPage = ({ embedded = false }: Props) => {
           onToggleActive={handleToggleActive}
           buttonColor={userColor}
           buttonTextColor={textColorForBackground(userColor)}
+          pointsSuffix={householdMode === "equality" ? "h" : "p"}
           shadeFor={(points: number) => {
             const base = memberColor || user?.color || userColor;
             const bg = shadeForPoints(base, points);

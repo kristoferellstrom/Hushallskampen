@@ -8,6 +8,7 @@ type Props = {
   members: Member[];
   selectedAssignee: string;
   onChangeAssignee: (id: string) => void;
+  pointsSuffix?: string;
 
   onDragStartChore: (choreId: string, e: React.DragEvent<HTMLDivElement>) => void;
   onDragEndChore: () => void;
@@ -20,6 +21,7 @@ export const ChoreSidebar = ({
   onChangeAssignee,
   onDragStartChore,
   onDragEndChore,
+  pointsSuffix = "p",
 }: Props) => {
   const selectedMember = members.find((m) => m._id === selectedAssignee) || members[0];
   const titleMap: Record<string, string> = {
@@ -65,7 +67,8 @@ export const ChoreSidebar = ({
               onDragEnd={onDragEndChore}
             >
               <div className="chore-dot" style={{ background: bg, color: fg }}>
-                {c.defaultPoints}p
+                {c.defaultPoints}
+                {pointsSuffix}
               </div>
               <div className="chore-name">{label}</div>
             </div>

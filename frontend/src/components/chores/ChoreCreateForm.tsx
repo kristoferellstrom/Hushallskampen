@@ -11,6 +11,8 @@ type Props = {
   onSubmit: (e: React.FormEvent) => void;
   buttonColor?: string;
   buttonTextColor?: string;
+  pointsLabel?: string;
+  pointsHint?: string;
 };
 
 export const ChoreCreateForm = ({
@@ -24,6 +26,8 @@ export const ChoreCreateForm = ({
   onSubmit,
   buttonColor,
   buttonTextColor,
+  pointsLabel = "Poäng",
+  pointsHint = "(1–10)",
 }: Props) => {
   return (
     <form className="card create-card" onSubmit={onSubmit}>
@@ -39,8 +43,8 @@ export const ChoreCreateForm = ({
 
       <div className="field">
         <div className="label-row">
-          <span>Poäng</span>
-          <span className="micro-hint">(1–10)</span>
+          <span>{pointsLabel}</span>
+          <span className="micro-hint">{pointsHint}</span>
         </div>
         <input
           type="number"

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
 import { useCalendarData } from "../hooks/useCalendarData";
@@ -12,6 +13,7 @@ import { ChoreSidebar } from "../components/calendar/ChoreSidebar";
 import { CalendarBoard } from "../components/calendar/CalendarBoard";
 import { SelectedDaySidebar } from "../components/calendar/SelectedDaySidebar";
 import { colorPreview, fallbackColorForUser } from "../utils/palette";
+import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
 
@@ -20,6 +22,9 @@ export const CalendarPage = ({ embedded = false }: Props) => {
 
   const drag = useCalendarDrag();
   const cal = useCalendarData(token, user);
+  const [householdMode, setHouseholdMode] = useState<"competition" | "equality">(
+    () => (localStorage.getItem("householdMode") === "equality" ? "equality" : "competition"),
+  );
 
   const actions = useCalendarActions({
     token,
@@ -47,7 +52,8 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     }
     const date = window.prompt("Ange datum (YYYY-MM-DD):", cal.selectedDay || cal.monthGrid[0]?.date.slice(0, 10));
     if (!date) return;
-    const list = cal.chores.map((c) => `${c.title} (${c.defaultPoints}p)`).join("\n");
+    const suffix = householdMode === "equality" ? "h" : "p";
+    const list = cal.chores.map((c) => `${c.title} (${c.defaultPoints}${suffix})`).join("\n");
     const title = window.prompt(`Välj syssla (skriv exakt titel):\n${list}`);
     if (!title) return;
     const chore = cal.chores.find((c) => c.title.toLowerCase() === title.toLowerCase());
@@ -79,6 +85,22 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     return preview || fallbackColorForUser(user?.id || "");
   })();
 
+  useEffect(() => {
+    const loadMode = async () => {
+      try {
+        if (!token) return;
+        const res = await getHousehold(token);
+        const mode = res.household?.mode === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+        localStorage.setItem("householdMode", mode);
+      } catch {
+        const mode = localStorage.getItem("householdMode") === "equality" ? "equality" : "competition";
+        setHouseholdMode(mode);
+      }
+    };
+    loadMode();
+  }, [token]);
+
   const content = (
     <>
       <CalendarStatusRow status={cal.status} error={cal.error} />
@@ -89,6 +111,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
           members={cal.members}
           selectedAssignee={cal.selectedAssignee}
           onChangeAssignee={cal.setSelectedAssignee}
+          pointsSuffix={householdMode === "equality" ? "h" : "p"}
           onDragStartChore={(choreId, e) => {
             drag.setDragChoreId(choreId);
             e.dataTransfer.effectAllowed = "copyMove";

@@ -13,6 +13,7 @@ type Props = {
   buttonColor?: string;
   buttonTextColor?: string;
   disableTitle?: boolean;
+  pointsLabel?: string;
 };
 
 export const ChoreEditForm = ({
@@ -28,6 +29,7 @@ export const ChoreEditForm = ({
   buttonColor,
   buttonTextColor,
   disableTitle = false,
+  pointsLabel = "Poäng",
 }: Props) => {
   return (
     <form className="card" onSubmit={onSubmit}>
@@ -39,7 +41,7 @@ export const ChoreEditForm = ({
       </label>
 
       <label>
-        Poäng
+        {pointsLabel}
         <input
           type="number"
           min={1}

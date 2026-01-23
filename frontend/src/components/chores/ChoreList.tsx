@@ -36,6 +36,7 @@ type Props = {
   buttonColor?: string;
   buttonTextColor?: string;
   shadeFor: (points: number) => { bg: string; fg: string };
+  pointsSuffix?: string;
 };
 
 export const ChoreList = ({
@@ -49,6 +50,7 @@ export const ChoreList = ({
   buttonColor,
   buttonTextColor,
   shadeFor,
+  pointsSuffix = "p",
 }: Props) => {
   const defaultTitles: Record<string, string> = {
     diska: "Diska",
@@ -122,7 +124,10 @@ export const ChoreList = ({
           return (
             <div key={c._id} className={`chore-badge ${isInactive ? "inactive" : ""}`} title={c.description || ""}>
               <div className="chore-dot" style={{ background: dotBg, color: dotFg }}>
-                <span className="chore-points">{c.defaultPoints}p</span>
+                <span className="chore-points">
+                  {c.defaultPoints}
+                  {pointsSuffix}
+                </span>
               </div>
               <div className="chore-name">{displayTitle}</div>
 
