@@ -53,6 +53,7 @@ export const SettingsPage = () => {
   const [lastSavedRules, setLastSavedRules] = useState<string>("");
   const [lastSavedColor, setLastSavedColor] = useState<string | undefined>(undefined);
   const [initializedBaseline, setInitializedBaseline] = useState(false);
+  const hasLoadedHousehold = Boolean(invite || name || prize || rulesText || members.length);
 
   useEffect(() => {
     const loadColor = async () => {
@@ -74,12 +75,24 @@ export const SettingsPage = () => {
   }, [members, user?.id]);
 
   useEffect(() => {
-    if (!initializedBaseline && (userColor !== undefined || rulesText !== undefined)) {
+    if (!initializedBaseline && hasLoadedHousehold) {
       setLastSavedColor(userColor ?? "");
       setLastSavedRules(rulesText ?? "");
       setInitializedBaseline(true);
     }
-  }, [initializedBaseline, userColor, rulesText]);
+  }, [initializedBaseline, hasLoadedHousehold, userColor, rulesText]);
+
+  useEffect(() => {
+    // Om baslinjen saknas men vi har data, synka så knappen startar grå
+    if (initializedBaseline) {
+      if (!lastSavedColor && userColor) {
+        setLastSavedColor(userColor);
+      }
+      if (!lastSavedRules && rulesText) {
+        setLastSavedRules(rulesText);
+      }
+    }
+  }, [initializedBaseline, lastSavedColor, lastSavedRules, userColor, rulesText]);
 
   useEffect(() => {
     const loadApprovals = async () => {
