@@ -475,6 +475,13 @@
     border: 1px solid rgba(15, 23, 42, 0.12) !important;
   }
 
+  &.force-inactive {
+    background: #e2e8f0 !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
   &.action-icon {
     background: transparent !important;
     color: #1f2937 !important;
@@ -528,9 +535,39 @@
   }
 
   &.inactive {
-    opacity: 0.55;
+    opacity: 1;
     box-shadow: none;
-    filter: grayscale(0.2);
+    background: #f1f5f9;
+    border-color: rgba(15, 23, 42, 0.05);
+
+    .actions {
+      opacity: 0.9;
+    }
+
+    .chore-dot {
+      background: #e2e8f0;
+      color: #475569;
+      box-shadow: none;
+    }
+
+    .chore-name {
+      color: #475569;
+    }
+
+    .tiny-btn.user-btn {
+      background: #e2e8f0 !important;
+      color: #475569 !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: none !important;
+
+      &.activate-btn {
+        background: var(--user-color, $color-primary) !important;
+        color: var(--user-color-fg, $color-surface) !important;
+        border: none !important;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12) !important;
+        filter: none !important;
+      }
+    }
   }
 }
 

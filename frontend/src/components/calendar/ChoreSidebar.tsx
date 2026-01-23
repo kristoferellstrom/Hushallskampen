@@ -1,7 +1,7 @@
 import { shadeForPoints, textColorForBackground } from "../../utils/palette";
 
 type Member = { _id: string; name: string; color?: string };
-type Chore = { _id: string; title: string; defaultPoints: number };
+type Chore = { _id: string; title: string; defaultPoints: number; isActive?: boolean };
 
 type Props = {
   chores: Chore[];
@@ -30,6 +30,8 @@ export const ChoreSidebar = ({
     laundry: "Tvätt",
   };
 
+  const visibleChores = chores.filter((c) => c.isActive !== false);
+
   return (
     <div className="card sidebar left hoverable">
       <div className="chore-corner-figure" aria-hidden="true">
@@ -49,7 +51,7 @@ export const ChoreSidebar = ({
       </label>
 
       <div className="chores-badges">
-        {chores.map((c) => {
+        {visibleChores.map((c) => {
           const bg = shadeForPoints(selectedMember?.color, c.defaultPoints);
           const fg = textColorForBackground(bg);
           const label = titleMap[c.title.toLowerCase()] || c.title;

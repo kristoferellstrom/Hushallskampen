@@ -175,6 +175,14 @@
   &.left {
     position: relative;
     overflow: visible;
+
+    .chores-badges {
+      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      gap: 14px;
+      justify-items: center;
+      justify-content: center;
+      width: 100%;
+    }
   }
 }
 

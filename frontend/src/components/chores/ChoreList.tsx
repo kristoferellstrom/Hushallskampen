@@ -85,6 +85,10 @@ export const ChoreList = ({
     const bSlug = b.slug || normalize(b.title);
     const aDefault = Boolean(a.isDefault || defaultTitles[aSlug]);
     const bDefault = Boolean(b.isDefault || defaultTitles[bSlug]);
+    const aInactive = a.isActive === false;
+    const bInactive = b.isActive === false;
+    if (aInactive && !bInactive) return 1;
+    if (!aInactive && bInactive) return -1;
     if (aDefault && !bDefault) return -1;
     if (!aDefault && bDefault) return 1;
     if (aDefault && bDefault) {
@@ -109,65 +113,91 @@ export const ChoreList = ({
           const slugKey = c.slug || normalize(c.title);
           const isDefault = Boolean(c.isDefault || defaultTitles[slugKey]);
           const isInactive = c.isActive === false;
+          const dotBg = isInactive ? "#e2e8f0" : bg;
+          const dotFg = isInactive ? "#475569" : fg;
           const displayTitle =
             isDefault && (defaultTitles[c.slug || ""] || defaultTitles[slugKey])
               ? defaultTitles[c.slug || ""] || defaultTitles[slugKey]
               : c.title;
           return (
             <div key={c._id} className={`chore-badge ${isInactive ? "inactive" : ""}`} title={c.description || ""}>
-              <div className="chore-dot" style={{ background: bg, color: fg }}>
+              <div className="chore-dot" style={{ background: dotBg, color: dotFg }}>
                 <span className="chore-points">{c.defaultPoints}p</span>
               </div>
               <div className="chore-name">{displayTitle}</div>
 
               {isDefault && (
-                <span className="micro-hint" style={{ color: "#64748b" }}>
-                  Standard
+                <span className="micro-hint" style={{ color: isInactive ? "#475569" : "#64748b" }}>
+                  {isInactive ? "Pausad" : "Standard"}
                 </span>
               )}
 
               <div className="actions">
-                {onToggleActive && isDefault && (
+                {onToggleActive && isDefault && isInactive && (
                   <button
                     type="button"
-                    className={`tiny-btn user-btn ${isInactive ? "" : "ghost"}`}
-                    aria-label={isInactive ? "Aktivera" : "Inaktivera"}
-                    onClick={() => onToggleActive(c._id, !isInactive)}
+                    className="tiny-btn user-btn activate-btn"
+                    aria-label="Aktivera"
+                    onClick={() => onToggleActive(c._id, true)}
                     disabled={loading}
                     style={
                       buttonColor
-                        ? isInactive
-                          ? { background: buttonColor, color: buttonTextColor, border: "none" }
-                          : {
-                              background: "rgba(15, 23, 42, 0.08)",
-                              color: buttonColor,
-                              border: "1px solid rgba(15, 23, 42, 0.12)",
-                            }
+                        ? {
+                            background: buttonColor,
+                            color: buttonTextColor,
+                            border: "none",
+                            boxShadow: "0 6px 14px rgba(15,23,42,0.12)",
+                            ["--user-color" as any]: buttonColor,
+                            ["--user-color-fg" as any]: buttonTextColor,
+                          }
                         : undefined
                     }
                   >
-                    {isInactive ? "Aktivera" : "Pausa"}
+                    Aktivera
                   </button>
                 )}
 
-                <button
-                  type="button"
-                  className="tiny-btn user-btn icon-only"
-                  style={
-                    buttonColor
-                      ? {
-                          background: buttonColor,
-                          color: buttonTextColor,
-                          border: "none",
-                        }
-                      : undefined
-                  }
-                  aria-label="Redigera"
-                  onClick={() => onEdit(c)}
-                  disabled={loading}
-                >
-                  <EditIcon />
-                </button>
+                {onToggleActive && isDefault && !isInactive && (
+                  <button
+                    type="button"
+                    className="tiny-btn user-btn ghost"
+                    aria-label="Pausa"
+                    onClick={() => onToggleActive(c._id, false)}
+                    disabled={loading}
+                    style={
+                      buttonColor
+                        ? {
+                            background: "rgba(15, 23, 42, 0.08)",
+                            color: buttonColor,
+                            border: "1px solid rgba(15, 23, 42, 0.12)",
+                          }
+                        : undefined
+                    }
+                  >
+                    Pausa
+                  </button>
+                )}
+
+                {(!isDefault || !isInactive) && (
+                  <button
+                    type="button"
+                    className="tiny-btn user-btn icon-only"
+                    style={
+                      buttonColor
+                        ? {
+                            background: buttonColor,
+                            color: buttonTextColor,
+                            border: "none",
+                          }
+                        : undefined
+                    }
+                    aria-label="Redigera"
+                    onClick={() => onEdit(c)}
+                    disabled={loading}
+                  >
+                    <EditIcon />
+                  </button>
+                )}
 
                 {!isDefault && (
                     <button

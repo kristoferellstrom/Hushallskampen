@@ -60,6 +60,7 @@ export const useChores = (token: string | null | undefined) => {
       const res = await fetchChores(token);
       const mapped = (res.chores || []).map((c) => ({
         ...c,
+        isActive: c.isActive ?? true,
         isDefault:
           c.isDefault ||
           (c.slug ? defaultSlugs.has(c.slug) : false) ||
