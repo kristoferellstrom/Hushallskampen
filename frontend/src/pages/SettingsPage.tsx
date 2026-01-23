@@ -24,7 +24,6 @@ export const SettingsPage = () => {
     updatingHousehold,
     members,
     rulesText,
-    approvalTimeout,
     targetShares,
 
     availableColors,
@@ -36,7 +35,6 @@ export const SettingsPage = () => {
     setMode,
     setPrize,
     setRulesText,
-    setApprovalTimeout,
 
     loadInvite,
     handleUpdateHousehold,
@@ -231,7 +229,6 @@ export const SettingsPage = () => {
             name={name}
             mode={mode}
             prize={prize}
-            approvalTimeout={approvalTimeout}
             members={members}
             targetShares={targetShares}
             updatingHousehold={updatingHousehold}
@@ -241,7 +238,6 @@ export const SettingsPage = () => {
             setName={setName}
             setMode={setMode}
             setPrize={setPrize}
-            setApprovalTimeout={setApprovalTimeout}
             setTargetShareForMember={setTargetShareForMember}
             handleUpdateHousehold={handleUpdateHousehold}
           />

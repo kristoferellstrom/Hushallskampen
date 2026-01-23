@@ -20,7 +20,6 @@ export const useSettingsPage = () => {
   const [updatingHousehold, setUpdatingHousehold] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [rulesText, setRulesText] = useState("");
-  const [approvalTimeout, setApprovalTimeout] = useState<number | undefined>(undefined);
   const [targetShares, setTargetShares] = useState<Record<string, number>>({});
 
   const availableColors = useMemo(() => ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"], []);
@@ -52,7 +51,6 @@ export const useSettingsPage = () => {
         setMode("competition");
         setPrize("");
         setRulesText("");
-        setApprovalTimeout(undefined);
         setTargetShares({});
         return;
       }
@@ -62,7 +60,6 @@ export const useSettingsPage = () => {
       setMode(res.household.mode === "equality" ? "equality" : "competition");
       setPrize(res.household.weeklyPrizeText || "");
       setRulesText(res.household.rulesText || "");
-      setApprovalTimeout(res.household.approvalTimeoutHours);
 
       if (res.household.targetShares && res.household.targetShares.length > 0) {
         const map: Record<string, number> = {};
@@ -124,7 +121,6 @@ export const useSettingsPage = () => {
         mode,
         weeklyPrizeText: prize,
         rulesText,
-        approvalTimeoutHours: approvalTimeout,
         targetShares: targetShareArray.length ? targetShareArray : undefined,
       });
       await loadInvite(); // hämta om hushållet så fälten speglar sparade värden
@@ -178,7 +174,6 @@ export const useSettingsPage = () => {
     updatingHousehold,
     members,
     rulesText,
-    approvalTimeout,
     targetShares,
 
     availableColors,
@@ -190,7 +185,6 @@ export const useSettingsPage = () => {
     setMode,
     setPrize,
     setRulesText,
-    setApprovalTimeout,
 
     loadInvite,
     handleUpdateHousehold,

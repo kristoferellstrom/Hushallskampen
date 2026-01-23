@@ -26,7 +26,6 @@ export async function getHousehold(token: string) {
           mode?: string;
           weeklyPrizeText?: string;
           rulesText?: string;
-          approvalTimeoutHours?: number;
           targetShares?: Array<{ userId: string; targetPct: number }>;
         }
       | null;
@@ -50,7 +49,6 @@ export async function updateHousehold(
     mode?: "competition" | "equality";
     weeklyPrizeText?: string;
     rulesText?: string;
-    approvalTimeoutHours?: number;
     targetShares?: Array<{ userId: string; targetPct: number }>;
   },
 ) {

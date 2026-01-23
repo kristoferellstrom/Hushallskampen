@@ -4,7 +4,6 @@ type Props = {
   name: string;
   mode: "competition" | "equality";
   prize: string;
-  approvalTimeout?: number;
   members: Member[];
   targetShares: Record<string, number>;
 
@@ -16,7 +15,6 @@ type Props = {
   setName: (v: string) => void;
   setMode: (v: "competition" | "equality") => void;
   setPrize: (v: string) => void;
-  setApprovalTimeout: (v: number | undefined) => void;
 
   setTargetShareForMember: (memberId: string, value: string) => void;
   handleUpdateHousehold: () => void;
@@ -26,7 +24,6 @@ export const HouseholdSettingsCard = ({
   name,
   mode,
   prize,
-  approvalTimeout,
   members,
   targetShares,
   updatingHousehold,
@@ -36,7 +33,6 @@ export const HouseholdSettingsCard = ({
   setName,
   setMode,
   setPrize,
-  setApprovalTimeout,
   setTargetShareForMember,
   handleUpdateHousehold,
 }: Props) => {
@@ -66,19 +62,6 @@ export const HouseholdSettingsCard = ({
           onChange={(e) => setPrize(e.target.value)}
           placeholder="Ex: Välj film, middag, etc."
         />
-      </label>
-
-      <label>
-        Auto-approve/påminnelse (timmar)
-        <input
-          type="number"
-          min={0}
-          max={168}
-          value={approvalTimeout ?? ""}
-          onChange={(e) => setApprovalTimeout(e.target.value === "" ? undefined : Number(e.target.value))}
-          placeholder="0 = av, 24 = en dag"
-        />
-        <p className="hint">Sparas som hushållsinställning (kan användas för auto-approve/påminnelser i nästa steg).</p>
       </label>
 
       <div>
