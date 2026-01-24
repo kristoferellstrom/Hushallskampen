@@ -72,7 +72,7 @@ export const CalendarWeekView = ({
                             <span className="mini-name" style={{ color: fg }}>
                               {en.choreId?.title || "Syssla"}
                             </span>
-                            <span className="mini-points">{pts}p</span>
+                            <span className="mini-points" aria-hidden="true"></span>
                           </div>
                           <p className="hint mini-assignee" style={{ color: fg }}>
                             {en.assignedToUserId?.name || "-"}

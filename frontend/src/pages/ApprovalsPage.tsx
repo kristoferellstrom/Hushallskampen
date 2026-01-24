@@ -109,17 +109,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
               <div>
                 <div className="item-head">
                   <strong>{a.calendarEntryId.choreId?.title || "Syssla"}</strong>
-                  {(() => {
-                    const pts = a.calendarEntryId.choreId?.defaultPoints ?? 0;
-                    const baseColor = (a.submittedByUserId as any)?.color || userColor;
-                    const pillBg = shadeForPoints(baseColor, pts) || baseColor || userColor;
-                    const pillFg = textColorForBackground(pillBg);
-                    return (
-                      <span className="pill light" style={{ background: pillBg, color: pillFg }}>
-                        {pts}p
-                      </span>
-                    );
-                  })()}
                   <span className="muted-date">{a.calendarEntryId.date.slice(0, 10)}</span>
                   <span className="muted-date submitted-by">Av: {a.submittedByUserId.name}</span>
                 </div>
@@ -264,9 +253,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
                   <div>
                     <div className="item-head">
                       <strong>{h.calendarEntryId.choreId?.title || "Syssla"}</strong>
-                      <span className="pill light" style={{ background: pillBg, color: pillFg }}>
-                        {h.calendarEntryId.choreId?.defaultPoints ?? 0}p
-                      </span>
                       <span className="muted-date">{h.calendarEntryId.date.slice(0, 10)}</span>
                     </div>
                     <p className="hint">

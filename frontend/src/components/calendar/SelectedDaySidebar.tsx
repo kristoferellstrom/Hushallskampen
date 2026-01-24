@@ -88,7 +88,7 @@ export const SelectedDaySidebar = ({
                     <span className="mini-name" style={{ color: textColor }}>
                       {e.choreId?.title || "Syssla"}
                     </span>
-                    <span className="mini-points">{safePoints}p</span>
+                    <span className="mini-points" aria-hidden="true"></span>
                   </div>
                   <p className="hint mini-assignee" style={{ color: textColor }}>
                     {firstName(e.assignedToUserId.name)}
@@ -159,7 +159,7 @@ export const SelectedDaySidebar = ({
                     style={{ background: shade, color: textColor }}
                   >
                     <div>
-                      <strong>{e.choreId?.title || "Syssla"}</strong> · {safePoints}p
+                      <strong>{e.choreId?.title || "Syssla"}</strong>
                       <p className="hint" style={{ color: textColor, opacity: 0.9 }}>
                         {firstName(e.assignedToUserId.name)}
                       </p>
