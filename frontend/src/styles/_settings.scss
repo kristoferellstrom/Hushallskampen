@@ -518,12 +518,24 @@
     align-content: start;
     justify-items: start;
     padding: 16px;
+    position: relative;
     min-height: 0;
     overflow: hidden;
     gap: 10px;
     background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
     border: 1px solid rgba(15, 23, 42, 0.06);
     border-radius: 14px;
+
+    .mode-actions {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+
+      .save-colors-btn {
+        min-width: 120px;
+        padding: 10px 14px;
+      }
+    }
 
     .mode-toggle {
       margin: 20px auto 14px;

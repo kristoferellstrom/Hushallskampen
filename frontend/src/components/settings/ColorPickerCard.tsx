@@ -139,7 +139,7 @@ export const ColorPickerCard = ({
           onClick={handleSaveClick}
           disabled={saving || !dirty}
         >
-          {saving ? "Sparar..." : "Spara inställningarna"}
+          {saving ? "Sparar..." : "Spara"}
         </button>
       </div>
 

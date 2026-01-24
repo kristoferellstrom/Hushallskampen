@@ -244,6 +244,17 @@ export const SettingsPage = () => {
           <br />
           Du kan byta läge när ni vill men läget styr hur statistiken, badges och mål räknas.
         </p>
+        <div className="mode-actions">
+          <button
+            type="button"
+            className="save-colors-btn"
+            style={{ background: "var(--user-color, #0f172a)", color: "var(--user-color-fg, #ffffff)" }}
+            onClick={handleUpdateHousehold}
+            disabled={updatingHousehold}
+          >
+            {updatingHousehold ? "Sparar..." : "Spara"}
+          </button>
+        </div>
         <div className="mode-toggle">
           <button type="button" className={mode === "competition" ? "active" : ""} onClick={() => setMode("competition")}>
             Tävling
@@ -319,7 +330,7 @@ export const SettingsPage = () => {
               onClick={handleUpdateHousehold}
               disabled={updatingHousehold}
             >
-              {updatingHousehold ? "Sparar..." : "Spara inställningarna"}
+              {updatingHousehold ? "Sparar..." : "Spara"}
             </button>
           </div>
         </div>

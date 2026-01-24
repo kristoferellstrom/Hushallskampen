@@ -88,7 +88,7 @@ export const HouseholdSettingsCard = ({
           onClick={handleUpdateHousehold}
           disabled={updatingHousehold}
         >
-          {updatingHousehold ? "Sparar..." : "Spara inställningarna"}
+          {updatingHousehold ? "Sparar..." : "Spara"}
         </button>
       </div>
 
