@@ -234,8 +234,6 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
               colorPreview((h.reviewedByUserId as any)?.color || userColor) ||
               (h.reviewedByUserId as any)?.color ||
               userColor;
-            const pillBg = shadeForPoints(submitterColor, h.calendarEntryId.choreId?.defaultPoints ?? 0) || submitterColor;
-            const pillFg = textColorForBackground(pillBg);
             const gradientBg = `linear-gradient(90deg, ${toRgba(submitterColor, 0.16)}, ${toRgba(reviewerColor, 0.16)})`;
 
             return (
