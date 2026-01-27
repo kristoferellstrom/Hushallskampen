@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export type Chore = {
   _id: string;
   title: string;
@@ -52,6 +54,9 @@ export const ChoreList = ({
   shadeFor,
   pointsSuffix = "p",
 }: Props) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [showAllMobile, setShowAllMobile] = useState(false);
+
   const defaultTitles: Record<string, string> = {
     diska: "Diska",
     dammsuga: "Dammsuga",
@@ -101,6 +106,18 @@ export const ChoreList = ({
     return a.title.localeCompare(b.title, "sv");
   });
 
+  useEffect(() => {
+    const MOBILE_BREAKPOINT = 900; // match mobilanpassning
+    const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const visibleChores =
+    isMobile && !showAllMobile ? sortedChores.slice(0, Math.min(sortedChores.length, 12)) : sortedChores;
+  const hasMoreMobile = isMobile && sortedChores.length > 12;
+
   return (
     <div className="card">
       <div className="row">
@@ -110,7 +127,7 @@ export const ChoreList = ({
       </div>
 
       <div className="chores-badges inline-grid">
-        {sortedChores.map((c) => {
+        {visibleChores.map((c) => {
           const { bg, fg } = shadeFor(c.defaultPoints);
           const slugKey = c.slug || normalize(c.title);
           const isDefault = Boolean(c.isDefault || defaultTitles[slugKey]);
@@ -229,6 +246,18 @@ export const ChoreList = ({
           );
         })}
       </div>
+      {hasMoreMobile && (
+        <div className="row" style={{ justifyContent: "center", marginTop: 8 }}>
+          <button
+            type="button"
+            className="tiny-btn ghost"
+            onClick={() => setShowAllMobile((v) => !v)}
+            aria-label={showAllMobile ? "Visa färre sysslor" : "Visa fler sysslor"}
+          >
+            {showAllMobile ? "Visa färre" : "Visa fler"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
