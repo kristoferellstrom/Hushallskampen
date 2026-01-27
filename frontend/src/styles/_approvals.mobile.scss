@@ -44,4 +44,24 @@
   .history-figure {
     order: 2;
   }
+
+  .approvals-card .chips {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    align-items: center;
+  }
+
+  .approvals-card .chips .chip {
+    width: 100%;
+  }
+
+  .approvals-card .chips .chip.ghost {
+    grid-column: 1 / -1;
+    width: fit-content;
+  }
+
+  .approvals-card .comment-box {
+    width: 100%;
+  }
 }
