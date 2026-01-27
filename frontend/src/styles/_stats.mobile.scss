@@ -1,0 +1,18 @@
+@use "./theme" as *;
+
+@media (max-width: 768px) {
+  .leader-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 0;
+  }
+
+  .leader-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}

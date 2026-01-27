@@ -11,6 +11,7 @@
 @use "./forms";
 @use "./components";
 @use "./stats";
+@use "./stats.mobile" as statsMobile;
 @use "./settings";
 @use "./approvals";
 @use "./chores";
