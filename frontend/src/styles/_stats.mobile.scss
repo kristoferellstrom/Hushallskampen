@@ -50,4 +50,23 @@
     justify-self: center;
     padding: 0 8px;
   }
+
+  .stats-card .stat-desc {
+    padding: 0;
+    word-break: break-word;
+ 
+  }
+
+  .stat-figure-wide {
+    display: none;
+  }
+
+  .year-shift,
+  .card.stats-card:has(.year-shift) {
+    display: none !important;
+  }
+
+  .leader-strip .leader-card:nth-child(3) {
+    display: none !important;
+  }
 }
