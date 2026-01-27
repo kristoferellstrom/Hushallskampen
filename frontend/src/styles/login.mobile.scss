@@ -1,0 +1,32 @@
+@media (max-width: 768px) {
+  .auth-shell {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-x: hidden;
+  }
+
+  .auth-logo {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 80px!important;
+  }
+
+  .auth-logo .logo-mark,
+  .auth-logo img,
+  .auth-logo svg {
+    height: auto;
+    transform: scale(1.7);
+    transform-origin: top center;
+  }
+
+  .mode-toggle {
+    align-self: center;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+}

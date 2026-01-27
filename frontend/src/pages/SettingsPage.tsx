@@ -186,7 +186,17 @@ export const SettingsPage = () => {
           </nav>
         </div>
         <div className="header-actions" style={{ gap: 8, justifyContent: "flex-end", marginLeft: "auto" }}>
-          <Link to="/settings" className="nav-link subtle active settings-link" style={{ marginRight: 4 }}>
+          <Link
+            to="/settings"
+            className="nav-link subtle active settings-link"
+            style={{ marginRight: 4 }}
+            onClick={(e) => {
+              if (window.matchMedia("(max-width: 768px)").matches) {
+                e.preventDefault();
+                navigate("/dashboard#kalender");
+              }
+            }}
+          >
             <img className="settings-icon" src="/mob/setting_icon_mob.svg" alt="" aria-hidden="true" />
             <span className="settings-label">Inställningar</span>
           </Link>

@@ -1,6 +1,7 @@
 import type { Mode } from "../hooks/useAuthForm";
 import { Logo } from "../components/Logo";
 import "../styles/login.scss";
+import "../styles/login.mobile.scss";
 
 import { useRememberEmail } from "../hooks/useRememberEmail";
 import { useAuthForm } from "../hooks/useAuthForm";
