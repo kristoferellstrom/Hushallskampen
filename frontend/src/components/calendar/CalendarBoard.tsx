@@ -44,7 +44,7 @@ type Props = {
 
 export const CalendarBoard = ({
   monthLabel,
-  loading,
+  // loading,
   onPrevMonth,
   onNextMonth,
   userColor,
@@ -55,7 +55,7 @@ export const CalendarBoard = ({
   onChangeView,
   showHeatmap,
   onToggleHeatmap,
-  onCopyLastWeek,
+  // onCopyLastWeek,
   onManualAdd,
   selectedDay,
   onSelectDay,
@@ -183,21 +183,6 @@ export const CalendarBoard = ({
           }}
         >
           Lägg till manuellt
-        </button>
-        <button
-          type="button"
-          className="chip"
-          onClick={onCopyLastWeek}
-          disabled={loading}
-          style={{
-            flex: "0 0 auto",
-            minWidth: 120,
-            background: userColor,
-            color: textColorForBackground(userColor),
-            border: "none",
-          }}
-        >
-          Kopiera förra veckan
         </button>
         <button
           type="button"
