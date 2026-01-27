@@ -14,7 +14,7 @@
 
   .bottom-nav-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
     gap: 6px;
     align-items: center;
   }
@@ -25,20 +25,40 @@
     display: grid;
     place-items: center;
     padding: 10px 6px;
-    font-size: 18px;
-    color: $color-primary;
+    color: #1f2937;
     border-radius: 14px;
     transition: background 120ms ease, transform 120ms ease, color 120ms ease;
 
     &.active {
       background: rgba(15, 23, 42, 0.08);
-      color: $color-primary;
+      color: #0f172a;
       font-weight: 800;
     }
 
     &:hover {
       transform: translateY(-1px);
     }
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    fill: none;
+  }
+
+  .icon img {
+    width: 22px;
+    height: 22px;
+    display: block;
+    object-fit: contain;
   }
 }
 

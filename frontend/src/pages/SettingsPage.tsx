@@ -9,6 +9,7 @@ import { listApprovals } from "../api";
 
 import { HouseholdSettingsCard } from "../components/settings/HouseholdSettingsCard";
 import { ColorPickerCard } from "../components/settings/ColorPickerCard";
+import { mobileNavItems } from "../components/MobileNavIcons";
 
 export const SettingsPage = () => {
   const { token, user, logout } = useAuth();
@@ -139,13 +140,7 @@ export const SettingsPage = () => {
   const memberNames = (members || []).map((m) => m.name).join(", ");
   const memberCount = members?.length ?? 0;
   const showPrizes = mode === "competition";
-  const navItems = [
-    { id: "kalender", icon: "⌂", label: "Kalender" },
-    { id: "sysslor", icon: "✚", label: "Sysslor" },
-    { id: "godkannanden", icon: "✓", label: "Godkännanden" },
-    { id: "statistik", icon: "≡", label: "Statistik" },
-    showPrizes ? { id: "priser", icon: "★", label: "Priser" } : null,
-  ].filter(Boolean) as { id: string; icon: string; label: string }[];
+  const navItems = mobileNavItems(showPrizes);
 
   return (
     <div

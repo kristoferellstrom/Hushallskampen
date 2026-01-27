@@ -8,6 +8,7 @@ import { AchievementsPage } from "./AchievementsPage";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { useEffect, useState } from "react";
 import { listMembers, listApprovals, getHousehold } from "../api";
+import { mobileNavItems } from "../components/MobileNavIcons";
 
 export const HomePage = () => {
   const { user, token, logout } = useAuth();
@@ -19,13 +20,7 @@ export const HomePage = () => {
   );
   const showPrizes = householdMode !== "equality";
   const sectionIds = showPrizes ? ["kalender", "sysslor", "godkannanden", "statistik", "priser"] : ["kalender", "sysslor", "godkannanden", "statistik"];
-  const navItems = [
-    { id: "kalender", icon: "⌂", label: "Kalender" },
-    { id: "sysslor", icon: "✚", label: "Sysslor" },
-    { id: "godkannanden", icon: "✓", label: "Godkännanden" },
-    { id: "statistik", icon: "≡", label: "Statistik" },
-    showPrizes ? { id: "priser", icon: "★", label: "Priser" } : null,
-  ].filter(Boolean) as { id: string; icon: string; label: string }[];
+  const navItems = mobileNavItems(showPrizes);
 
   useEffect(() => {
     const loadColor = async () => {
