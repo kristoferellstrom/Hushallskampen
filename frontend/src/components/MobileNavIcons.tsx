@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export const mobileNavItems = (showPrizes: boolean) =>
   ([
     {
@@ -27,4 +29,4 @@ export const mobileNavItems = (showPrizes: boolean) =>
           icon: <img src="/mob/prize_icon_mob.svg" alt="" aria-hidden="true" />,
         }
       : null,
-  ].filter(Boolean) as { id: string; label: string; icon: JSX.Element }[]);
+  ].filter(Boolean) as { id: string; label: string; icon: ReactNode }[]);
