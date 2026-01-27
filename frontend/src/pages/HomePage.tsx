@@ -178,8 +178,9 @@ export const HomePage = () => {
           </nav>
         </div>
         <div className="header-actions">
-          <Link to="/settings" className="nav-link" style={{ marginRight: 8 }}>
-            Inställningar
+          <Link to="/settings" className="nav-link settings-link" style={{ marginRight: 8 }}>
+            <img className="settings-icon" src="/mob/setting_icon_mob.svg" alt="" aria-hidden="true" />
+            <span className="settings-label">Inställningar</span>
           </Link>
           <button
             className="logout-btn"

@@ -186,8 +186,9 @@ export const SettingsPage = () => {
           </nav>
         </div>
         <div className="header-actions" style={{ gap: 8, justifyContent: "flex-end", marginLeft: "auto" }}>
-          <Link to="/settings" className="nav-link subtle active" style={{ marginRight: 4 }}>
-            Inställningar
+          <Link to="/settings" className="nav-link subtle active settings-link" style={{ marginRight: 4 }}>
+            <img className="settings-icon" src="/mob/setting_icon_mob.svg" alt="" aria-hidden="true" />
+            <span className="settings-label">Inställningar</span>
           </Link>
           <button
             className="logout-btn"
@@ -400,6 +401,16 @@ export const SettingsPage = () => {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="mobile-logout">
+        <button
+          className="logout-btn"
+          onClick={logout}
+          style={{ background: shellColor, color: shellColorFg, border: "none" }}
+        >
+          Logga ut
+        </button>
       </div>
     </div>
   );
