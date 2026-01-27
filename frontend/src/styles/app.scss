@@ -12,6 +12,7 @@
 @use "./components";
 @use "./stats";
 @use "./stats.mobile" as statsMobile;
+@use "./achievements.mobile" as achievementsMobile;
 @use "./settings";
 @use "./approvals";
 @use "./chores";
