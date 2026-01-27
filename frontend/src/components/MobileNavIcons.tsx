@@ -8,14 +8,14 @@ export const mobileNavItems = (showPrizes: boolean) =>
       icon: <img src="/mob/home_icon_mob.svg" alt="" aria-hidden="true" />,
     },
     {
-      id: "sysslor",
-      label: "Sysslor",
-      icon: <img src="/mob/task_icon_mob.svg" alt="" aria-hidden="true" />,
-    },
-    {
       id: "godkannanden",
       label: "Godkännanden",
       icon: <img src="/mob/approved_icon_mob.svg" alt="" aria-hidden="true" />,
+    },
+    {
+      id: "sysslor",
+      label: "Sysslor",
+      icon: <img src="/mob/task_icon_mob.svg" alt="" aria-hidden="true" />,
     },
     {
       id: "statistik",
