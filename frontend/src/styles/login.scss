@@ -20,6 +20,9 @@ $hk-green: #9fc63f;
     justify-content: center;
     align-items: center;
     margin: 0 0 -65px;
+    position: relative;
+    z-index: 0;
+    pointer-events: none;
 
     > * {
       margin: 0;
@@ -34,6 +37,12 @@ $hk-green: #9fc63f;
       margin: 0 auto;
     }
   }
+}
+
+.mode-toggle,
+.auth-card {
+  position: relative;
+  z-index: 1;
 }
 
 .mode-toggle {

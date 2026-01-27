@@ -10,6 +10,9 @@
     width: 100%;
     max-width: 100%;
     margin-bottom: 80px!important;
+    position: relative;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .auth-logo .logo-mark,
@@ -22,11 +25,15 @@
 
   .mode-toggle {
     align-self: center;
+    position: relative;
+    z-index: 1;
   }
 
   .auth-card {
     width: 100%;
     max-width: 100%;
     margin: 0;
+    position: relative;
+    z-index: 1;
   }
 }
