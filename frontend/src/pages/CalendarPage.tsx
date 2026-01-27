@@ -12,7 +12,7 @@ import { CalendarStatusRow } from "../components/calendar/CalendarStatusRow";
 import { ChoreSidebar } from "../components/calendar/ChoreSidebar";
 import { CalendarBoard } from "../components/calendar/CalendarBoard";
 import { SelectedDaySidebar } from "../components/calendar/SelectedDaySidebar";
-import { colorPreview, fallbackColorForUser } from "../utils/palette";
+import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
@@ -25,6 +25,9 @@ export const CalendarPage = ({ embedded = false }: Props) => {
   const [householdMode, setHouseholdMode] = useState<"competition" | "equality">(
     () => (localStorage.getItem("householdMode") === "equality" ? "equality" : "competition"),
   );
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [manualDate, setManualDate] = useState("");
+  const [manualChoreId, setManualChoreId] = useState<string>("");
 
   const actions = useCalendarActions({
     token,
@@ -50,18 +53,10 @@ export const CalendarPage = ({ embedded = false }: Props) => {
       cal.setError("Inga sysslor att lägga till ännu.");
       return;
     }
-    const date = window.prompt("Ange datum (YYYY-MM-DD):", cal.selectedDay || cal.monthGrid[0]?.date.slice(0, 10));
-    if (!date) return;
-    const suffix = householdMode === "equality" ? "h" : "p";
-    const list = cal.chores.map((c) => `${c.title} (${c.defaultPoints}${suffix})`).join("\n");
-    const title = window.prompt(`Välj syssla (skriv exakt titel):\n${list}`);
-    if (!title) return;
-    const chore = cal.chores.find((c) => c.title.toLowerCase() === title.toLowerCase());
-    if (!chore) {
-      cal.setError("Hittade ingen syssla med det namnet.");
-      return;
-    }
-    actions.handleDropCreate(date, chore._id);
+    const prefillDate = cal.selectedDay || cal.monthGrid[0]?.date.slice(0, 10) || "";
+    setManualDate(prefillDate);
+    setManualChoreId(cal.chores[0]?._id || "");
+    setShowManualModal(true);
   };
 
   const handleDropDay = (day: string, payload: { entryId?: string; choreId?: string }) => {
@@ -84,6 +79,7 @@ export const CalendarPage = ({ embedded = false }: Props) => {
     const preview = colorPreview(base);
     return preview || fallbackColorForUser(user?.id || "");
   })();
+  const activeFg = textColorForBackground(userColor);
 
   useEffect(() => {
     const loadMode = async () => {
@@ -177,6 +173,47 @@ export const CalendarPage = ({ embedded = false }: Props) => {
           onDragEndEntry={() => drag.setDragOverDay(null)}
         />
       </div>
+
+      {showManualModal && (
+        <div className="modal-backdrop" onClick={() => setShowManualModal(false)}>
+          <div className="modal manual-modal" onClick={(e) => e.stopPropagation()} style={{ ["--user-color" as any]: userColor }}>
+            <h3>Lägg till aktivitet</h3>
+            <div className="modal-form">
+              <label>
+                Datum
+                <input type="date" value={manualDate} onChange={(e) => setManualDate(e.target.value)} required />
+              </label>
+              <label>
+                Aktivitet
+                <select value={manualChoreId} onChange={(e) => setManualChoreId(e.target.value)}>
+                  {cal.chores.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="manual-actions">
+                <button type="button" className="ghost" onClick={() => setShowManualModal(false)}>
+                  Avbryt
+                </button>
+                <button
+                  type="button"
+                  className="save-colors-btn"
+                  style={{ background: userColor, color: activeFg }}
+                  onClick={() => {
+                    if (!manualDate || !manualChoreId) return;
+                    actions.handleDropCreate(manualDate, manualChoreId);
+                    setShowManualModal(false);
+                  }}
+                >
+                  Lägg till
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 
