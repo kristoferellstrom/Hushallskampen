@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSettingsPage } from "../hooks/useSettingsPage";
 import { useAuth } from "../context/AuthContext";
 import { fetchMonthlyBadges, listMembers } from "../api";
@@ -12,6 +12,7 @@ import { ColorPickerCard } from "../components/settings/ColorPickerCard";
 
 export const SettingsPage = () => {
   const { token, user, logout } = useAuth();
+  const navigate = useNavigate();
   const {
     invite,
     name,
@@ -64,7 +65,7 @@ export const SettingsPage = () => {
         const me = res.members.find((m: any) => m._id === user.id);
         if (me?.color) setMemberColor(me.color);
       } catch {
-        /* ignore */
+
       }
     };
     loadColor();
@@ -84,7 +85,6 @@ export const SettingsPage = () => {
   }, [initializedBaseline, hasLoadedHousehold, userColor, rulesText]);
 
   useEffect(() => {
-    // Om baslinjen saknas men vi har data, synka så knappen startar grå
     if (initializedBaseline) {
       if (!lastSavedColor && userColor) {
         setLastSavedColor(userColor);
@@ -138,6 +138,14 @@ export const SettingsPage = () => {
   const myChoreBadges = choreBadges.filter((b) => b.winners.some((w) => w.userId === myId && w.wins > 0));
   const memberNames = (members || []).map((m) => m.name).join(", ");
   const memberCount = members?.length ?? 0;
+  const showPrizes = mode === "competition";
+  const navItems = [
+    { id: "kalender", icon: "⌂", label: "Kalender" },
+    { id: "sysslor", icon: "✚", label: "Sysslor" },
+    { id: "godkannanden", icon: "✓", label: "Godkännanden" },
+    { id: "statistik", icon: "≡", label: "Statistik" },
+    showPrizes ? { id: "priser", icon: "★", label: "Priser" } : null,
+  ].filter(Boolean) as { id: string; icon: string; label: string }[];
 
   return (
     <div
@@ -376,6 +384,28 @@ export const SettingsPage = () => {
         </>
       )}
     </div>
+
+      {/* Mobilmeny */}
+      <div className="bottom-nav" aria-label="Mobilmeny">
+        <div className="bottom-nav-grid">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              aria-label={item.label}
+              onClick={() => navigate(`/dashboard#${item.id}`)}
+            >
+              <span className="icon" aria-hidden="true">
+                {item.icon}
+              </span>
+              {item.id === "godkannanden" && approvalCount > 0 && (
+                <span className="nav-badge" style={{ marginTop: 2 }}>
+                  {approvalCount}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
