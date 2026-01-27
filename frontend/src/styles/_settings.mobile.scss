@@ -53,4 +53,35 @@
   .mobile-logout .logout-btn {
     width: min(320px, 90vw);
   }
+
+  .target-share-grid .target-row {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+  }
+
+  .target-share-grid .target-chip {
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .target-share-grid .target-chip .name {
+    text-align: center;
+    justify-self: center;
+  }
+
+  .target-share-grid .target-chip .target-input-wrap {
+    width: 64px;
+  }
+
+  .target-share-grid .target-chip .target-input {
+    padding: 8px 22px 8px 10px;
+    text-align: center;
+  }
+
+  .target-share-grid .target-chip .suffix {
+    right: 8px;
+  }
 }
