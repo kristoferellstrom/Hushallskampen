@@ -3,9 +3,11 @@
 @use "./base";
 @use "./typography";
 @use "./layout";
+@use "./layout.mobile" as layoutMobile;
+@use "./calendar";
+@use "./calendar.mobile" as calendarMobile;
 @use "./forms";
 @use "./components";
-@use "./calendar";
 @use "./stats";
 @use "./settings";
 @use "./approvals";

@@ -19,6 +19,13 @@ export const HomePage = () => {
   );
   const showPrizes = householdMode !== "equality";
   const sectionIds = showPrizes ? ["kalender", "sysslor", "godkannanden", "statistik", "priser"] : ["kalender", "sysslor", "godkannanden", "statistik"];
+  const navItems = [
+    { id: "kalender", icon: "⌂", label: "Kalender" },
+    { id: "sysslor", icon: "✚", label: "Sysslor" },
+    { id: "godkannanden", icon: "✓", label: "Godkännanden" },
+    { id: "statistik", icon: "≡", label: "Statistik" },
+    showPrizes ? { id: "priser", icon: "★", label: "Priser" } : null,
+  ].filter(Boolean) as { id: string; icon: string; label: string }[];
 
   useEffect(() => {
     const loadColor = async () => {
@@ -91,7 +98,7 @@ export const HomePage = () => {
         const el = document.getElementById(id);
         if (!el) return;
         const rect = el.getBoundingClientRect();
-        const offset = Math.abs(rect.top - 120); // lite buffert under headern
+        const offset = Math.abs(rect.top - 120);
         if (offset < closest) {
           closest = offset;
           current = id;
@@ -206,6 +213,29 @@ export const HomePage = () => {
           <AchievementsPage embedded />
         </div>
       )}
+
+      {/* Mobilz */}
+      <div className="bottom-nav" aria-label="Mobilmeny">
+        <div className="bottom-nav-grid">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              className={selected === item.id ? "active" : ""}
+              aria-label={item.label}
+              onClick={() => scrollToId(item.id)}
+            >
+              <span className="icon" aria-hidden="true">
+                {item.icon}
+              </span>
+              {item.id === "godkannanden" && approvalCount > 0 && (
+                <span className="nav-badge" style={{ marginTop: 2 }}>
+                  {approvalCount}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,58 @@
+@use "./theme" as *;
+
+@media (max-width: 768px) {
+  .calendar-row .sidebar.left {
+    display: none !important;
+  }
+
+  .calendar-row .sidebar.right {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    order: -1;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  .calendar-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .calendar-row.three-cols > .calendar-column {
+    min-width: 0;
+    width: 100%;
+    flex: 1 1 100%;
+    overflow: hidden;
+  }
+
+  .calendar-row .calendar-column,
+  .calendar-row .calendar-card {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .calendar-topbar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .calendar-top-controls {
+    justify-content: flex-end;
+
+    .mode-toggle {
+      display: none !important;
+    }
+
+    .calendar-filter {
+      display: none !important;
+    }
+  }
+
+  .calendar-corner-figure {
+    width: 120px;
+    height: 120px;
+    top: -28px;
+    left: -8px;
+  }
+}
