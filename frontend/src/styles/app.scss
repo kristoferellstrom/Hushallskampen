@@ -6,6 +6,8 @@
 @use "./layout.mobile" as layoutMobile;
 @use "./calendar";
 @use "./calendar.mobile" as calendarMobile;
+@use "./approvals.mobile" as approvalsMobile;
+@use "./chores.mobile" as choresMobile;
 @use "./forms";
 @use "./components";
 @use "./stats";

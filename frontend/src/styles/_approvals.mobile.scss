@@ -1,0 +1,47 @@
+@use "./theme" as *;
+
+@media (max-width: 768px) {
+  .approvals-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .history-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .history-figure {
+    display: none !important;
+  }
+
+  .approvals-stack > .card:first-of-type {
+    order: 1;
+  }
+
+
+
+  .approvals-stack > .history-wrap {
+    order: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .history-wrap {
+    width: 100%;
+  }
+  .history-card {
+    width: 100%;
+    order: 1;
+  }
+
+  .history-figure {
+    order: 2;
+  }
+}
