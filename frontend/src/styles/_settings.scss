@@ -516,7 +516,7 @@
   .hero-mode-card {
     display: grid;
     align-content: start;
-    justify-items: start;
+    justify-items: stretch;
     padding: 16px;
     position: relative;
     min-height: 0;
@@ -526,20 +526,9 @@
     border: 1px solid rgba(15, 23, 42, 0.06);
     border-radius: 14px;
 
-    .mode-actions {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-
-      .save-colors-btn {
-        min-width: 120px;
-        padding: 10px 14px;
-      }
-    }
-
     .mode-toggle {
-      margin: 20px auto 14px;
-      justify-self: center;
+      margin: 0;
+      justify-self: start;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -571,6 +560,29 @@
           transform: translateY(-1px);
           box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
         }
+      }
+    }
+
+    .mode-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    .mode-actions-inline {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 0;
+
+      .save-colors-btn {
+        min-width: 120px;
+        padding: 10px 14px;
       }
     }
   }

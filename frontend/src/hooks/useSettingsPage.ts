@@ -23,6 +23,14 @@ export const useSettingsPage = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [rulesText, setRulesText] = useState("");
   const [targetShares, setTargetShares] = useState<Record<string, number>>({});
+  const [baseline, setBaseline] = useState({
+    mode: "competition" as Mode,
+    prize: "",
+    monthPrize: "",
+    yearPrize: "",
+    rulesText: "",
+    targetShares: {} as Record<string, number>,
+  });
 
   const availableColors = useMemo(() => ["blue", "green", "red", "orange", "purple", "pink", "yellow", "teal"], []);
   const colorLabels: Record<string, string> = useMemo(
@@ -67,6 +75,18 @@ export const useSettingsPage = () => {
       setMonthPrize((res.household as any).monthlyPrizeText || "");
       setYearPrize((res.household as any).yearlyPrizeText || "");
       setRulesText(res.household.rulesText || "");
+      setBaseline({
+        mode: res.household.mode === "equality" ? "equality" : "competition",
+        prize: res.household.weeklyPrizeText || "",
+        monthPrize: (res.household as any).monthlyPrizeText || "",
+        yearPrize: (res.household as any).yearlyPrizeText || "",
+        rulesText: res.household.rulesText || "",
+        targetShares:
+          res.household.targetShares?.reduce((map: Record<string, number>, t: any) => {
+            map[String(t.userId)] = t.targetPct;
+            return map;
+          }, {}) || {},
+      });
 
       if (res.household.targetShares && res.household.targetShares.length > 0) {
         const map: Record<string, number> = {};
@@ -111,6 +131,22 @@ export const useSettingsPage = () => {
   const usedColors = useMemo(() => members.filter((m) => m.color).map((m) => m.color), [members]);
   const userColor = useMemo(() => members.find((m) => m._id === user?.id)?.color || user?.color, [members, user]);
 
+  const isTargetSharesDirty = useMemo(() => {
+    const keys = new Set([...Object.keys(targetShares), ...Object.keys(baseline.targetShares)]);
+    for (const k of keys) {
+      if ((targetShares[k] ?? "") !== (baseline.targetShares[k] ?? "")) return true;
+    }
+    return false;
+  }, [targetShares, baseline.targetShares]);
+
+  const householdDirty =
+    mode !== baseline.mode ||
+    prize !== baseline.prize ||
+    monthPrize !== baseline.monthPrize ||
+    yearPrize !== baseline.yearPrize ||
+    rulesText !== baseline.rulesText ||
+    isTargetSharesDirty;
+
   const handleUpdateHousehold = async () => {
     if (!token) return;
     setStatus("");
@@ -133,6 +169,17 @@ export const useSettingsPage = () => {
         targetShares: targetShareArray.length ? targetShareArray : undefined,
       });
       localStorage.setItem("householdMode", mode);
+      setBaseline({
+        mode,
+        prize,
+        monthPrize,
+        yearPrize,
+        rulesText,
+        targetShares: targetShareArray.reduce((acc, t) => {
+          acc[t.userId] = t.targetPct;
+          return acc;
+        }, {} as Record<string, number>),
+      });
       await loadInvite(); // hämta om hushållet så fälten speglar sparade värden
       setStatus("Hushållet uppdaterat");
     } catch (err) {
@@ -205,5 +252,6 @@ export const useSettingsPage = () => {
     copyInvite,
     handleColor,
     setTargetShareForMember,
+    householdDirty,
   };
 };

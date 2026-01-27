@@ -30,6 +30,7 @@ export const SettingsPage = () => {
     colorLabels,
     usedColors,
     userColor,
+    householdDirty,
 
     setName,
     setMode,
@@ -53,6 +54,7 @@ export const SettingsPage = () => {
   const [lastSavedColor, setLastSavedColor] = useState<string | undefined>(undefined);
   const [initializedBaseline, setInitializedBaseline] = useState(false);
   const hasLoadedHousehold = Boolean(invite || name || prize || rulesText || members.length);
+  const saveDisabled = updatingHousehold || !householdDirty;
 
   useEffect(() => {
     const loadColor = async () => {
@@ -244,24 +246,29 @@ export const SettingsPage = () => {
           <br />
           Du kan byta läge när ni vill men läget styr hur statistiken, badges och mål räknas.
         </p>
-        <div className="mode-actions">
-          <button
-            type="button"
-            className="save-colors-btn"
-            style={{ background: "var(--user-color, #0f172a)", color: "var(--user-color-fg, #ffffff)" }}
-            onClick={handleUpdateHousehold}
-            disabled={updatingHousehold}
-          >
-            {updatingHousehold ? "Sparar..." : "Spara"}
-          </button>
-        </div>
-        <div className="mode-toggle">
-          <button type="button" className={mode === "competition" ? "active" : ""} onClick={() => setMode("competition")}>
-            Tävling
-          </button>
-          <button type="button" className={mode === "equality" ? "active" : ""} onClick={() => setMode("equality")}>
-            Rättvisa
-          </button>
+        <div className="mode-toggle-row">
+          <div className="mode-toggle">
+            <button type="button" className={mode === "competition" ? "active" : ""} onClick={() => setMode("competition")}>
+              Tävling
+            </button>
+            <button type="button" className={mode === "equality" ? "active" : ""} onClick={() => setMode("equality")}>
+              Rättvisa
+            </button>
+          </div>
+          <div className="mode-actions-inline">
+            <button
+              type="button"
+              className="save-colors-btn"
+              style={{
+                background: saveDisabled ? "#cbd5e1" : "var(--user-color, #0f172a)",
+                color: saveDisabled ? "#ffffff" : "var(--user-color-fg, #ffffff)",
+              }}
+              onClick={handleUpdateHousehold}
+              disabled={saveDisabled}
+            >
+              {updatingHousehold ? "Sparar..." : "Spara"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -326,9 +333,12 @@ export const SettingsPage = () => {
             <button
               type="button"
               className="save-colors-btn"
-              style={{ background: "var(--user-color, #0f172a)", color: "var(--user-color-fg, #ffffff)" }}
+              style={{
+                background: saveDisabled ? "#cbd5e1" : "var(--user-color, #0f172a)",
+                color: saveDisabled ? "#ffffff" : "var(--user-color-fg, #ffffff)",
+              }}
               onClick={handleUpdateHousehold}
-              disabled={updatingHousehold}
+              disabled={saveDisabled}
             >
               {updatingHousehold ? "Sparar..." : "Spara"}
             </button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createHousehold, joinHousehold } from "../api";
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/Logo";
