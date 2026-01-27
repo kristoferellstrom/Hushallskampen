@@ -51,21 +51,10 @@ export const HouseholdPage = () => {
   };
 
   return (
-    <div className="shell">
-      <Link className="back-link" to="/dashboard">
-        ← Till dashboard
-      </Link>
+    <div className="shell household-shell">
       <Logo />
-      <header>
-        <div>
-          <p className="eyebrow">Hushåll</p>
-          <h1>Skapa eller gå med</h1>
-          <p className="hint">Du är inloggad som {user?.email}</p>
-        </div>
-      </header>
-
-      <div className="grid">
-        <form className="card" onSubmit={handleCreate}>
+      <div className="grid household-stack">
+        <form className="card household-create" onSubmit={handleCreate}>
           <h2>Skapa hushåll</h2>
           <label>
             Namn
@@ -79,7 +68,7 @@ export const HouseholdPage = () => {
           )}
         </form>
 
-        <form className="card" onSubmit={handleJoin}>
+        <form className="card household-join" onSubmit={handleJoin}>
           <h2>Gå med i hushåll</h2>
           <label>
             Inbjudningskod

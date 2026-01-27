@@ -66,3 +66,67 @@
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
+
+.household-stack {
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+  justify-items: center;
+  gap: 12px;
+
+  form.card {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .household-create {
+    border: 1px solid rgba(123, 58, 169, 0.55);
+    box-shadow: 0 10px 28px rgba(123, 58, 169, 0.12);
+
+    h2 {
+      color: rgba(95, 45, 138, 0.9);
+    }
+
+    button {
+      background: rgba(123, 58, 169, 0.9);
+      color: #ffffff;
+      border: none;
+      font-weight: 800;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(123, 58, 169, 0.2);
+      }
+    }
+  }
+
+  .household-join {
+    border: 1px solid rgba(123, 176, 65, 0.6);
+    box-shadow: 0 10px 28px rgba(123, 176, 65, 0.12);
+
+    h2 {
+      color: rgba(95, 138, 48, 0.9);
+    }
+
+    button {
+      background: rgba(123, 176, 65, 0.9);
+      color: #ffffff;
+      border: none;
+      font-weight: 800;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(123, 176, 65, 0.2);
+      }
+    }
+  }
+}
+
+.household-shell {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 20px !important;
+}
