@@ -13,6 +13,7 @@ import { ChoreSidebar } from "../components/calendar/ChoreSidebar";
 import { CalendarBoard } from "../components/calendar/CalendarBoard";
 import { SelectedDaySidebar } from "../components/calendar/SelectedDaySidebar";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../utils/imageUtils";
 import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
@@ -119,7 +120,9 @@ export const CalendarPage = ({ embedded = false }: Props) => {
         <div className="calendar-column">
           <div className="calendar-corner-figure" aria-hidden="true">
             <img
-              src="/figure/man_vacuum.webp"
+              src={withWebpWidth("/figure/man_vacuum.webp", 400)}
+              srcSet={buildWebpSrcSet("/figure/man_vacuum.webp", [400, 800], 1200)}
+              sizes="205px"
               alt="Illustration av dammsugning"
               loading="eager"
               decoding="async"

@@ -2,6 +2,7 @@ import type { StatItem } from "../../hooks/useStats";
 import type { BalanceInfo } from "../../hooks/useStats";
 import { BalanceRow } from "./BalanceRow";
 import { colorPreview, textColorForBackground, fallbackColorForUser } from "../../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../../utils/imageUtils";
 
 type Props = {
   title: string;
@@ -129,10 +130,15 @@ export const StatsCard = ({
                 {figureSrc && (
                   <img
                     className="pie-figure"
-                    src={figureSrc}
+                    src={withWebpWidth(figureSrc, 400)}
+                    srcSet={buildWebpSrcSet(figureSrc, [400, 800], 1200)}
+                    sizes="165px"
                     alt="Shopping illustration"
                     loading="lazy"
-                    aria-hidden="true" decoding="async"
+                    aria-hidden="true"
+                    decoding="async"
+                    width="1200"
+                    height="800"
                   />
                 )}
                 <div className="pie" style={{ background: gradient }} aria-label="Poängfördelning"></div>

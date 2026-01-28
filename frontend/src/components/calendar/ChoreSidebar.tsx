@@ -1,4 +1,5 @@
 import { shadeForPoints, textColorForBackground } from "../../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../../utils/imageUtils";
 
 type Member = { _id: string; name: string; color?: string };
 type Chore = { _id: string; title: string; defaultPoints: number; isActive?: boolean };
@@ -38,7 +39,9 @@ export const ChoreSidebar = ({
     <div className="card sidebar left hoverable">
       <div className="chore-corner-figure" aria-hidden="true">
         <img
-          src="/figure/woman_folding.webp"
+          src={withWebpWidth("/figure/woman_folding.webp", 400)}
+          srcSet={buildWebpSrcSet("/figure/woman_folding.webp", [400, 800], 1200)}
+          sizes="195px"
           alt="Illustration av vikning"
           loading="lazy"
           decoding="async"

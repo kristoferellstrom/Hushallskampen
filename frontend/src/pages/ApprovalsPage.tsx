@@ -4,6 +4,7 @@ import { Logo } from "../components/Logo";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
 import { useAuth } from "../context/AuthContext";
 import { colorPreview, fallbackColorForUser, textColorForBackground, shadeForPoints } from "../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../utils/imageUtils";
 import { listMembers } from "../api";
 
 type Props = { embedded?: boolean };
@@ -214,7 +215,16 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   const renderHistory = () => (
     <div className="history-wrap">
       <div className="history-figure">
-        <img src="/figure/woman_wash.webp" alt="Kvinna tvättar" loading="lazy" decoding="async" width="1200" height="800" />
+        <img
+          src={withWebpWidth("/figure/woman_wash.webp", 800)}
+          srcSet={buildWebpSrcSet("/figure/woman_wash.webp", [400, 800], 1200)}
+          sizes="(max-width: 900px) 100vw, 50vw"
+          alt="Kvinna tvättar"
+          loading="lazy"
+          decoding="async"
+          width="1200"
+          height="800"
+        />
       </div>
       <div className="card hoverable approvals-card history-card">
         <div className="row">

@@ -7,6 +7,7 @@ import { useStats } from "../hooks/useStats";
 import { StatsCard } from "../components/stats/StatsCard";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
 import { colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../utils/imageUtils";
 import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
@@ -228,7 +229,9 @@ export const StatsPage = ({ embedded = false }: Props) => {
             <div className="year-extras">
               <div className="stat-block figure-block">
                 <img
-                  src="/figure/stats.webp"
+                  src={withWebpWidth("/figure/stats.webp", 800)}
+                  srcSet={buildWebpSrcSet("/figure/stats.webp", [400, 800], 1200)}
+                  sizes="(max-width: 900px) 100vw, 560px"
                   alt="Statistikillustration"
                   loading="lazy"
                   className="stat-figure-wide"
@@ -325,11 +328,15 @@ export const StatsPage = ({ embedded = false }: Props) => {
               )}
               <div className="chore-figure">
                 <img
-                  src="/figure/aret_runt.webp"
+                  src={withWebpWidth("/figure/aret_runt.webp", 800)}
+                  srcSet={buildWebpSrcSet("/figure/aret_runt.webp", [400, 800], 1200)}
+                  sizes="(max-width: 900px) 100vw, 560px"
                   alt="Året runt illustration"
                   loading="lazy"
                   className="stat-figure-wide"
                   decoding="async"
+                  width="1200"
+                  height="800"
                 />
                 <p className="hint">
                   {showPoints

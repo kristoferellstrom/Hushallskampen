@@ -191,6 +191,8 @@ export const HomePage = () => {
               alt="Inställningar"
               aria-hidden="true"
               decoding="async"
+              width="22"
+              height="22"
             />
             <span className="settings-label">Inställningar</span>
           </Link>

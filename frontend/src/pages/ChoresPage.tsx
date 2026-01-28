@@ -10,6 +10,7 @@ import { ChoreCreateForm } from "../components/chores/ChoreCreateForm";
 import { ChoreEditForm } from "../components/chores/ChoreEditForm";
 import { ChoreList } from "../components/chores/ChoreList";
 import { colorPreview, fallbackColorForUser, textColorForBackground, shadeForPoints } from "../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../utils/imageUtils";
 import { listMembers, getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
@@ -147,7 +148,16 @@ export const ChoresPage = ({ embedded = false }: Props) => {
         </div>
 
         <div className="chores-figure">
-          <img src="/figure/sysslor.webp" alt="Illustration sysslor" loading="lazy" decoding="async" width="1200" height="800" />
+          <img
+            src={withWebpWidth("/figure/sysslor.webp", 800)}
+            srcSet={buildWebpSrcSet("/figure/sysslor.webp", [400, 800], 1200)}
+            sizes="(max-width: 900px) 100vw, 520px"
+            alt="Illustration sysslor"
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="800"
+          />
         </div>
       </div>
 

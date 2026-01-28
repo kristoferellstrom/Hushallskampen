@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { fetchMonthlyBadges } from "../api/achievements";
+import { buildWebpSrcSet, withWebpWidth } from "../utils/imageUtils";
 
 type Props = { embedded?: boolean };
 
@@ -44,6 +45,19 @@ const monthAwards: Award[] = [
   { title: "November", description: "Badge för vinnaren i november.", image: "/month/november.webp", month: 10 },
   { title: "December", description: "Badge för vinnaren i december.", image: "/month/december.webp", month: 11 },
 ];
+
+const awardImageSizes = "200px";
+
+const getAwardImageProps = (src: string) => {
+  const isMonth = src.includes("/month/");
+  return {
+    src: withWebpWidth(src, 160),
+    srcSet: buildWebpSrcSet(src, [160, 320], 512),
+    sizes: awardImageSizes,
+    width: 512,
+    height: isMonth ? 341 : 512,
+  };
+};
 
 export const AchievementsPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
@@ -105,7 +119,14 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
             <div className="badge-grid">
               {specialAwards.map((a) => (
                 <figure key={a.title} className="badge-card">
-                  {a.image && <img src={a.image} alt={a.title} loading="lazy" decoding="async" />}
+                  {a.image && (
+                    <img
+                      {...getAwardImageProps(a.image)}
+                      alt={a.title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                   <figcaption>
                     <strong>{a.title}</strong>
                     <span>{a.description}</span>
@@ -134,7 +155,14 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
                       state === "future" ? "muted" : ""
                     } ${state === "current" ? "active" : ""}`}
                   >
-                    {a.image && <img src={a.image} alt={a.title} loading="lazy" decoding="async" />}
+                    {a.image && (
+                      <img
+                        {...getAwardImageProps(a.image)}
+                        alt={a.title}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
                     {winnerText && (
                       <figcaption>
                         <span className="hint" style={{ marginTop: 2 }}>

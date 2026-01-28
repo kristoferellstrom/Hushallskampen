@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { fetchMonthlyBadges, listMembers } from "../api";
 import type { MonthlyBadge, PointsWinner } from "../api";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
+import { buildWebpSrcSet, withWebpWidth } from "../utils/imageUtils";
 import { listApprovals } from "../api";
 
 import { HouseholdSettingsCard } from "../components/settings/HouseholdSettingsCard";
@@ -203,6 +204,8 @@ export const SettingsPage = () => {
               alt="Inställningar"
               aria-hidden="true"
               decoding="async"
+              width="22"
+              height="22"
             />
             <span className="settings-label">Inställningar</span>
           </Link>
@@ -255,7 +258,16 @@ export const SettingsPage = () => {
         </div>
       </div>
       <div className="settings-card glass hero-extra-card">
-        <img src="/figure/insallningar.webp" alt="Inställningar" loading="lazy" decoding="async" width="1200" height="800" />
+        <img
+          src={withWebpWidth("/figure/insallningar.webp", 800)}
+          srcSet={buildWebpSrcSet("/figure/insallningar.webp", [400, 800], 1200)}
+          sizes="(max-width: 900px) 80vw, 30vw"
+          alt="Inställningar"
+          loading="lazy"
+          decoding="async"
+          width="1200"
+          height="800"
+        />
       </div>
       <div className="settings-card glass hero-mode-card">
         <h3>Välj hushållsläge</h3>
@@ -377,7 +389,9 @@ export const SettingsPage = () => {
                 <div className="badge-thumb-grid">
                   {myChoreBadges.map((b) => (
                     <figure key={b.slug} className="badge-thumb">
-                      {b.image && <img src={b.image} alt={b.title} loading="lazy" decoding="async" />}
+                      {b.image && (
+                        <img {...buildBadgeImageProps(b.image)} alt={b.title} loading="lazy" decoding="async" />
+                      )}
                       <figcaption className="hint">{b.title}</figcaption>
                     </figure>
                   ))}
@@ -432,6 +446,19 @@ export const SettingsPage = () => {
   );
 };
 
+const badgeImageSizes = "240px";
+
+const buildBadgeImageProps = (src: string) => {
+  const isMonth = src.includes("/month/");
+  return {
+    src: withWebpWidth(src, 160),
+    srcSet: buildWebpSrcSet(src, [160, 320], 512),
+    sizes: badgeImageSizes,
+    width: 512,
+    height: isMonth ? 341 : 512,
+  };
+};
+
 function renderMonthlyBadge(latestMonthKey: string | null, monthPointsWinner: PointsWinner | null, myId?: string) {
   if (!latestMonthKey || !monthPointsWinner) {
     return <p className="hint">Ingen vinnare ännu för den senaste avslutade månaden.</p>;
@@ -463,7 +490,11 @@ function renderMonthlyBadge(latestMonthKey: string | null, monthPointsWinner: Po
   return (
     <div className="badge-thumb-grid">
       <figure className="badge-thumb">
-        {src ? <img src={src} alt="Månadens badge" loading="lazy" decoding="async" /> : <span className="hint">Månadens badge</span>}
+        {src ? (
+          <img {...buildBadgeImageProps(src)} alt="Månadens badge" loading="lazy" decoding="async" />
+        ) : (
+          <span className="hint">Månadens badge</span>
+        )}
       </figure>
     </div>
   );
