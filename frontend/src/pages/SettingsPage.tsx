@@ -191,7 +191,7 @@ export const SettingsPage = () => {
             className="nav-link subtle active settings-link"
             style={{ marginRight: 4 }}
             onClick={(e) => {
-              if (window.matchMedia("(max-width: 768px)").matches) {
+              if (window.matchMedia("(max-width: 1366px)").matches) {
                 e.preventDefault();
                 navigate("/dashboard#kalender");
               }

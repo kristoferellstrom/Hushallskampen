@@ -4,8 +4,10 @@
 @use "./typography";
 @use "./layout";
 @use "./layout.mobile" as layoutMobile;
+@use "./layout.tablet" as layoutTablet;
 @use "./calendar";
 @use "./calendar.mobile" as calendarMobile;
+@use "./calendar.tablet" as calendarTablet;
 @use "./approvals.mobile" as approvalsMobile;
 @use "./chores.mobile" as choresMobile;
 @use "./forms";
@@ -15,5 +17,6 @@
 @use "./achievements.mobile" as achievementsMobile;
 @use "./settings";
 @use "./settings.mobile" as settingsMobile;
+@use "./settings.tablet" as settingsTablet;
 @use "./approvals";
 @use "./chores";
