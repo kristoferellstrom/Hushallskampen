@@ -505,6 +505,17 @@
   mix-blend-mode: multiply;
 }
 
+.stat-figure-compact {
+  width: min(100%, 520px);
+  margin: -220px auto;
+  border-radius: 0;
+  display: block;
+  object-fit: contain;
+  box-shadow: none;
+  background: transparent;
+  mix-blend-mode: multiply;
+}
+
 .period-label {
   margin-bottom: 6px !important;
   font-weight: 600;
@@ -640,7 +651,7 @@
 }
 
 .chore-figure {
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 .chore-bar-row {

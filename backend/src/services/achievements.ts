@@ -20,7 +20,7 @@ const badgeImages: Record<string, string> = {
   toalett: "/badge/manadesn_toalett.webp",
   fixare: "/badge/manadens_fixare.webp",
   handla: "/badge/manadens_handlare.webp",
-  husdjur: "/badge/manadens_husdjurshjälte.webp",
+  husdjur: "/badge/manadens_husdjurshjalte.webp",
   kock: "/badge/manadens_koksmastare.webp",
   sopor: "/badge/manadens_sopgeneral.webp",
   kampe: "/badge/manadens_kampe.webp",

@@ -330,10 +330,10 @@ export const StatsPage = ({ embedded = false }: Props) => {
                 <img
                   src={withWebpWidth("/figure/aret_runt.webp", 800)}
                   srcSet={buildWebpSrcSet("/figure/aret_runt.webp", [400, 800], 1200)}
-                  sizes="(max-width: 900px) 100vw, 560px"
+                  sizes="(max-width: 900px) 100vw, 520px"
                   alt="Året runt illustration"
                   loading="lazy"
-                  className="stat-figure-wide"
+                  className="stat-figure-compact"
                   decoding="async"
                   width="1200"
                   height="800"

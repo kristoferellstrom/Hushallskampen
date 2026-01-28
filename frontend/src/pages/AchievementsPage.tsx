@@ -25,7 +25,7 @@ const specialAwards: Award[] = [
   { title: "Månadens toalett", description: "Flest toalettrengöringar.", image: "/badge/manadesn_toalett.webp" },
   { title: "Månadens fixare", description: "Lagade eller fixade mest.", image: "/badge/manadens_fixare.webp" },
   { title: "Månadens handlare", description: "Styrde upp flest inköp.", image: "/badge/manadens_handlare.webp" },
-  { title: "Månadens husdjurshjälte", description: "Bäst på djuransvar.", image: "/badge/manadens_husdjurshjälte.webp" },
+  { title: "Månadens husdjurshjälte", description: "Bäst på djuransvar.", image: "/badge/manadens_husdjurshjalte.webp" },
   { title: "Månadens köksmästare", description: "Flest köksinsatser.", image: "/badge/manadens_koksmastare.webp" },
   { title: "Månadens latmask", description: "Skämtmärke - minst aktivitet.", image: "/badge/manadens_latmask.webp" },
   { title: "Månadens sopgeneral", description: "Bäst på sopor och återvinning.", image: "/badge/manadens_sopgeneral.webp" },

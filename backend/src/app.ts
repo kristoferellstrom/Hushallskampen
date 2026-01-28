@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ override: process.env.NODE_ENV !== "production" });
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -16,7 +16,7 @@ import achievementsRouter from "./routes/achievements";
 export const createApp = () => {
   const app = express();
 
-  const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173,http://localhost:5174";
+  const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173,http://localhost:5175,http://localhost:4173";
   app.use(
     cors(
       allowedOrigin
