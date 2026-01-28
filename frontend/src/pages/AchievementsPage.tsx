@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useStats } from "../hooks/useStats";
+import { fetchMonthlyBadges } from "../api/achievements";
 
 type Props = { embedded?: boolean };
 
@@ -46,21 +47,24 @@ const monthAwards: Award[] = [
 
 export const AchievementsPage = ({ embedded = false }: Props) => {
   const { token } = useAuth();
-  const { monthly } = useStats(token);
   const today = new Date();
+  const [latestMonthKey, setLatestMonthKey] = useState<string | null>(null);
+  const [monthPointsWinner, setMonthPointsWinner] = useState<{ userId: string; name?: string; points: number } | null>(null);
 
-  const getMonthWinners = (month: number) => {
-    const record = monthly.find((rec) => {
-      const d = new Date(rec.periodStart);
-      return d.getMonth() === month && d.getFullYear() === today.getFullYear();
-    });
-    if (!record || !record.totalsByUser.length) return [];
-    const sorted = [...record.totalsByUser].sort((a, b) => b.points - a.points);
-    const maxPoints = sorted[0]?.points ?? 0;
-    return record.totalsByUser
-      .filter((t) => t.points === maxPoints && maxPoints > 0)
-      .map((t) => t.userId?.name || "-");
-  };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        if (!token) return;
+        const res = await fetchMonthlyBadges(token);
+        setLatestMonthKey(res.latestCompletedMonthKey || null);
+        setMonthPointsWinner(res.monthPointsWinner || null);
+      } catch {
+        setLatestMonthKey(null);
+        setMonthPointsWinner(null);
+      }
+    };
+    load();
+  }, [token]);
 
   const getMonthState = (month: number) => {
     const start = new Date(today.getFullYear(), month, 1);
@@ -69,6 +73,13 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
     if (start > today) return "future";
     return "current";
   };
+
+  const latestMonthIndex = (() => {
+    if (!latestMonthKey) return null;
+    const [, month] = latestMonthKey.split("-");
+    const num = Number(month) - 1;
+    return Number.isFinite(num) && num >= 0 && num < 12 ? num : null;
+  })();
 
   return (
     <section id="priser" className="shell" style={{ paddingTop: embedded ? 0 : undefined }}>
@@ -106,20 +117,20 @@ export const AchievementsPage = ({ embedded = false }: Props) => {
             <h4 style={{ margin: "12px 0 6px" }}>Månadens badge</h4>
             <div className="badge-grid">
               {monthAwards.map((a) => {
-                const winners = a.month !== undefined ? getMonthWinners(a.month) : [];
                 const state = a.month !== undefined ? getMonthState(a.month) : "future";
+                const isLatestCompleted = a.month !== undefined && latestMonthIndex !== null && a.month === latestMonthIndex;
                 const winnerText =
                   state === "future"
                     ? ""
                     : state === "current"
                       ? "Pågår"
-                      : winners.length
-                        ? `Vinnare: ${winners.join(", ")}`
+                      : isLatestCompleted && monthPointsWinner?.name
+                        ? `Vinnare: ${monthPointsWinner.name}`
                         : "Ingen vinnare än";
                 return (
                   <figure
                     key={a.title}
-                    className={`badge-card ${winners.length && state === "past" ? "winner" : ""} ${
+                    className={`badge-card ${isLatestCompleted && state === "past" && monthPointsWinner?.name ? "winner" : ""} ${
                       state === "future" ? "muted" : ""
                     } ${state === "current" ? "active" : ""}`}
                   >

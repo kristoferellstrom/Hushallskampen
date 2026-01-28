@@ -121,7 +121,19 @@ export const ColorPickerCard = ({
             placeholder="Vad räknas som godkänt? Hur snabbt ska man granska? Vad händer vid avslag?"
           />
         ) : (
-          <p className={`rules-text ${rulesText ? "" : "muted"}`} onClick={() => onEditToggle?.()}>
+          <p
+            className={`rules-text ${rulesText ? "" : "muted"}`}
+            role="button"
+            tabIndex={0}
+            aria-label="Redigera hushållsregler"
+            onClick={() => onEditToggle?.()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onEditToggle?.();
+              }
+            }}
+          >
             {displayRules()}
           </p>
         )}

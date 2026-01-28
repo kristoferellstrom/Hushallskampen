@@ -20,3 +20,8 @@
 @use "./settings.tablet" as settingsTablet;
 @use "./approvals";
 @use "./chores";
+
+:where(a, button, input, select, textarea, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--user-color, $color-primary);
+  outline-offset: 2px;
+}

@@ -392,7 +392,7 @@ export const SettingsPage = () => {
     </div>
 
       {/* Mobilmeny */}
-      <div className="bottom-nav" aria-label="Mobilmeny">
+      <nav className="bottom-nav" aria-label="Mobilmeny">
         <div className="bottom-nav-grid">
           {navItems.map((item) => (
             <button
@@ -411,7 +411,7 @@ export const SettingsPage = () => {
             </button>
           ))}
         </div>
-      </div>
+      </nav>
 
       <div className="mobile-logout">
         <button

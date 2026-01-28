@@ -211,7 +211,7 @@ export const HomePage = () => {
       )}
 
       {/* Mobilz */}
-      <div className="bottom-nav" aria-label="Mobilmeny">
+      <nav className="bottom-nav" aria-label="Mobilmeny">
         <div className="bottom-nav-grid">
           {navItems.map((item) => (
             <button
@@ -231,7 +231,7 @@ export const HomePage = () => {
             </button>
           ))}
         </div>
-      </div>
+      </nav>
     </div>
   );
 };
