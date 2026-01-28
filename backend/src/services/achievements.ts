@@ -14,17 +14,17 @@ const defaultChores = [
 ];
 
 const badgeImages: Record<string, string> = {
-  diska: "/badge/manadens_diskare.png",
-  dammsuga: "/badge/manadens_dammsugare.png",
-  tvatta: "/badge/manadens_tvattmastare.png",
-  toalett: "/badge/manadesn_toalett.png",
-  fixare: "/badge/manadens_fixare.png",
-  handla: "/badge/manadens_handlare.png",
-  husdjur: "/badge/manadens_husdjurshjälte.png",
-  kock: "/badge/manadens_koksmastare.png",
-  sopor: "/badge/manadens_sopgeneral.png",
-  kampe: "/badge/manadens_kampe.png",
-  latmask: "/badge/manadens_latmask.png",
+  diska: "/badge/manadens_diskare.webp",
+  dammsuga: "/badge/manadens_dammsugare.webp",
+  tvatta: "/badge/manadens_tvattmastare.webp",
+  toalett: "/badge/manadesn_toalett.webp",
+  fixare: "/badge/manadens_fixare.webp",
+  handla: "/badge/manadens_handlare.webp",
+  husdjur: "/badge/manadens_husdjurshjälte.webp",
+  kock: "/badge/manadens_koksmastare.webp",
+  sopor: "/badge/manadens_sopgeneral.webp",
+  kampe: "/badge/manadens_kampe.webp",
+  latmask: "/badge/manadens_latmask.webp",
 };
 
 function monthKey(d: Date) {
