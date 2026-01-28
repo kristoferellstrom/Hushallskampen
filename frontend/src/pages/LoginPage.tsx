@@ -2,11 +2,13 @@ import type { Mode } from "../hooks/useAuthForm";
 import { Logo } from "../components/Logo";
 import "../styles/login.scss";
 import "../styles/login.mobile.scss";
+import "../styles/login.pwa.scss";
 
 import { useRememberEmail } from "../hooks/useRememberEmail";
 import { useAuthForm } from "../hooks/useAuthForm";
 import { AuthModeToggle } from "../components/auth/AuthModeToggle";
 import { AuthForm } from "../components/auth/AuthForm";
+import { PwaInstallButton } from "../components/PwaInstallButton";
 
 export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
   const remember = useRememberEmail();
@@ -40,6 +42,8 @@ export const LoginPage = ({ mode: initialMode = "login" }: { mode?: Mode }) => {
         error={authForm.error}
         onSubmit={handleSubmit}
       />
+
+      <PwaInstallButton />
     </div>
   );
 };
