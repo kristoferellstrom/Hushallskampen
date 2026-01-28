@@ -214,7 +214,7 @@ export const ApprovalsPage = ({ embedded = false }: Props) => {
   const renderHistory = () => (
     <div className="history-wrap">
       <div className="history-figure">
-        <img src="/figure/woman_wash.png" alt="Kvinna tvättar" loading="lazy" />
+        <img src="/figure/woman_wash.webp" alt="Kvinna tvättar" loading="lazy" decoding="async" width="1200" height="800" />
       </div>
       <div className="card hoverable approvals-card history-card">
         <div className="row">

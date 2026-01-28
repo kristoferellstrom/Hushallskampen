@@ -17,7 +17,7 @@ const defaultChores = [
   { title: "Sopor", defaultPoints: 1, slug: "sopor" },
 ];
 
-// Normaliserade engelska default-namn som ska rensas bort helt
+
 const englishDefaults = new Set(["dishes", "vacuum", "cleantoilet", "laundry", "groceries", "trash"]);
 
 const normalize = (s?: string) =>
@@ -31,7 +31,7 @@ export async function ensureDefaultChores(householdId: string) {
   const defaultsByTitle = new Map(defaultChores.map((c) => [c.title.toLowerCase(), c]));
   const defaultsBySlug = new Map(defaultChores.map((c) => [c.slug, c]));
 
-  // Rensa ut engelska default-sysslor (case-insensitive) och uppdatera befintliga svenska
+
   const current = await Chore.find({ householdId });
   for (const chore of current) {
     const normTitle = normalize(chore.title);

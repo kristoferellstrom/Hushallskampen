@@ -42,7 +42,7 @@ const supertest_1 = __importDefault(require("supertest"));
 const mongodb_memory_server_1 = require("mongodb-memory-server");
 let app;
 let mongo = null;
-let skipTests = false; // In restricted sandboxes mongodb-memory-server may not bind; skip instead of failing CI.
+let skipTests = false; 
 let skipReason = "";
 (0, vitest_1.beforeAll)(async () => {
     process.env.JWT_SECRET = "test_secret";
@@ -169,4 +169,3 @@ let skipReason = "";
         (0, vitest_1.expect)(otherReview.body.entry.status).toBe("approved");
     });
 });
-//# sourceMappingURL=api.test.js.map

@@ -170,7 +170,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           hideTotal
           stackedBalance
           sortByPoints
-          figureSrc="/figure/woman_shopping.png"
+          figureSrc="/figure/woman_shopping.webp"
           blockClassName="flat weekly-shift"
           hidePoints={!showPoints}
           controls={{
@@ -193,7 +193,7 @@ export const StatsPage = ({ embedded = false }: Props) => {
           hideTotal
           stackedBalance
           sortByPoints
-          figureSrc="/figure/man_washing.png"
+          figureSrc="/figure/man_washing.webp"
           blockClassName="flat monthly-shift"
           hidePoints={!showPoints}
           controls={{
@@ -228,10 +228,13 @@ export const StatsPage = ({ embedded = false }: Props) => {
             <div className="year-extras">
               <div className="stat-block figure-block">
                 <img
-                  src="/figure/stats.png"
+                  src="/figure/stats.webp"
                   alt="Statistikillustration"
                   loading="lazy"
                   className="stat-figure-wide"
+                  decoding="async"
+                  width="1200"
+                  height="800"
                 />
               </div>
               <div className="stat-block">
@@ -322,10 +325,11 @@ export const StatsPage = ({ embedded = false }: Props) => {
               )}
               <div className="chore-figure">
                 <img
-                  src="/figure/aret_runt.png"
+                  src="/figure/aret_runt.webp"
                   alt="Året runt illustration"
                   loading="lazy"
                   className="stat-figure-wide"
+                  decoding="async"
                 />
                 <p className="hint">
                   {showPoints

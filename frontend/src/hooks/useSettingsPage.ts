@@ -153,7 +153,9 @@ export const useSettingsPage = () => {
     setError("");
     setUpdatingHousehold(true);
     try {
-      // Säkerställ att alla medlemmar skickas med, även om något fält är tomt
+     
+
+
       const targetShareArray = Object.entries(targetShares).map(([userId, targetPct]) => ({
         userId,
         targetPct: Number(targetPct),
@@ -180,7 +182,7 @@ export const useSettingsPage = () => {
           return acc;
         }, {} as Record<string, number>),
       });
-      await loadInvite(); // hämta om hushållet så fälten speglar sparade värden
+      await loadInvite(); 
       setStatus("Hushållet uppdaterat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte uppdatera hushåll");

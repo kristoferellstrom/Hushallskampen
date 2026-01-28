@@ -37,7 +37,7 @@ export const ChoreSidebar = ({
   return (
     <div className="card sidebar left hoverable">
       <div className="chore-corner-figure" aria-hidden="true">
-        <img src="/figure/woman_folding.png" alt="" loading="lazy" />
+        <img src="/figure/woman_folding.webp" alt="" loading="lazy" decoding="async" width="1200" height="800" />
       </div>
       <h3>Sysslor</h3>
 

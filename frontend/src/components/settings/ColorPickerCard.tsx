@@ -45,7 +45,6 @@ export const ColorPickerCard = ({
   const [selectedColor, setSelectedColor] = useState<string>(userColor || "");
 
   useEffect(() => {
-    // spegla lagrad färg när den ändras externt
     setSelectedColor(userColor || "");
   }, [userColor]);
 

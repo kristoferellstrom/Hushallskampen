@@ -36,7 +36,7 @@ export const StatsCard = ({
   emptyText = "Inga data ännu",
   description,
   controls,
-  figureSrc = "/figure/woman_shopping.png",
+  figureSrc = "/figure/woman_shopping.webp",
   hidePeriodLabel = false,
   hideTotal = false,
   stackedBalance = false,
@@ -132,7 +132,7 @@ export const StatsCard = ({
                     src={figureSrc}
                     alt="Shopping illustration"
                     loading="lazy"
-                    aria-hidden="true"
+                    aria-hidden="true" decoding="async"
                   />
                 )}
                 <div className="pie" style={{ background: gradient }} aria-label="Poängfördelning"></div>

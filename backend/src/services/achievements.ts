@@ -91,7 +91,6 @@ export async function computeAchievements(householdId: string) {
     totalTasksMonthAll.set(userId, (totalTasksMonthAll.get(userId) || 0) + 1);
     totalTasksPerMonthAll.set(key, totalTasksMonthAll);
 
-    // Följande gäller bara för standard-sysslor (special badges)
     if (!chore?.isDefault || !chore.slug || !allowedSlugs.has(chore.slug)) continue;
 
     const byMonth = perSlugMonth.get(chore.slug) || new Map<string, Map<string, number>>();
@@ -104,8 +103,6 @@ export async function computeAchievements(householdId: string) {
     mCounts.set(userId, (mCounts.get(userId) || 0) + 1);
     monthCounts.set(chore.slug, mCounts);
   }
-
-  // säkerställ att alla medlemmar finns i totals (för latmask)
   for (const [month, counts] of totalTasksPerMonthAll.entries()) {
     for (const uid of memberIds) {
       if (!counts.has(uid)) counts.set(uid, 0);
@@ -161,7 +158,6 @@ export async function computeAchievements(householdId: string) {
     };
   });
 
-  // Månadens kämpe (flest uppgifter) och latmask (0 uppgifter)
   const extraBadges: Array<{ slug: string; title: string; image?: string; winners: { userId: string; name: string; wins: number }[] }> = [];
 
   const kampeWins = new Map<string, number>();

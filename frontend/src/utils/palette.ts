@@ -47,7 +47,6 @@ export function shadeForPoints(color: string | undefined, points: number) {
   const palette = key ? palettes[key] : null;
   const clamped = Math.min(Math.max(points, 1), 10);
 
-  // Skjut alla nivåer ett steg mörkare (starta på palettens andra nyans)
   const idx = Math.min(Math.ceil(clamped / 2), (palette?.length || 1) - 1);
   return palette ? palette[idx] : "#f8fafc";
 }

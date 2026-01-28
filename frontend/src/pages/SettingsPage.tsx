@@ -197,7 +197,7 @@ export const SettingsPage = () => {
               }
             }}
           >
-            <img className="settings-icon" src="/mob/setting_icon_mob.svg" alt="" aria-hidden="true" />
+            <img className="settings-icon" src="/mob/setting_icon_mob.svg" alt="" aria-hidden="true" decoding="async" />
             <span className="settings-label">Inställningar</span>
           </Link>
           <button
@@ -249,7 +249,7 @@ export const SettingsPage = () => {
         </div>
       </div>
       <div className="settings-card glass hero-extra-card">
-        <img src="/figure/insallningar.png" alt="Inställningar" loading="lazy" />
+        <img src="/figure/insallningar.webp" alt="Inställningar" loading="lazy" decoding="async" width="1200" height="800" />
       </div>
       <div className="settings-card glass hero-mode-card">
         <h3>Välj hushållsläge</h3>
@@ -371,7 +371,7 @@ export const SettingsPage = () => {
                 <div className="badge-thumb-grid">
                   {myChoreBadges.map((b) => (
                     <figure key={b.slug} className="badge-thumb">
-                      {b.image && <img src={b.image} alt={b.title} loading="lazy" />}
+                      {b.image && <img src={b.image} alt={b.title} loading="lazy" decoding="async" />}
                       <figcaption className="hint">{b.title}</figcaption>
                     </figure>
                   ))}
@@ -440,24 +440,24 @@ function renderMonthlyBadge(latestMonthKey: string | null, monthPointsWinner: Po
     return Number.isFinite(num) && num >= 0 && num < 12 ? num : null;
   })();
   const monthImages = [
-    "/month/januari.png",
-    "/month/februari.png",
-    "/month/mars.png",
-    "/month/april.png",
-    "/month/maj.png",
-    "/month/juni.png",
-    "/month/juli.png",
-    "/month/augusti.png",
-    "/month/september.png",
-    "/month/oktober.png",
-    "/month/november.png",
-    "/month/december.png",
+    "/month/januari.webp",
+    "/month/februari.webp",
+    "/month/mars.webp",
+    "/month/april.webp",
+    "/month/maj.webp",
+    "/month/juni.webp",
+    "/month/juli.webp",
+    "/month/augusti.webp",
+    "/month/september.webp",
+    "/month/oktober.webp",
+    "/month/november.webp",
+    "/month/december.webp",
   ];
   const src = monthIndex !== null ? monthImages[monthIndex] : undefined;
   return (
     <div className="badge-thumb-grid">
       <figure className="badge-thumb">
-        {src ? <img src={src} alt="Månadens badge" loading="lazy" /> : <span className="hint">Månadens badge</span>}
+        {src ? <img src={src} alt="Månadens badge" loading="lazy" decoding="async" /> : <span className="hint">Månadens badge</span>}
       </figure>
     </div>
   );

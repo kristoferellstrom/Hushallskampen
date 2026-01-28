@@ -6,7 +6,7 @@ import type { Express } from "express";
 
 let app: Express;
 let mongo: MongoMemoryServer | null = null;
-let skipTests = false; // In restricted sandboxes mongodb-memory-server may not bind; skip instead of failing CI.
+let skipTests = false;
 let skipReason = "";
 
 beforeAll(async () => {
