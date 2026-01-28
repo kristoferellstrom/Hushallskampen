@@ -29,6 +29,7 @@ const normalizeUser = (raw: any): User => ({
   id: raw.id || raw._id,
   name: raw.name,
   email: raw.email,
+  color: raw.color,
   householdId: raw.householdId,
 });
 

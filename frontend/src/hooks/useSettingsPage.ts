@@ -7,7 +7,7 @@ type Member = { _id: string; name: string; color?: string };
 type Mode = "competition" | "equality";
 
 export const useSettingsPage = () => {
-  const { token, user } = useAuth();
+  const { token, user, refreshUser } = useAuth();
 
   const [invite, setInvite] = useState("");
   const [name, setName] = useState("");
@@ -121,6 +121,8 @@ export const useSettingsPage = () => {
     setColorError("");
     try {
       await updateColor(token, color);
+      localStorage.setItem("hk_user_color", color);
+      await refreshUser();
       setColorStatus("Färg uppdaterad");
       await loadMembers();
     } catch (err) {

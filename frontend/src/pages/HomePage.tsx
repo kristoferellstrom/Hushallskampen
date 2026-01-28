@@ -13,7 +13,7 @@ import { mobileNavItems } from "../components/MobileNavIcons";
 export const HomePage = () => {
   const { user, token, logout } = useAuth();
   const [selected, setSelected] = useState<string>("kalender");
-  const [memberColor, setMemberColor] = useState<string | undefined>(undefined);
+  const [memberColor, setMemberColor] = useState<string | undefined>(() => localStorage.getItem("hk_user_color") || undefined);
   const [approvalCount, setApprovalCount] = useState<number>(0);
   const [householdMode, setHouseholdMode] = useState<"competition" | "equality">(
     () => (localStorage.getItem("householdMode") === "equality" ? "equality" : "competition"),
@@ -30,7 +30,7 @@ export const HomePage = () => {
         const me = res.members.find((m: any) => m._id === user?.id);
         if (me?.color) setMemberColor(me.color);
       } catch {
-        /* ignore */
+   
       }
     };
     loadColor();
