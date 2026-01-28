@@ -179,7 +179,13 @@ export const HomePage = () => {
         </div>
         <div className="header-actions">
           <Link to="/settings" className="nav-link settings-link" style={{ marginRight: 8 }}>
-            <img className="settings-icon" src="/mob/setting_icon_mob.svg" alt="" aria-hidden="true" decoding="async" />
+            <img
+              className="settings-icon"
+              src="/mob/setting_icon_mob.svg"
+              alt="Inställningar"
+              aria-hidden="true"
+              decoding="async"
+            />
             <span className="settings-label">Inställningar</span>
           </Link>
           <button
