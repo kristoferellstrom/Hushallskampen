@@ -29,6 +29,12 @@ export const ChoreCreateForm = ({
   pointsLabel = "Poäng",
   pointsHint = "(1–10)",
 }: Props) => {
+  const titleId = "chore-title";
+  const pointsId = "chore-points";
+  const pointsHintId = "chore-points-hint";
+  const descriptionId = "chore-description";
+  const descriptionHintId = "chore-description-hint";
+
   return (
     <form className="card create-card" onSubmit={onSubmit}>
       <div className="form-head">
@@ -37,29 +43,41 @@ export const ChoreCreateForm = ({
       </div>
 
       <div className="field">
-        <label>Titel</label>
-        <input value={newTitle} onChange={(e) => onChangeTitle(e.target.value)} required />
+        <label htmlFor={titleId}>Titel</label>
+        <input id={titleId} value={newTitle} onChange={(e) => onChangeTitle(e.target.value)} required />
       </div>
 
       <div className="field">
-        <div className="label-row">
+        <label className="label-row" htmlFor={pointsId}>
           <span>{pointsLabel}</span>
-          <span className="micro-hint">{pointsHint}</span>
-        </div>
+          <span className="micro-hint" id={pointsHintId}>
+            {pointsHint}
+          </span>
+        </label>
         <input
+          id={pointsId}
           type="number"
           min={1}
           max={10}
           value={newPoints}
           onChange={(e) => onChangePoints(e.target.value)}
           required
+          aria-describedby={pointsHintId}
         />
       </div>
 
       <div className="field">
-        <label>Beskrivning (valfritt)</label>
-        <textarea rows={3} value={newDescription} onChange={(e) => onChangeDescription(e.target.value)} />
-        <span className="micro-hint">Kort text om vad som ska göras</span>
+        <label htmlFor={descriptionId}>Beskrivning (valfritt)</label>
+        <textarea
+          id={descriptionId}
+          rows={3}
+          value={newDescription}
+          onChange={(e) => onChangeDescription(e.target.value)}
+          aria-describedby={descriptionHintId}
+        />
+        <span className="micro-hint" id={descriptionHintId}>
+          Kort text om vad som ska göras
+        </span>
       </div>
 
       <button

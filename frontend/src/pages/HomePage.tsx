@@ -86,25 +86,31 @@ export const HomePage = () => {
   };
 
   useEffect(() => {
-    const handler = () => {
-      let current = selected;
-      let closest = Number.POSITIVE_INFINITY;
-      sectionIds.forEach((id) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const offset = Math.abs(rect.top - 120);
-        if (offset < closest) {
-          closest = offset;
-          current = id;
-        }
-      });
-      if (current !== selected) setSelected(current);
-    };
-    window.addEventListener("scroll", handler, { passive: true });
-    handler();
-    return () => window.removeEventListener("scroll", handler);
-  }, [selected, sectionIds]);
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (!visible.length) return;
+        const id = visible[0].target.id;
+        setSelected((prev) => (prev === id ? prev : id));
+      },
+      {
+        root: null,
+        rootMargin: "-20% 0px -60% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      },
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sectionIds]);
 
   return (
     <div className="shell home-shell" style={{ ["--user-color" as any]: userColor, ["--user-color-fg" as any]: activeFg }}>

@@ -24,24 +24,26 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage mode="login" />} />
-          <Route path="/register" element={<LoginPage mode="register" />} />
+        <main>
+          <Routes>
+            <Route path="/login" element={<LoginPage mode="login" />} />
+            <Route path="/register" element={<LoginPage mode="register" />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<HomeRedirect />} />
-            <Route path="/household" element={<HouseholdPage />} />
-            <Route path="/dashboard" element={<HomePage />} />
-            <Route path="/chores" element={<HomePage />} />
-            <Route path="/calendar" element={<HomePage />} />
-            <Route path="/approvals" element={<HomePage />} />
-            <Route path="/stats" element={<HomePage />} />
-            <Route path="/achievements" element={<HomePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-          </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<HomeRedirect />} />
+              <Route path="/household" element={<HouseholdPage />} />
+              <Route path="/dashboard" element={<HomePage />} />
+              <Route path="/chores" element={<HomePage />} />
+              <Route path="/calendar" element={<HomePage />} />
+              <Route path="/approvals" element={<HomePage />} />
+              <Route path="/stats" element={<HomePage />} />
+              <Route path="/achievements" element={<HomePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </main>
       </AuthProvider>
     </BrowserRouter>
   );

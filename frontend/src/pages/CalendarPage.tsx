@@ -121,8 +121,9 @@ export const CalendarPage = ({ embedded = false }: Props) => {
             <img
               src="/figure/man_vacuum.webp"
               alt="Illustration av dammsugning"
-              loading="lazy"
+              loading="eager"
               decoding="async"
+              fetchPriority="high"
               width="1200"
               height="800"
             />
