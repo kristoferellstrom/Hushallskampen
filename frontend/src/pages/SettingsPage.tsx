@@ -15,6 +15,9 @@ import { mobileNavItems } from "../components/MobileNavIcons";
 export const SettingsPage = () => {
   const { token, user, logout } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const {
     invite,
     name,
@@ -192,6 +195,7 @@ export const SettingsPage = () => {
             className="nav-link subtle active settings-link"
             style={{ marginRight: 4 }}
             onClick={(e) => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
               if (window.matchMedia("(max-width: 1366px)").matches) {
                 e.preventDefault();
                 navigate("/dashboard#kalender");

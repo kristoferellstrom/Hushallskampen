@@ -80,8 +80,21 @@ export const HomePage = () => {
   const activeFg = textColorForBackground(userColor);
 
   const scrollToId = (id: string) => {
+    if (id === "kalender") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setSelected(id);
+      return;
+    }
+
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!el) return;
+
+    const header = document.querySelector<HTMLElement>(".home-header");
+    const headerHeight = header?.getBoundingClientRect().height ?? 0;
+    const extraOffset = 12;
+    const targetTop = Math.max(0, el.getBoundingClientRect().top + window.scrollY - headerHeight - extraOffset);
+
+    window.scrollTo({ top: targetTop, behavior: "smooth" });
     setSelected(id);
   };
 
