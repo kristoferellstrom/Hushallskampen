@@ -1,0 +1,56 @@
+@use "../theme" as *;
+
+.hero-logo {
+  display: none;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  flex-wrap: nowrap;
+  min-width: 0;
+  margin-bottom: 0;
+  position: relative;
+  padding: 4px 0 4px;
+
+  .home-left {
+    flex: 0 0 auto;
+    min-width: 280px;
+    position: relative;
+    z-index: 3;
+  }
+
+  .nav-links {
+    position: relative;
+    z-index: 3;
+  }
+
+  .header-logo-large {
+    display: none;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    margin-left: 0;
+    position: relative;
+    z-index: 3;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.mobile-logout {
+  display: none;
+}
+
+.header-logo-standalone {
+  display: none;
+}
+

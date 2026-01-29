@@ -1,0 +1,174 @@
+@use "../theme" as *;
+
+.user-row {
+  gap: 10px;
+  align-items: center;
+
+  .user-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    opacity: 0.55;
+  }
+
+  .user-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.1;
+  }
+
+  .user-name {
+    font-weight: 800;
+  }
+
+  .user-meta {
+    font-size: 12px;
+    opacity: 0.75;
+  }
+
+  .user-points {
+    margin-left: auto;
+    font-size: 16px;
+  }
+}
+
+.chore-bars {
+  gap: 10px;
+}
+
+.chore-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.chore-chip {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+  min-height: 86px;
+}
+
+.chore-chip-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.chip-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--chore-color, #2563eb);
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
+}
+
+.chore-chip-text {
+  display: grid;
+  gap: 2px;
+}
+
+.chore-chip .user-name {
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.chore-chip .user-meta {
+  font-size: 12px;
+  color: $color-muted-strong;
+  text-align: left;
+}
+
+.chore-chip .chore-count {
+  font-weight: 800;
+  font-size: 13px;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.chore-chip-bar {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.chore-chip-fill {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.08), var(--chore-color, #2563eb));
+  border-radius: 999px;
+  transition: width 160ms ease;
+}
+
+.chore-chip:hover .chore-chip-fill {
+  width: 100% !important;
+}
+
+.chore-figure {
+  margin-top: 4px;
+}
+
+.chore-bar-row {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.chore-bar-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.chore-bar {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.chore-bar-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--chore-color, #2563eb), var(--chore-bar-bg, rgba(37, 99, 235, 0.4)));
+  border-radius: 999px;
+}
+
+.chore-bar-value {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.chore-text .user-name {
+  font-weight: 800;
+}
+
+.chore-text .user-meta {
+  font-size: 12px;
+  color: $color-muted-strong;
+}
+

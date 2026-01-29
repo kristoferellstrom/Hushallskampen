@@ -1,0 +1,162 @@
+@use "../theme" as *;
+
+.settings-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+  grid-auto-rows: minmax(0, 1fr);
+
+  .hero-left-card {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    height: 100%;
+    align-self: stretch;
+
+    h2 {
+      margin: 0 0 4px;
+    }
+
+    .hint {
+      margin: 0 0 4px;
+    }
+
+    .hero-code {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+
+      .invite-pill {
+        display: inline-block;
+        padding: 0;
+        background: transparent;
+        color: #0f172a;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        min-width: 64px;
+        text-align: left;
+        border: none;
+        transform: translateY(-2px);
+      }
+    }
+
+    .color-picker-hero {
+      margin-top: 10px;
+      width: 100%;
+      .color-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        max-width: 560px;
+      }
+    }
+  }
+
+  .hero-mode-card {
+    display: grid;
+    align-content: start;
+    justify-items: stretch;
+    padding: 16px;
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    gap: 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 14px;
+
+    .mode-toggle {
+      margin: 0;
+      justify-self: start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+
+      button {
+        padding: 16px 22px;
+        font-size: 16px;
+        font-weight: 800;
+        border: none;
+        background: transparent;
+        color: #334155;
+        border-radius: 10px;
+        transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease, color 120ms ease;
+        border: 2px solid transparent;
+
+        &.active {
+          background: var(--user-color, $color-primary);
+          color: var(--user-color-fg, $color-surface);
+          box-shadow: 0 10px 20px rgba(15, 23, 42, 0.14);
+          border-color: #0f172a;
+        }
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+        }
+      }
+    }
+
+    .mode-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+
+    .mode-actions-inline {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 0;
+
+      .save-colors-btn {
+        min-width: 120px;
+        padding: 10px 14px;
+      }
+    }
+  }
+
+  .hero-extra-card {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    min-height: 0;
+    overflow: hidden;
+
+    img {
+      width: 60%;
+      height: 100%;
+    }
+  }
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+
+    .hero-left-card {
+      grid-row: 1 / span 2;
+      grid-column: 1;
+    }
+
+    .hero-extra-card {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .hero-mode-card {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+}
+
