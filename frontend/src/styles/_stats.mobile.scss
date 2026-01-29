@@ -16,6 +16,15 @@
     max-width: 100%;
   }
 
+  .stats-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .stats-page-header {
+    padding: 4px 0 0;
+  }
+
   .stats-card {
     width: calc(100% + 32px);
     margin-left: -16px;

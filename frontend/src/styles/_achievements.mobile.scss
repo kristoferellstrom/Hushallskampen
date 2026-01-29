@@ -12,9 +12,9 @@
   }
 
   #priser .card.stats-card {
-    width: 100vw;
-    margin-left: calc(-55vw + 50%);
-    margin-right: calc(-50vw + 50%);
+    width: calc(100% + 24px);
+    margin-left: -12px;
+    margin-right: -12px;
     border-radius: 0;
     max-width: none;
   }
@@ -42,5 +42,22 @@
     height: auto;
     display: block;
     margin: 0 auto;
+  }
+}
+
+@media (max-width: 400px) {
+  #priser .card.stats-card {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #priser .badge-block {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  #priser .badge-grid {
+    grid-template-columns: 1fr;
   }
 }
