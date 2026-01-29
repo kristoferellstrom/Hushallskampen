@@ -61,6 +61,10 @@
     display: none;
   }
 
+  .stat-figure-compact {
+    display: none;
+  }
+
   .year-shift,
   .card.stats-card:has(.year-shift) {
     display: none !important;

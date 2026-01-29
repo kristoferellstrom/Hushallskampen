@@ -49,10 +49,11 @@ const monthAwards: Award[] = [
 const awardImageSizes = "200px";
 
 const getAwardImageProps = (src: string) => {
-  const isMonth = src.includes("/month/");
+  const safeSrc = src.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+  const isMonth = safeSrc.includes("/month/");
   return {
-    src: withWebpWidth(src, 160),
-    srcSet: buildWebpSrcSet(src, [160, 320], 512),
+    src: withWebpWidth(safeSrc, 160),
+    srcSet: buildWebpSrcSet(safeSrc, [160, 320], 512),
     sizes: awardImageSizes,
     width: 512,
     height: isMonth ? 341 : 512,

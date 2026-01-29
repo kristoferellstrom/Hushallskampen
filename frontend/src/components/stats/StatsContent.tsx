@@ -249,13 +249,14 @@ export const StatsContent = ({
                 <img
                   src={withWebpWidth("/figure/aret_runt.webp", 800)}
                   srcSet={buildWebpSrcSet("/figure/aret_runt.webp", [400, 800], 1200)}
-                  sizes="(max-width: 900px) 100vw, 520px"
+                  sizes="140px"
                   alt="Året runt illustration"
                   loading="lazy"
                   className="stat-figure-compact"
+                  style={{ width: "240px", maxWidth: "240px", height: "auto" }}
                   decoding="async"
-                  width="1200"
-                  height="800"
+                  width="240"
+                  height="160"
                 />
                 <p className="hint">
                   {showPoints

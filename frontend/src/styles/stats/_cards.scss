@@ -335,8 +335,10 @@
 }
 
 .stat-figure-compact {
-  width: min(100%, 520px);
-  margin: -220px auto;
+  width: 450px !important;
+  max-width: 540px !important;
+  height: auto !important;
+
   border-radius: 0;
   display: block;
   object-fit: contain;
@@ -361,4 +363,3 @@
   font-size: 13px;
   margin: 4px 0 10px;
 }
-
