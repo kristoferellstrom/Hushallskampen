@@ -1,0 +1,70 @@
+@use "../theme" as *;
+
+
+.danger-btn {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  font-weight: 800;
+  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.2);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 22px rgba(220, 38, 38, 0.25);
+    filter: brightness(0.98);
+  }
+
+  &.action-icon {
+    background: transparent;
+    color: #1f2937;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    display: grid;
+    place-items: center;
+    box-shadow: none;
+    filter: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: none;
+      filter: none;
+    }
+  }
+}
+
+.thumb-icon {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background: var(--thumb-color, currentColor) !important;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.thumb-up {
+  mask-image: url("/svg/thumb_up.svg");
+  -webkit-mask-image: url("/svg/thumb_up.svg");
+}
+
+.thumb-down {
+  mask-image: url("/svg/thumb_down.svg");
+  -webkit-mask-image: url("/svg/thumb_down.svg");
+}
+
+.action-icon:hover .thumb-icon {
+  background: var(--thumb-hover-color, var(--user-color, #2563eb)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+}
+
+.action-icon:hover {
+  color: var(--thumb-hover-color, var(--user-color, #2563eb)) !important;
+}
+

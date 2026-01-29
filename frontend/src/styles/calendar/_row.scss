@@ -1,0 +1,54 @@
+@use "../theme" as *;
+
+
+.calendar-row {
+  align-items: stretch;
+  position: relative;
+  z-index: 2;
+  gap: 16px;
+
+  &.two-cols {
+    align-items: flex-start;
+
+    > .sidebar {
+      min-width: 260px;
+    }
+    > .calendar-card {
+      min-width: 640px;
+    }
+  }
+
+  &.three-cols {
+    align-items: flex-start;
+
+    > .sidebar.left {
+      flex: 1.2;
+      min-width: 260px;
+    }
+    > .calendar-column {
+      flex: 3;
+      min-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+
+      .calendar-card {
+        flex: 1;
+      }
+
+      .pending-banner {
+        font-size: 12px;
+        width: fit-content;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        align-self: center;
+      }
+    }
+    > .sidebar.right {
+      flex: 1.2;
+      min-width: 260px;
+    }
+  }
+}

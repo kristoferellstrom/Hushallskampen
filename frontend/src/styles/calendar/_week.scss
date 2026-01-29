@@ -1,0 +1,76 @@
+@use "../theme" as *;
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 6px;
+}
+
+.week-grid .day-cell {
+  height: 180px;
+  min-height: 0;
+  display: flex;
+
+  .day-number {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .weekday-label {
+    font-size: 11px;
+    text-transform: capitalize;
+    color: #64748b;
+  }
+}
+
+.week-grid .day-entries {
+  flex: 1;
+  margin-top: 8px;
+  overflow: auto;
+  min-height: 0;
+  max-height: 100%;
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+.status-row {
+  min-height: 20px;
+}
+
+.day-number {
+  font-weight: 600;
+  color: $color-primary;
+  font-size: 12px;
+}
+
+.dot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 20px;
+  align-items: center;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+  border: 1px solid $color-dot;
+
+  &.more {
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: $color-pill-strong;
+    color: $color-surface;
+    font-size: 11px;
+    border: none;
+  }
+}

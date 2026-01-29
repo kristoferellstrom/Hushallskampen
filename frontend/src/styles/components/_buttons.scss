@@ -1,0 +1,99 @@
+@use "../theme" as *;
+
+button {
+  border: none;
+  background: $color-primary;
+  color: $color-surface;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+
+  &:disabled {
+    background: $color-border;
+    cursor: not-allowed;
+  }
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.08);
+    color: $color-primary;
+    box-shadow: none;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+  }
+}
+
+.user-btn {
+  background: var(--user-color, $color-primary);
+  color: var(--user-color-fg, $color-surface);
+  border: none;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--user-color, $color-primary);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+  }
+
+  &.action-icon {
+    background: transparent;
+    color: #1f2937;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: grid;
+    place-items: center;
+    box-shadow: none;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+    }
+  }
+}
+
+.tiny-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.12);
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.16);
+    opacity: 0.95;
+  }
+
+  &:disabled {
+    box-shadow: none;
+    opacity: 0.6;
+  }
+
+  &.ghost {
+    background: rgba(15, 23, 42, 0.06);
+    color: $color-primary;
+    box-shadow: none;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+
+    &:hover:not(:disabled) {
+      box-shadow: none;
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.icon-only {
+    padding: 4px 6px;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 6px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}

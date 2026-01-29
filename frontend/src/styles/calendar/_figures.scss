@@ -1,0 +1,61 @@
+@use "../theme" as *;
+
+
+.calendar-corner-figure {
+  position: absolute;
+  top: -47px;
+  left: -16px;
+  width: 205px;
+  height: 205px;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
+  background: transparent;
+  pointer-events: none;
+  z-index: 5;
+  transition: transform 160ms ease;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+.calendar-column:hover .calendar-corner-figure {
+  transform: translateY(-4px);
+}
+
+.chore-corner-figure {
+  position: absolute;
+  top: -36px;
+  right: 8px;
+  width: 195px;
+  height: 195px;
+  pointer-events: none;
+  z-index: 4;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+.calendar-card {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+
+  button {
+    transition: transform 140ms ease, box-shadow 140ms ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1);
+    }
+  }
+}
+

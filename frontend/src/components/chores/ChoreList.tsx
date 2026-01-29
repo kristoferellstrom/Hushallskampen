@@ -107,7 +107,7 @@ export const ChoreList = ({
   });
 
   useEffect(() => {
-    const MOBILE_BREAKPOINT = 900; // match mobilanpassning
+    const MOBILE_BREAKPOINT = 900;
     const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
     check();
     window.addEventListener("resize", check, { passive: true });

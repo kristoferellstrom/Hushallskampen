@@ -1,0 +1,43 @@
+@use "../theme" as *;
+
+.day-cell {
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  min-height: 110px;
+  padding: 8px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+
+  &.placeholder {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: $color-border;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
+  }
+
+  &.muted {
+    opacity: 0.5;
+  }
+
+  &.selected {
+    border-color: var(--user-color, $color-primary);
+    box-shadow: 0 0 0 2px var(--user-color, $color-primary);
+  }
+
+  &.drag-over {
+    border-color: $color-accent;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
+  }
+}
+

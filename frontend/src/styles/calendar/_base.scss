@@ -1,0 +1,34 @@
+@use "../theme" as *;
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.calendar-day {
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  background: $color-card;
+}
+
+.day-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid $color-border;
+  background: $color-surface;
+}
+
+.status-pill {
+  &.planned {
+    border-left: 4px solid #0f172a;
+  }
+  &.submitted {
+    border-left: 4px solid #f59e0b;
+  }
+  &.approved {
+    border-left: 4px solid #16a34a;
+  }
+  &.rejected {
+    border-left: 4px solid #dc2626;
+  }
+}

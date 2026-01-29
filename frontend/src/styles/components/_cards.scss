@@ -1,0 +1,32 @@
+@use "../theme" as *;
+
+
+.card {
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  padding: 16px;
+  background: $color-card;
+  box-shadow: 0 6px 20px $color-shadow;
+}
+
+.token {
+  display: block;
+  word-break: break-all;
+  background: $color-surface;
+  border: 1px dashed $color-border;
+  padding: 8px;
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.status {
+  margin: 12px 0 0;
+  font-weight: 600;
+
+  &.ok {
+    color: $color-success;
+  }
+  &.error {
+    color: $color-error;
+  }
+}
