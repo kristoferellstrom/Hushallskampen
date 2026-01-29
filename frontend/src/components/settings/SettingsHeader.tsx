@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { assetUrl } from "../../utils/imageUtils";
 
 type SettingsHeaderProps = {
   mode: string;
@@ -67,7 +68,7 @@ export const SettingsHeader = ({
         >
           <img
             className="settings-icon"
-            src="/mob/setting_icon_mob.svg"
+            src={assetUrl("/mob/setting_icon_mob.svg")}
             alt="Inställningar"
             aria-hidden="true"
             decoding="async"

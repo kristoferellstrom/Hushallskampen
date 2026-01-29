@@ -1,5 +1,5 @@
-import logoSrc from "/logo.webp";
+import { assetUrl } from "../utils/imageUtils";
 
 export const Logo = () => (
-  <img src={logoSrc} alt="Hushållskampen" className="logo-mark" loading="lazy" decoding="async" width="1200" height="800" />
+  <img src={assetUrl("/logo.webp")} alt="Hushållskampen" className="logo-mark" loading="lazy" decoding="async" width="1200" height="800" />
 );

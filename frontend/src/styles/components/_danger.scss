@@ -49,13 +49,13 @@
 }
 
 .thumb-up {
-  mask-image: url("/svg/thumb_up.svg");
-  -webkit-mask-image: url("/svg/thumb_up.svg");
+  mask-image: url("../../assets/thumb_up.svg");
+  -webkit-mask-image: url("../../assets/thumb_up.svg");
 }
 
 .thumb-down {
-  mask-image: url("/svg/thumb_down.svg");
-  -webkit-mask-image: url("/svg/thumb_down.svg");
+  mask-image: url("../../assets/thumb_down.svg");
+  -webkit-mask-image: url("../../assets/thumb_down.svg");
 }
 
 .action-icon:hover .thumb-icon {
@@ -67,4 +67,3 @@
 .action-icon:hover {
   color: var(--thumb-hover-color, var(--user-color, #2563eb)) !important;
 }
-

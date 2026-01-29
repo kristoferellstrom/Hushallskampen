@@ -21,8 +21,9 @@ const HomeRedirect = () => {
 };
 
 function App() {
+  const baseName = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={baseName}>
       <AuthProvider>
         <main>
           <Routes>

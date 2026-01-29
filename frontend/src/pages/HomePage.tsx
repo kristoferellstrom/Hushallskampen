@@ -9,6 +9,7 @@ import { colorPreview, fallbackColorForUser, textColorForBackground } from "../u
 import { useEffect, useState } from "react";
 import { listMembers, listApprovals, getHousehold } from "../api";
 import { mobileNavItems } from "../components/MobileNavIcons";
+import { assetUrl } from "../utils/imageUtils";
 
 export const HomePage = () => {
   const { user, token, logout } = useAuth();
@@ -200,7 +201,7 @@ export const HomePage = () => {
           <Link to="/settings" className="nav-link settings-link" style={{ marginRight: 8 }}>
             <img
               className="settings-icon"
-              src="/mob/setting_icon_mob.svg"
+              src={assetUrl("/mob/setting_icon_mob.svg")}
               alt="Inställningar"
               aria-hidden="true"
               decoding="async"
