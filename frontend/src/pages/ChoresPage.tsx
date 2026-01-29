@@ -177,7 +177,8 @@ export const ChoresPage = ({ embedded = false }: Props) => {
             const base = memberColor || user?.color || userColor;
             const bg = shadeForPoints(base, points);
             const finalBg = bg || userColor;
-            return { bg: finalBg, fg: textColorForBackground(finalBg) };
+            const fg = points === 3 || points === 4 ? "#1f2937" : textColorForBackground(finalBg);
+            return { bg: finalBg, fg };
           }}
         />
       </div>

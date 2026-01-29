@@ -14,6 +14,21 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         injectRegister: null,
+        workbox: {
+          runtimeCaching: [
+            {
+              urlPattern: /\.(?:png|jpg|jpeg|webp|svg)$/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'images',
+                expiration: {
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 60 * 24 * 30,
+                },
+              },
+            },
+          ],
+        },
         manifest: {
           name: 'Hushållskampen',
           short_name: 'Hushållskampen',

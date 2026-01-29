@@ -9,6 +9,13 @@ const palettes: Record<string, string[]> = {
   teal: ["#e4f7f7", "#c6ecec", "#8fd8d8", "#59c2c2", "#2a9b9b"],
 };
 
+const secondShadeHexes = new Set(
+  Object.values(palettes)
+    .map((palette) => palette[1])
+    .filter(Boolean)
+    .map((hex) => hex.toLowerCase()),
+);
+
 const aliases: Record<string, string> = {
   blå: "blue",
   bla: "blue",
@@ -104,6 +111,7 @@ function mix(hexA: string, hexB: string, t: number) {
 }
 
 export function textColorForBackground(hex: string) {
+  if (secondShadeHexes.has(hex.toLowerCase())) return "#000000";
   const lum = luminance(hex);
   if (lum < 0.6) return "#ffffff";
   const t = clamp((0.75 - lum) / 0.75, 0, 1);
