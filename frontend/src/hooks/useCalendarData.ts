@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchChores, listCalendar, listMembers } from "../api";
 import { buildMonthGrid, buildWeekGrid, formatDateLocal, getGridRange } from "../utils/calendarDates";
 import type { CalendarEntry, CalendarChore, CalendarMember } from "../types/calendar";
+import { onDataUpdated } from "../utils/appEvents";
 
 type UserLike = { id?: string } | null;
 
@@ -96,6 +97,8 @@ export const useCalendarData = (token: string | null, user: UserLike) => {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  useEffect(() => onDataUpdated(loadAll), [loadAll]);
 
   return {
     entries,

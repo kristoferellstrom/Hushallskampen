@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchMonthlyStats, fetchWeeklyStats, getHousehold, listMembers } from "../api/index.ts";
+import { onDataUpdated } from "../utils/appEvents";
 
 export type StatItem = {
   periodStart: string;
@@ -68,6 +69,8 @@ export const useStats = (token: string | null | undefined) => {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => onDataUpdated(load), [load]);
 
   const balanceInfo = useCallback(
     (rec: StatItem): BalanceInfo => {

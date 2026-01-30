@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { CalendarEntry } from "../../types/calendar";
-import { shadeForPoints, textColorForBackground } from "../../utils/palette";
+import { darkShade, lightShade, textColorForBackground } from "../../utils/palette";
 
 type Props = {
   selectedDay: string;
@@ -65,9 +65,7 @@ export const SelectedDaySidebar = ({
       <ul className="list compact planned-list">
         {plannedEntries.map((e) => {
           const baseColor = e.assignedToUserId?.color;
-          const points = e.choreId?.defaultPoints ?? 0;
-          const safePoints = Number.isFinite(points) ? points : 0;
-          const shade = shadeForPoints(baseColor, safePoints);
+          const shade = lightShade(baseColor);
           const textColor = textColorForBackground(shade);
           const statusLabel = e.status === "rejected" ? "Avvisad – gör om" : "";
 
@@ -102,8 +100,8 @@ export const SelectedDaySidebar = ({
                       type="button"
                       className="tiny-btn"
                       style={{
-                        background: userColor,
-                        color: textColorForBackground(userColor),
+                        background: darkShade(userColor),
+                        color: textColorForBackground(darkShade(userColor)),
                       }}
                       onClick={() => onSubmit(e._id)}
                       disabled={loading || myPendingCount >= 5}
@@ -148,9 +146,7 @@ export const SelectedDaySidebar = ({
             <ul className="list compact approved-list" style={{ marginTop: 6 }}>
               {approvedEntries.map((e) => {
                 const baseColor = e.assignedToUserId?.color;
-                const points = e.choreId?.defaultPoints ?? 0;
-                const safePoints = Number.isFinite(points) ? points : 0;
-                const shade = shadeForPoints(baseColor, safePoints);
+                const shade = lightShade(baseColor);
                 const textColor = textColorForBackground(shade);
                 return (
                   <li
@@ -170,9 +166,7 @@ export const SelectedDaySidebar = ({
 
               {rejectedEntries.map((e) => {
                 const baseColor = e.assignedToUserId?.color;
-                const points = e.choreId?.defaultPoints ?? 0;
-                const safePoints = Number.isFinite(points) ? points : 0;
-                const shade = shadeForPoints(baseColor, safePoints);
+                const shade = lightShade(baseColor);
                 const textColor = textColorForBackground(shade);
 
                 return (
@@ -195,14 +189,20 @@ export const SelectedDaySidebar = ({
                       {isEligible(e) && e.assignedToUserId?._id === currentUserId && (
                         <div
                           className="mini-actions"
-                          style={{ width: "100%", justifyContent: "flex-end", marginTop: 18, gap: 12 }}
+                          style={{
+                            width: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            alignSelf: "stretch",
+                            gap: 12,
+                          }}
                         >
                           <button
                             type="button"
                             className="tiny-btn"
                             style={{
-                              background: userColor,
-                              color: textColorForBackground(userColor),
+                              background: darkShade(userColor),
+                              color: textColorForBackground(darkShade(userColor)),
                               boxShadow: "0 6px 16px rgba(0,0,0,0.18)",
                               fontWeight: 800,
                             }}

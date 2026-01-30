@@ -6,10 +6,11 @@ import { ApprovalsPage } from "./ApprovalsPage";
 import { StatsPage } from "./StatsPage";
 import { AchievementsPage } from "./AchievementsPage";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listMembers, listApprovals, getHousehold } from "../api";
 import { mobileNavItems } from "../components/MobileNavIcons";
 import { assetUrl } from "../utils/imageUtils";
+import { onDataUpdated } from "../utils/appEvents";
 
 export const HomePage = () => {
   const { user, token, logout } = useAuth();
@@ -37,20 +38,23 @@ export const HomePage = () => {
     loadColor();
   }, [token, user?.id, user?.color]);
 
-  useEffect(() => {
-    const loadApprovals = async () => {
-      try {
-        if (!token) return;
-        const res = await listApprovals(token);
-        const mine = user?.id;
-        const pendingForMe = res.approvals.filter((a: any) => a.submittedByUserId?._id !== mine);
-        setApprovalCount(pendingForMe.length || 0);
-      } catch {
-        setApprovalCount(0);
-      }
-    };
-    loadApprovals();
+  const loadApprovals = useCallback(async () => {
+    try {
+      if (!token) return;
+      const res = await listApprovals(token);
+      const mine = user?.id;
+      const pendingForMe = res.approvals.filter((a: any) => a.submittedByUserId?._id !== mine);
+      setApprovalCount(pendingForMe.length || 0);
+    } catch {
+      setApprovalCount(0);
+    }
   }, [token, user?.id]);
+
+  useEffect(() => {
+    loadApprovals();
+  }, [loadApprovals]);
+
+  useEffect(() => onDataUpdated(loadApprovals), [loadApprovals]);
 
   useEffect(() => {
     const loadHousehold = async () => {

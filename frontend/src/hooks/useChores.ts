@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { createChore, deleteChore, fetchChores, updateChore } from "../api";
+import { emitDataUpdated } from "../utils/appEvents";
 
 export type Chore = {
   _id: string;
@@ -92,6 +93,7 @@ export const useChores = (token: string | null | undefined) => {
         await createChore(token, payload);
         setStatus("Skapade syssla");
         await loadChores();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte skapa syssla");
       } finally {
@@ -110,6 +112,7 @@ export const useChores = (token: string | null | undefined) => {
         await updateChore(token, id, payload);
         setStatus("Uppdaterade syssla");
         await loadChores();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte uppdatera");
       } finally {
@@ -128,6 +131,7 @@ export const useChores = (token: string | null | undefined) => {
         await deleteChore(token, id);
         setStatus("Tog bort syssla");
         await loadChores();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte ta bort");
       } finally {

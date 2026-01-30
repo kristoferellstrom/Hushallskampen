@@ -65,7 +65,7 @@ export const ChoreSidebar = ({
       <div className="chores-badges">
         {visibleChores.map((c) => {
           const bg = shadeForPoints(selectedMember?.color, c.defaultPoints);
-          const fg = textColorForBackground(bg);
+          const fg = c.defaultPoints === 3 || c.defaultPoints === 4 ? "#1f2937" : textColorForBackground(bg);
           const label = titleMap[c.title.toLowerCase()] || c.title;
 
           return (

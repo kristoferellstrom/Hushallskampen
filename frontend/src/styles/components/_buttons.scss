@@ -84,6 +84,17 @@ button {
     }
   }
 
+  &.user-btn.ghost:not(.icon-only):hover:not(:disabled) {
+    background: var(--user-color, $color-primary) !important;
+    color: var(--user-color-fg, $color-surface) !important;
+    border-color: transparent !important;
+    filter: brightness(0.92);
+  }
+
+  &.user-btn.activate-btn:hover:not(:disabled) {
+    filter: brightness(0.92);
+  }
+
   &.icon-only {
     padding: 4px 6px;
     min-width: 0;

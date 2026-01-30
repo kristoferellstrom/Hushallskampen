@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { createCalendarEntry, deleteCalendarEntry, submitCalendarEntry, copyLastWeek, updateCalendarEntry } from "../api";
 import type { CalendarEntry, CalendarMember } from "../types/calendar";
+import { emitDataUpdated } from "../utils/appEvents";
 
 type Params = {
   token: string | null;
@@ -51,6 +52,7 @@ export const useCalendarActions = ({
         await submitCalendarEntry(token, id);
         setStatus("Markerad som klar (väntar på godkännande)");
         await loadAll();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte markera");
       } finally {
@@ -71,6 +73,7 @@ export const useCalendarActions = ({
         await deleteCalendarEntry(token, id);
         setStatus("Tog bort posten");
         await loadAll();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte ta bort");
       } finally {
@@ -98,6 +101,7 @@ export const useCalendarActions = ({
         await createCalendarEntry(token, { choreId, date: day, assignedToUserId: assignee });
         setStatus("La till syssla i kalendern");
         await loadAll();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte lägga till syssla");
       } finally {
@@ -118,6 +122,7 @@ export const useCalendarActions = ({
         await updateCalendarEntry(token, entryId, { date: day });
         setStatus("Flyttade sysslan");
         await loadAll();
+        emitDataUpdated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte flytta syssla");
       } finally {
@@ -137,6 +142,7 @@ export const useCalendarActions = ({
       const res = await copyLastWeek(token);
       setStatus(`Kopierade ${res.created.length} sysslor från förra veckan`);
       await loadAll();
+      emitDataUpdated();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte kopiera förra veckan");
     } finally {

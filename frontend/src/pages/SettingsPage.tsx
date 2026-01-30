@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSettingsPage } from "../hooks/useSettingsPage";
 import { useAuth } from "../context/AuthContext";
 import { fetchMonthlyBadges, listMembers } from "../api";
 import type { MonthlyBadge, PointsWinner } from "../api";
 import { colorPreview, fallbackColorForUser, textColorForBackground } from "../utils/palette";
 import { listApprovals } from "../api";
+import { onDataUpdated } from "../utils/appEvents";
 
 import { SettingsHeroGrid } from "../components/settings/SettingsHeroGrid";
 import { SettingsContentGrid } from "../components/settings/SettingsContentGrid";
@@ -99,20 +100,23 @@ export const SettingsPage = () => {
     }
   }, [initializedBaseline, lastSavedColor, lastSavedRules, userColor, rulesText]);
 
-  useEffect(() => {
-    const loadApprovals = async () => {
-      try {
-        if (!token) return;
-        const res = await listApprovals(token);
-        const mine = user?.id;
-        const pendingForMe = res.approvals.filter((a: any) => a.submittedByUserId?._id !== mine);
-        setApprovalCount(pendingForMe.length || 0);
-      } catch {
-        setApprovalCount(0);
-      }
-    };
-    loadApprovals();
+  const loadApprovals = useCallback(async () => {
+    try {
+      if (!token) return;
+      const res = await listApprovals(token);
+      const mine = user?.id;
+      const pendingForMe = res.approvals.filter((a: any) => a.submittedByUserId?._id !== mine);
+      setApprovalCount(pendingForMe.length || 0);
+    } catch {
+      setApprovalCount(0);
+    }
   }, [token, user?.id]);
+
+  useEffect(() => {
+    loadApprovals();
+  }, [loadApprovals]);
+
+  useEffect(() => onDataUpdated(loadApprovals), [loadApprovals]);
 
   const shellColor = (() => {
     const base = memberColor || user?.color;

@@ -135,3 +135,21 @@ export function chartColor(index: number) {
   const i = Math.abs(index) % chartPalette.length;
   return chartPalette[i];
 }
+
+export function lightShade(color?: string) {
+  if (!color) return "#f8fafc";
+  const key = normalizeColorKey(color);
+  if (key.startsWith("#")) return mix(key, "#ffffff", 0.75);
+  const palette = palettes[key];
+  if (!palette || palette.length === 0) return "#f8fafc";
+  return palette[0];
+}
+
+export function darkShade(color?: string) {
+  if (!color) return "#0f172a";
+  const key = normalizeColorKey(color);
+  if (key.startsWith("#")) return mix(key, "#000000", 0.35);
+  const palette = palettes[key];
+  if (!palette || palette.length === 0) return "#0f172a";
+  return palette[palette.length - 1];
+}

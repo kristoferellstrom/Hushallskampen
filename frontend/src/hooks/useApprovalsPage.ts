@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { listApprovalHistory, listApprovals, reviewApproval } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { emitDataUpdated } from "../utils/appEvents";
 
 export type Approval = {
   _id: string;
@@ -144,6 +145,7 @@ export const useApprovalsPage = (historyLimit = 10) => {
       setStatus(action === "approve" ? "Godkände" : "Avslog");
       clearComment(id);
       await load();
+      emitDataUpdated();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kunde inte uppdatera");
     } finally {
