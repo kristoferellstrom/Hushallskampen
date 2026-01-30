@@ -9,6 +9,7 @@ export type CalendarChore = {
   _id: string;
   title: string;
   defaultPoints: number;
+  description?: string;
   isActive?: boolean;
   isDefault?: boolean;
 };

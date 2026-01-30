@@ -72,6 +72,7 @@ export const ChoreSidebar = ({
             <div
               key={c._id}
               className="chore-badge"
+              title={c.description || ""}
               draggable
               onDragStart={(e) => onDragStartChore(c._id, e)}
               onDragEnd={onDragEndChore}

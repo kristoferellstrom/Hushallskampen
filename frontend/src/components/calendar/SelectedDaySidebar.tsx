@@ -76,6 +76,7 @@ export const SelectedDaySidebar = ({
                 e.status === "rejected" ? "status-rejected" : ""
               }`}
               style={{ background: shade, color: textColor }}
+              title={e.choreId?.description || ""}
               draggable={isEligible(e)}
               onDragStart={(ev) => onDragStartEntry(e._id, ev)}
               onDragEnd={onDragEndEntry}
@@ -153,6 +154,7 @@ export const SelectedDaySidebar = ({
                     key={e._id}
                     className="mini-item status-approved"
                     style={{ background: shade, color: textColor }}
+                    title={e.choreId?.description || ""}
                   >
                     <div>
                       <strong>{e.choreId?.title || "Syssla"}</strong>
@@ -174,6 +176,7 @@ export const SelectedDaySidebar = ({
                     key={e._id}
                     className="mini-item status-rejected"
                     style={{ background: shade, color: textColor }}
+                    title={e.choreId?.description || ""}
                   >
                     <div className="mini-content">
                       <div className="mini-text">

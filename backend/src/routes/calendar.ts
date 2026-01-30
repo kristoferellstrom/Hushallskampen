@@ -44,7 +44,7 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
       householdId: user.householdId,
       date: { $gte: start, $lt: end },
     })
-      .populate({ path: "choreId", select: "title defaultPoints" })
+      .populate({ path: "choreId", select: "title defaultPoints description" })
       .populate({ path: "assignedToUserId", select: "name email color" })
       .sort({ date: 1 });
 
