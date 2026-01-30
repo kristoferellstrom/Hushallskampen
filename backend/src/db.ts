@@ -5,6 +5,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 dotenv.config();
 
 let memoryServer: MongoMemoryServer | null = null;
+let dbMode: "mongo" | "memory" = "mongo";
 const MONGO_MEM_VERSION = process.env.MONGO_MEMORY_VERSION || "7.0.9";
 
 async function startMemoryServer() {
@@ -13,6 +14,7 @@ async function startMemoryServer() {
   });
   const uri = memoryServer.getUri();
   await mongoose.connect(uri);
+  dbMode = "memory";
   console.log("MongoDB (memory) connected");
 }
 
@@ -27,6 +29,7 @@ export const connectDB = async () => {
 
   try {
     await mongoose.connect(mongoUri);
+    dbMode = "mongo";
     console.log("MongoDB connected");
   } catch (error) {
     console.error("MongoDB connection error, försöker med in-memory:", error);
@@ -40,3 +43,5 @@ export const connectDB = async () => {
 };
 
 export default mongoose;
+
+export const getDbMode = () => dbMode;

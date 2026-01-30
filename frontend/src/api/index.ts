@@ -7,3 +7,4 @@ export * from "./approvals";
 export * from "./stats";
 export * from "./users";
 export * from "./achievements";
+export * from "./health";

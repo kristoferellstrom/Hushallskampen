@@ -12,6 +12,7 @@ import approvalsRouter from "./routes/approvals";
 import statsRouter from "./routes/stats";
 import usersRouter from "./routes/users";
 import achievementsRouter from "./routes/achievements";
+import { getDbMode } from "./db";
 
 export const createApp = () => {
   const app = express();
@@ -41,7 +42,10 @@ export const createApp = () => {
   app.use("/api/achievements", achievementsRouter);
 
   app.get("/health", (_req: Request, res: Response) => {
-    res.json({ status: "ok" });
+    res.json({ status: "ok", db: getDbMode() });
+  });
+  app.get("/api/health", (_req: Request, res: Response) => {
+    res.json({ status: "ok", db: getDbMode() });
   });
 
   app.use((err: any, _req: any, res: any, _next: any) => {

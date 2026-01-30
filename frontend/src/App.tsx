@@ -12,6 +12,7 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import { HomePage } from "./pages/HomePage";
+import { DbStatusBanner } from "./components/DbStatusBanner";
 
 const HomeRedirect = () => {
   const { token, user, loading } = useAuth();
@@ -26,6 +27,7 @@ function App() {
     <BrowserRouter basename={baseName}>
       <AuthProvider>
         <main>
+          <DbStatusBanner />
           <Routes>
             <Route path="/login" element={<LoginPage mode="login" />} />
             <Route path="/register" element={<LoginPage mode="register" />} />

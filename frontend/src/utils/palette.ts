@@ -9,6 +9,17 @@ const palettes: Record<string, string[]> = {
   teal: ["#e4f7f7", "#c6ecec", "#8fd8d8", "#59c2c2", "#2a9b9b"],
 };
 
+const chartPalette = [
+  "#4E79A7",
+  "#F28E2B",
+  "#E15759",
+  "#76B7B2",
+  "#59A14F",
+  "#EDC948",
+  "#B07AA1",
+  "#FF9DA7",
+];
+
 const secondShadeHexes = new Set(
   Object.values(palettes)
     .map((palette) => palette[1])
@@ -119,3 +130,8 @@ export function textColorForBackground(hex: string) {
 }
 
 export const colorKeys = Object.keys(palettes);
+
+export function chartColor(index: number) {
+  const i = Math.abs(index) % chartPalette.length;
+  return chartPalette[i];
+}

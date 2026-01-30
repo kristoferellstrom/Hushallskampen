@@ -6,7 +6,7 @@ import { Logo } from "../components/Logo";
 import { useStats } from "../hooks/useStats";
 import { StatsContent } from "../components/stats/StatsContent";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
-import { colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
+import { chartColor, colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
 import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
@@ -112,8 +112,8 @@ export const StatsPage = ({ embedded = false }: Props) => {
   const yearChorePie = useMemo(() => {
     const total = yearChoreSlices.reduce((sum, c) => sum + c.count, 0);
     let start = 0;
-    const segments = yearChoreSlices.map((c) => {
-      const base = colorPreview(fallbackColorForUser(c.chore)) || fallbackColorForUser(c.chore);
+    const segments = yearChoreSlices.map((c, index) => {
+      const base = chartColor(index);
       const slice = total > 0 ? (c.count / total) * 360 : 0;
       const pct = total > 0 ? Math.round((c.count / total) * 100) : 0;
       const entryStart = start;

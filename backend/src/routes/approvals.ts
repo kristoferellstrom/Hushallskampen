@@ -105,7 +105,7 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
 
       const chore = await Chore.findById(entry.choreId).select("defaultPoints");
       const points = chore?.defaultPoints ?? 0;
-      const approvedAt = entry.approvedAt || new Date();
+      const statsDate = entry.date ? new Date(entry.date) : entry.approvedAt || new Date();
 
       const periodKey = (date: Date, type: "week" | "month") => {
         const d = new Date(date);
@@ -123,7 +123,7 @@ router.post("/:id/review", authMiddleware, async (req: AuthRequest, res) => {
       };
 
       const upsertStats = async (type: "week" | "month") => {
-        const { start, end } = periodKey(approvedAt, type);
+        const { start, end } = periodKey(statsDate, type);
         let record = await StatsRecord.findOne({ householdId: reviewer.householdId, periodType: type, periodStart: start, periodEnd: end });
         if (!record) {
           record = await StatsRecord.create({
