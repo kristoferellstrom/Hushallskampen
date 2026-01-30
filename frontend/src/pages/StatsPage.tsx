@@ -6,7 +6,7 @@ import { Logo } from "../components/Logo";
 import { useStats } from "../hooks/useStats";
 import { StatsContent } from "../components/stats/StatsContent";
 import { useApprovalsPage } from "../hooks/useApprovalsPage";
-import { chartColor, colorPreview, fallbackColorForUser, shadeForPoints } from "../utils/palette";
+import { chartColor, fallbackColorForUser, shadeForPoints } from "../utils/palette";
 import { getHousehold } from "../api";
 
 type Props = { embedded?: boolean };
