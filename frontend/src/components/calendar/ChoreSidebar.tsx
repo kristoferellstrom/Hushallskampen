@@ -2,7 +2,7 @@ import { shadeForPoints, textColorForBackground } from "../../utils/palette";
 import { buildWebpSrcSet, withWebpWidth } from "../../utils/imageUtils";
 
 type Member = { _id: string; name: string; color?: string };
-type Chore = { _id: string; title: string; defaultPoints: number; isActive?: boolean };
+type Chore = { _id: string; title: string; defaultPoints: number; description?: string; isActive?: boolean };
 
 type Props = {
   chores: Chore[];
