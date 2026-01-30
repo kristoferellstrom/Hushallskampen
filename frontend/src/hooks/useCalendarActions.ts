@@ -31,9 +31,22 @@ export const useCalendarActions = ({
   setLoading,
   loadAll,
 }: Params) => {
+  const isFutureEntry = useCallback((e: CalendarEntry) => {
+    if (!e?.date) return false;
+    const entryDate = new Date(e.date);
+    if (isNaN(entryDate.getTime())) return false;
+    entryDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return entryDate > today;
+  }, []);
+
   const isEligible = useCallback(
-    (e: CalendarEntry) => (e.status === "planned" || e.status === "rejected") && e.assignedToUserId._id === userId,
-    [userId],
+    (e: CalendarEntry) =>
+      (e.status === "planned" || e.status === "rejected") &&
+      e.assignedToUserId._id === userId &&
+      !isFutureEntry(e),
+    [userId, isFutureEntry],
   );
 
   const handleSubmit = useCallback(

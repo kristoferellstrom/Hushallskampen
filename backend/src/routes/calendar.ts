@@ -136,14 +136,25 @@ router.post("/copy-last-week", authMiddleware, async (req: AuthRequest, res) => 
   }
 });
 
-router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
-  try {
-    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
-    const { id } = req.params;
-    const entry = await CalendarEntry.findById(id);
-    if (!entry) return res.status(404).json({ error: "Entry not found" });
-    if (String(entry.assignedToUserId) !== String(req.userId)) return res.status(403).json({ error: "Not assigned to you" });
-    if (!["planned", "rejected"].includes(entry.status)) return res.status(400).json({ error: "Entry not in a submit-ready state" });
+  router.post("/:id/submit", authMiddleware, async (req: AuthRequest, res) => {
+    try {
+      if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+      const { id } = req.params;
+      const entry = await CalendarEntry.findById(id);
+      if (!entry) return res.status(404).json({ error: "Entry not found" });
+      if (String(entry.assignedToUserId) !== String(req.userId)) return res.status(403).json({ error: "Not assigned to you" });
+      if (!["planned", "rejected"].includes(entry.status)) return res.status(400).json({ error: "Entry not in a submit-ready state" });
+      if (entry.date) {
+        const entryDate = new Date(entry.date);
+        if (!isNaN(entryDate.getTime())) {
+          entryDate.setHours(0, 0, 0, 0);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (entryDate > today) {
+            return res.status(400).json({ error: "Cannot submit a future task" });
+          }
+        }
+      }
 
     const pendingCount = await CalendarEntry.countDocuments({
       assignedToUserId: req.userId,
